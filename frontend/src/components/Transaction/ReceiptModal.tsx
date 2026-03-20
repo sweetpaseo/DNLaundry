@@ -51,16 +51,17 @@ export const ReceiptModal = ({ isOpen, onClose, transaction, settings }: Receipt
               />
             )}
             <h2 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '0 0 0.25rem' }}>{settings?.name || 'Antigravity Laundry'}</h2>
-            <div style={{ fontSize: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.1rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem' }}>
-                <WhatsAppIcon size={12} color="#000" /> {settings?.phone}
+            <div style={{ fontSize: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.2rem', alignItems: 'center' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+                <WhatsAppIcon size={12} color="#000" /> <span>{settings?.phone}</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem' }}>
-                <MapPin size={10} /> {settings?.address}
+              <div style={{ display: 'inline-flex', alignItems: 'flex-start', gap: '0.3rem', maxWidth: '280px' }}>
+                <MapPin size={10} style={{ flexShrink: 0, marginTop: '2px' }} /> 
+                <span>{settings?.address}</span>
               </div>
               {settings?.instagram && (
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem' }}>
-                  <Instagram size={10} /> {settings?.instagram}
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+                  <Instagram size={10} /> <span>{settings?.instagram}</span>
                 </div>
               )}
             </div>
