@@ -104,7 +104,8 @@ memberTypes.get('/', async (c) => {
   
   for (const name of essential) {
     if (!existingNames.includes(name.toLowerCase())) {
-      await supabase.from('customer_types').insert({ name })
+      const { error: insError } = await supabase.from('customer_types').insert({ name })
+      if (insError) console.error(`Failed to seed ${name}:`, insError)
     }
   }
 
