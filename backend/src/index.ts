@@ -12,6 +12,17 @@ const app = new Hono<{ Bindings: Bindings }>()
 app.use('*', cors())
 
 // Health Check / Landing Page
+app.get('/api/health', async (c) => {
+  try {
+    const supabase = getSupabase(c.env)
+    const { data, error } = await supabase.from('laundry_settings').select('id').limit(1).single()
+    if (error && error.code !== 'PGRST116') throw error
+    return c.json({ status: 'ok', database: 'connected' })
+  } catch (e) {
+    return c.json({ status: 'error', database: 'disconnected' }, 500)
+  }
+})
+
 app.get('/', (c) => {
   return c.html(`
     <body style="font-family: sans-serif; padding: 2rem; background: #0f172a; color: white;">

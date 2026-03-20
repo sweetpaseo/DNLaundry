@@ -284,5 +284,16 @@ export const api = {
       localStorage.setItem('laundry_settings', JSON.stringify(data));
       return data;
     }
+  },
+
+  async checkConnection() {
+    try {
+      const res = await fetch(`${API_BASE_URL}/health`);
+      if (!res.ok) return false;
+      const data = await res.json();
+      return data.status === 'ok';
+    } catch (e) {
+      return false;
+    }
   }
 };

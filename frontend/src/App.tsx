@@ -18,6 +18,7 @@ function App() {
   const [activeTab, setActiveTab] = useState<'input' | 'list'>('input');
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
   const [settings, setSettings] = useState<any>(null);
+  const [isOnline, setIsOnline] = useState(true);
 
   useEffect(() => {
     if (user) {
@@ -37,6 +38,16 @@ function App() {
       }
     };
     fetchSettings();
+  }, []);
+
+  useEffect(() => {
+    const checkStatus = async () => {
+      const status = await api.checkConnection();
+      setIsOnline(status);
+    };
+    checkStatus();
+    const interval = setInterval(checkStatus, 15000); // Check every 15s
+    return () => clearInterval(interval);
   }, []);
 
   const handleLoginSuccess = (userData: any) => {
@@ -79,10 +90,27 @@ function App() {
           </h1>
           <p style={{ color: 'var(--text-muted)' }}>Sistem Kasir Laundry Profesional</p>
         </div>
-        <div style={{ display: 'flex', gap: '1rem' }}>
+        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+          {/* Connection Indicator */}
+          <div className="glass-card" style={{ padding: '0.4rem 0.8rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <div 
+              style={{ 
+                width: 10, 
+                height: 10, 
+                borderRadius: '50%', 
+                background: isOnline ? '#10b981' : '#f43f5e',
+                boxShadow: isOnline ? '0 0 10px rgba(16, 185, 129, 0.5)' : '0 0 10px rgba(244, 63, 94, 0.5)',
+                transition: 'all 0.3s ease'
+              }} 
+            />
+            <span style={{ fontSize: '0.7rem', fontWeight: 600, color: isOnline ? '#10b981' : '#f43f5e' }}>
+              {isOnline ? 'DATABASE ONLINE' : 'DATABASE OFFLINE'}
+            </span>
+          </div>
+
           <div className="glass-card" style={{ padding: '0.4rem 0.8rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <div style={{ width: 8, height: 8, borderRadius: '50%', background: user.role === 'owner' ? '#FF0084' : '#10b981' }}></div>
-            <span style={{ fontSize: '0.75rem' }}>{user.name} ({user.role === 'owner' ? 'Owner' : 'Staff'})</span>
+            <span style={{ fontSize: '0.75rem' }}>{user.name}</span>
           </div>
           <button 
             className="glass-card" 

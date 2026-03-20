@@ -123,6 +123,7 @@ export const AdminDashboard = () => {
       await api.createService(data);
       fetchData();
       setIsServiceModalOpen(false);
+      alert('Perubahan berhasil disimpan!');
       setEditingService(null);
     } catch (error) {
       alert('Gagal menyimpan layanan');
@@ -149,6 +150,7 @@ export const AdminDashboard = () => {
       }
       fetchData();
       setIsEmployeeModalOpen(false);
+      alert('Perubahan berhasil disimpan!');
     } catch (error) {
       alert('Gagal menyimpan karyawan');
     }
@@ -163,6 +165,7 @@ export const AdminDashboard = () => {
           created_at: new Date().toISOString() 
         });
         fetchData();
+        alert('Perubahan berhasil disimpan!');
       } catch (error) {
         alert('Gagal memberikan insentif');
       }
@@ -180,6 +183,7 @@ export const AdminDashboard = () => {
       fetchData();
       setIsExpenseModalOpen(false);
       setEditingExpense(null);
+      alert('Perubahan berhasil disimpan!');
     } catch (error) {
       alert('Gagal menyimpan pengeluaran');
     }
@@ -190,6 +194,7 @@ export const AdminDashboard = () => {
       try {
         await api.deleteExpense(id);
         fetchData();
+        alert('Perubahan berhasil disimpan!');
       } catch (error) {
         alert('Gagal menghapus pengeluaran');
       }
@@ -206,6 +211,7 @@ export const AdminDashboard = () => {
       fetchData();
       setIsUserModalOpen(false);
       setEditingUser(null);
+      alert('Perubahan berhasil disimpan!');
     } catch (error) {
       alert('Gagal menyimpan user');
     }
@@ -216,6 +222,7 @@ export const AdminDashboard = () => {
       try {
         await api.deleteUser(id);
         fetchData();
+        alert('Perubahan berhasil disimpan!');
       } catch (error) {
         alert('Gagal menghapus user');
       }
