@@ -3,6 +3,7 @@ import { Printer, Trash2, Edit3, CheckCircle, Clock, Search, Loader2 } from 'luc
 import type { Transaction, TransactionStatus } from '../../types';
 import { api } from '../../services/api';
 import { ReceiptModal } from './ReceiptModal';
+import { EditTransactionModal } from './EditTransactionModal';
 
 export const TransactionList = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -11,6 +12,8 @@ export const TransactionList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [isReceiptOpen, setIsReceiptOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [settings, setSettings] = useState<any>(null);
 
   const fetchTransactions = async () => {
@@ -21,6 +24,26 @@ export const TransactionList = () => {
       console.error('Failed to fetch transactions:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleUpdate = async (id: string, data: Partial<Transaction>) => {
+    try {
+      await api.updateTransaction(id, data);
+      fetchTransactions();
+    } catch (error) {
+      console.error('Failed to update transaction:', error);
+      throw error;
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!window.confirm('Apakah Anda yakin ingin menghapus transaksi ini?')) return;
+    try {
+      await api.deleteTransaction(id);
+      fetchTransactions();
+    } catch (error) {
+      alert('Gagal menghapus transaksi');
     }
   };
 
@@ -174,6 +197,7 @@ export const TransactionList = () => {
                   </button>
                   <button 
                     title="Edit" 
+                    onClick={() => { setEditingTransaction(t); setIsEditOpen(true); }}
                     style={{ 
                       width: '2.5rem', height: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', color: 'white', border: '1px solid var(--glass-border)', cursor: 'pointer', transition: 'all 0.2s'
                     }}
@@ -184,6 +208,7 @@ export const TransactionList = () => {
                   </button>
                   <button 
                     title="Hapus" 
+                    onClick={() => handleDelete(t.id)}
                     style={{ 
                       width: '2.5rem', height: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(244, 63, 94, 0.1)', borderRadius: '8px', color: '#f43f5e', border: '1px solid rgba(244, 63, 94, 0.2)', cursor: 'pointer', transition: 'all 0.2s'
                     }}
@@ -205,6 +230,15 @@ export const TransactionList = () => {
         </div>
       )}
 
+      {editingTransaction && (
+        <EditTransactionModal 
+          isOpen={isEditOpen}
+          onClose={() => { setIsEditOpen(false); setEditingTransaction(null); }}
+          onSave={handleUpdate}
+          transaction={editingTransaction}
+        />
+      )}
+      
       {selectedTransaction && (
         <ReceiptModal 
           isOpen={isReceiptOpen}
