@@ -21,10 +21,11 @@ app.use('/api/*', async (c, next) => {
                     c.env?.VITE_API_SECRET_KEY || 
                     (typeof process !== 'undefined' ? (process.env.API_SECRET_KEY || process.env.VITE_API_SECRET_KEY) : undefined)
   
-  // Skip check for health endpoint if needed, but for now, protect everything /api/*
-  // Also pass through if we are in dev (localhost) and secret is not set? 
-  // No, better to be strict.
-  
+  // Exclude health check from protection for easier debugging and status monitoring
+  if (c.req.path === '/api/health') {
+    return next()
+  }
+
   if (secretKey && apiKey !== secretKey) {
     return c.json({ error: 'Unauthorized: Invalid API Key' }, 401)
   }
