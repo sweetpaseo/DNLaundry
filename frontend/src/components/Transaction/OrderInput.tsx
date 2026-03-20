@@ -28,6 +28,7 @@ export const OrderInput = () => {
     };
     fetchData();
   }, []);
+  const [selectedTier, setSelectedTier] = useState<'normal' | 'member' | 'express' | 'special'>('normal');
   const [amount, setAmount] = useState<number>(0);
   const [notes, setNotes] = useState('');
   const [discountType, setDiscountType] = useState<'percent' | 'fixed'>('percent');
@@ -37,7 +38,12 @@ export const OrderInput = () => {
   useEffect(() => {
     const srv = services.find(s => s.id === selectedServiceId);
     if (srv) {
-      const subtotal = srv.price * amount;
+      let price = srv.price_normal || 0;
+      if (selectedTier === 'member') price = srv.price_member || 0;
+      else if (selectedTier === 'express') price = srv.price_express || 0;
+      else if (selectedTier === 'special') price = srv.price_special || 0;
+      
+      const subtotal = price * amount;
       let discountAmount = 0;
       if (discountType === 'percent') {
         discountAmount = (subtotal * discountValue) / 100;
@@ -46,14 +52,21 @@ export const OrderInput = () => {
       }
       setTotal(Math.max(0, subtotal - discountAmount));
     }
-  }, [selectedServiceId, amount, discountType, discountValue, services]);
+  }, [selectedServiceId, selectedTier, amount, discountType, discountValue, services]);
 
   const handleCustomerChange = (val: string) => {
     setCustomerName(val);
     const lowVal = val.toLowerCase();
-    setDiscountType('percent'); // Default to percent for auto-discounts
-    if (lowVal.includes('vip') || lowVal.includes('special')) setDiscountValue(10);
-    else if (lowVal.includes('member')) setDiscountValue(5);
+    
+    // Auto-detect tier from name (legacy-style shortcut)
+    if (lowVal.includes('member')) setSelectedTier('member');
+    else if (lowVal.includes('express')) setSelectedTier('express');
+    else if (lowVal.includes('special')) setSelectedTier('special');
+    else setSelectedTier('normal');
+    
+    // Auto-discount logic for VIP
+    setDiscountType('percent');
+    if (lowVal.includes('vip')) setDiscountValue(10);
     else setDiscountValue(0);
   };
 
@@ -141,7 +154,7 @@ export const OrderInput = () => {
                 style={{ width: '100%', height: '3.5rem', fontSize: '1rem' }}
               >
                 {services.map(s => (
-                  <option key={s.id} value={s.id} style={{ background: '#1a1a1a', color: 'white' }}>{s.name} - Rp {s.price}/{s.unit}</option>
+                  <option key={s.id} value={s.id} style={{ background: '#1a1a1a', color: 'white' }}>{s.name} - Rp {s.price_normal?.toLocaleString()}/{s.unit}</option>
                 ))}
               </select>
             </div>
@@ -157,6 +170,34 @@ export const OrderInput = () => {
                   <option key={e.id} value={e.id} style={{ background: '#1a1a1a', color: 'white' }}>{e.name}</option>
                 ))}
               </select>
+            </div>
+          </div>
+
+          <div className="form-group" style={{ marginTop: '1.25rem' }}>
+            <label style={{ display: 'block', marginBottom: '0.8rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>Tier Harga Layanan</label>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem' }}>
+              {(['normal', 'member', 'express', 'special'] as const).map(tier => (
+                <button
+                  key={tier}
+                  type="button"
+                  onClick={() => setSelectedTier(tier)}
+                  style={{
+                    padding: '0.75rem 0.5rem',
+                    borderRadius: '10px',
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    border: '1px solid var(--glass-border)',
+                    cursor: 'pointer',
+                    background: selectedTier === tier ? 'var(--primary-gradient)' : 'rgba(255,255,255,0.03)',
+                    color: selectedTier === tier ? 'white' : 'var(--text-muted)',
+                    transition: 'all 0.2s',
+                    boxShadow: selectedTier === tier ? '0 4px 12px rgba(255, 0, 132, 0.2)' : 'none'
+                  }}
+                >
+                  {tier}
+                </button>
+              ))}
             </div>
           </div>
 

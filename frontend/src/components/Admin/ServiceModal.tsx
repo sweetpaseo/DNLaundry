@@ -13,7 +13,10 @@ interface ServiceModalProps {
 export const ServiceModal = ({ isOpen, onClose, onSave, initialData }: ServiceModalProps) => {
   const [formData, setFormData] = useState<Partial<Service>>({
     name: '',
-    price: 0,
+    price_normal: 0,
+    price_member: 0,
+    price_express: 0,
+    price_special: 0,
     unit: 'kg',
     is_active: true
   });
@@ -22,7 +25,15 @@ export const ServiceModal = ({ isOpen, onClose, onSave, initialData }: ServiceMo
     if (initialData) {
       setFormData(initialData);
     } else {
-      setFormData({ name: '', price: 0, unit: 'kg', is_active: true });
+      setFormData({ 
+        name: '', 
+        price_normal: 0, 
+        price_member: 0, 
+        price_express: 0, 
+        price_special: 0, 
+        unit: 'kg', 
+        is_active: true 
+      });
     }
   }, [initialData, isOpen]);
 
@@ -46,26 +57,15 @@ export const ServiceModal = ({ isOpen, onClose, onSave, initialData }: ServiceMo
         </div>
 
         <form onSubmit={(e) => { e.preventDefault(); onSave(formData); }} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          <div className="form-group" style={{ gridColumn: 'span 1' }}>
-            <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.875rem' }}>Nama Layanan</label>
-            <input 
-              type="text" 
-              required
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Misal: Cuci Sepatu"
-              style={{ width: '100%' }}
-            />
-          </div>
-
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <div className="form-group">
-              <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.875rem' }}>Harga (Rp)</label>
+              <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.875rem' }}>Nama Layanan</label>
               <input 
-                type="number" 
+                type="text" 
                 required
-                value={formData.price}
-                onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder="Misal: Cuci Sepatu"
                 style={{ width: '100%' }}
               />
             </div>
@@ -80,6 +80,49 @@ export const ServiceModal = ({ isOpen, onClose, onSave, initialData }: ServiceMo
                 <option value="pcs">Per Potong (pcs)</option>
                 <option value="m2">Per Meter (m2)</option>
               </select>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="form-group">
+              <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.875rem', color: 'var(--text-muted)' }}>Harga Normal (Rp)</label>
+              <input 
+                type="number" 
+                required
+                value={formData.price_normal || 0}
+                onChange={(e) => setFormData({ ...formData, price_normal: Number(e.target.value) })}
+                style={{ width: '100%', borderColor: 'var(--glass-border)' }}
+              />
+            </div>
+            <div className="form-group">
+              <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.875rem', color: 'var(--primary)' }}>Harga Member (Rp)</label>
+              <input 
+                type="number" 
+                required
+                value={formData.price_member || 0}
+                onChange={(e) => setFormData({ ...formData, price_member: Number(e.target.value) })}
+                style={{ width: '100%', borderColor: 'var(--primary)' }}
+              />
+            </div>
+            <div className="form-group">
+              <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.875rem', color: 'var(--accent)' }}>Harga Express (Rp)</label>
+              <input 
+                type="number" 
+                required
+                value={formData.price_express || 0}
+                onChange={(e) => setFormData({ ...formData, price_express: Number(e.target.value) })}
+                style={{ width: '100%', borderColor: 'var(--accent)' }}
+              />
+            </div>
+            <div className="form-group">
+              <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.875rem', color: '#fbbf24' }}>Harga Special (Rp)</label>
+              <input 
+                type="number" 
+                required
+                value={formData.price_special || 0}
+                onChange={(e) => setFormData({ ...formData, price_special: Number(e.target.value) })}
+                style={{ width: '100%', borderColor: '#fbbf24' }}
+              />
             </div>
           </div>
 

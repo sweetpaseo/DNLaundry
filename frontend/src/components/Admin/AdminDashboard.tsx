@@ -368,8 +368,21 @@ export const AdminDashboard = () => {
                 {services.map(service => (
                   <tr key={service.id} style={{ borderBottom: '1px solid var(--glass-border)', opacity: service.is_active ? 1 : 0.5 }}>
                     <td style={{ padding: '1rem' }}>
-                      <div style={{ fontWeight: 600 }}>{service.name}</div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Rp {service.price.toLocaleString()}/{service.unit}</div>
+                      <div style={{ fontWeight: 600, marginBottom: '0.5rem' }}>{service.name}</div>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.4rem', fontSize: '0.7rem' }}>
+                        <div style={{ padding: '2px 6px', background: 'rgba(255,255,255,0.03)', borderRadius: '4px' }}>
+                          <span style={{ color: 'var(--text-muted)' }}>N:</span> Rp {service.price_normal?.toLocaleString()}
+                        </div>
+                        <div style={{ padding: '2px 6px', background: 'rgba(255, 0, 132, 0.05)', borderRadius: '4px', color: 'var(--primary)', fontWeight: 600 }}>
+                          <span>M:</span> Rp {service.price_member?.toLocaleString()}
+                        </div>
+                        <div style={{ padding: '2px 6px', background: 'rgba(0, 212, 255, 0.05)', borderRadius: '4px', color: 'var(--accent)' }}>
+                          <span>E:</span> Rp {service.price_express?.toLocaleString()}
+                        </div>
+                        <div style={{ padding: '2px 6px', background: 'rgba(251, 191, 36, 0.05)', borderRadius: '4px', color: '#fbbf24' }}>
+                          <span>S:</span> Rp {service.price_special?.toLocaleString()}
+                        </div>
+                      </div>
                     </td>
                     <td style={{ padding: '1rem' }}>
                       {service.commission_value ? (

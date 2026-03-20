@@ -1,7 +1,10 @@
 export interface Service {
   id: string;
   name: string;
-  price: number;
+  price_normal: number;
+  price_member: number;
+  price_express: number;
+  price_special: number;
   unit: string;
   is_active: boolean;
   commission_type?: 'percentage' | 'fixed';
