@@ -52,7 +52,7 @@ export const ServiceModal = ({ isOpen, onClose, onSave, initialData }: ServiceMo
     <div className="modal-overlay">
       <div className="glass-card modal-content" style={{ padding: '2rem', border: '1px solid var(--glass-border)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-          <h3 style={{ fontWeight: 600 }}>{initialData ? 'Edit Layanan' : 'Tambah Layanan Baru'}</h3>
+          <h3 style={{ fontWeight: 600 }}>Konfigurasi Harga: {formData.name || 'Baru'}</h3>
           <button onClick={onClose} style={{ color: 'var(--text-muted)' }}><X size={20} /></button>
         </div>
 
