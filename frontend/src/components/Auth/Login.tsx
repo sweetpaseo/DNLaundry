@@ -54,9 +54,9 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
       >
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <div style={{ 
-            width: 96, 
-            height: 96, 
-            borderRadius: '24px', 
+            width: 160, 
+            height: 160, 
+            borderRadius: '32px', 
             background: logoUrl ? 'rgba(255,255,255,0.05)' : 'var(--primary-gradient)', 
             display: 'flex', 
             alignItems: 'center', 
@@ -68,7 +68,7 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
             border: logoUrl ? '1px solid var(--glass-border)' : 'none'
           }}>
             {logoUrl ? (
-              <img src={logoUrl} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '10px' }} />
+              <img src={logoUrl} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '15px' }} />
             ) : (
               <Lock size={40} />
             )}
