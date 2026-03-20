@@ -1,7 +1,7 @@
 import React from 'react';
 import { 
   DollarSign, Package, TrendingUp, Settings, Users, Plus, Trash2, Power, 
-  Briefcase, Calculator, History, Phone, Wallet, Receipt, Edit, Clock, Store
+  Briefcase, Calculator, History, Phone, Wallet, Receipt, Edit, Store
 } from 'lucide-react';
 import type { Service, CustomerType, Employee, Incentive, Transaction, Expense } from '../../types';
 import { ServiceModal } from './ServiceModal';
@@ -129,7 +129,7 @@ export const AdminDashboard = () => {
     }
   };
 
-  const handleSaveLevel = async (data: Partial<CustomerType>) => {
+  const handleSaveLevel = async (_data: Partial<CustomerType>) => {
     try {
       // await api.createLevel(data); // Add if needed
       fetchData();
