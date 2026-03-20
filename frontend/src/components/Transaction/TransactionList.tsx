@@ -29,7 +29,15 @@ export const TransactionList = () => {
 
   const handleUpdate = async (id: string, data: Partial<Transaction>) => {
     try {
-      await api.updateTransaction(id, data);
+      const transaction = transactions.find(t => t.id === id);
+      if (transaction?.group_id) {
+        const groupItems = transactions.filter(t => t.group_id === transaction.group_id);
+        for (const item of groupItems) {
+          await api.updateTransaction(item.id, data);
+        }
+      } else {
+        await api.updateTransaction(id, data);
+      }
       fetchTransactions();
     } catch (error) {
       console.error('Failed to update transaction:', error);
@@ -104,123 +112,118 @@ export const TransactionList = () => {
         </div>
       ) : (
         <div className="responsive-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 350px), 1fr))' }}>
-          {filteredData.map(t => {
-            const statusStyle = getStatusStyle(t.status);
-            const isOverdue = t.status !== 'Siap Ambil' && t.due_date && new Date() > new Date(t.due_date);
-            
-            return (
-              <div key={t.id} className="glass-card animate-fade-in" style={{ 
-                padding: '1.5rem', 
-                display: 'flex', 
-                flexDirection: 'column', 
-                gap: '1.25rem',
-                border: isOverdue ? '2px solid #ef4444' : '1px solid var(--glass-border)',
-                boxShadow: isOverdue ? '0 0 15px rgba(239, 68, 68, 0.2)' : 'none'
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <div>
-                    <h4 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '0.2rem' }}>{t.customer_name}</h4>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                      <Clock size={14} /> {new Date(t.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}
-                    </div>
-                    {t.due_date && (
-                      <div style={{ 
+          {/* Grouping Logic */}
+          {(() => {
+            const grouped = filteredData.reduce((acc, t) => {
+              const gid = t.group_id || t.id;
+              if (!acc[gid]) acc[gid] = [];
+              acc[gid].push(t);
+              return acc;
+            }, {} as Record<string, Transaction[]>);
+
+            return Object.values(grouped)
+              .sort((a, b) => new Date(b[0].created_at).getTime() - new Date(a[0].created_at).getTime())
+              .map(group => {
+                const t = group[0]; // Primary record
+                const totalGroupPrice = group.reduce((sum, item) => sum + item.final_price, 0);
+                const allPaid = group.every(item => item.is_paid);
+                const statusStyle = getStatusStyle(t.status); // Use first item's status
+                const isOverdue = t.status !== 'Siap Ambil' && t.due_date && new Date() > new Date(t.due_date);
+                
+                return (
+                  <div key={t.group_id || t.id} className="glass-card animate-fade-in" style={{ 
+                    padding: '1.5rem', 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    gap: '1.25rem',
+                    border: isOverdue ? '2px solid #ef4444' : '1px solid var(--glass-border)',
+                    boxShadow: isOverdue ? '0 0 15px rgba(239, 68, 68, 0.2)' : 'none'
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <div>
+                        <h4 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '0.2rem' }}>{t.customer_name}</h4>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <Clock size={14} /> {new Date(t.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}
+                        </div>
+                      </div>
+                      <span style={{ 
+                        padding: '0.4rem 0.75rem', 
+                        borderRadius: '8px', 
                         fontSize: '0.75rem', 
-                        marginTop: '0.4rem',
-                        fontWeight: 700,
-                        color: isOverdue ? '#ef4444' : 'var(--text-muted)',
+                        fontWeight: 800,
+                        background: statusStyle.bg,
+                        color: statusStyle.color,
+                        border: `1px solid ${statusStyle.color}44`,
                         display: 'flex',
                         alignItems: 'center',
                         gap: '0.4rem'
                       }}>
-                        <Clock size={12} /> Deadline: {new Date(t.due_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
-                        {isOverdue && <span style={{ background: '#ef4444', color: 'white', padding: '1px 6px', borderRadius: '4px', fontSize: '0.65rem' }}>TERLAMBAT</span>}
+                        {t.status === 'Siap Ambil' ? <CheckCircle size={14} /> : <Clock size={14} />}
+                        {t.status.toUpperCase()}
+                      </span>
+                    </div>
+
+                    <div style={{ padding: '0.75rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                      {group.map(item => (
+                        <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+                          <span style={{ color: 'var(--text-muted)' }}>{item.service_name}</span>
+                          <span style={{ fontWeight: 600 }}>{item.weight} {item.unit || 'kg/pcs'}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.1rem' }}>Total Bayar:</p>
+                        <h3 style={{ fontSize: '1.4rem', fontWeight: 900, color: 'white' }}>
+                          Rp {totalGroupPrice.toLocaleString('id-ID')}
+                        </h3>
                       </div>
-                    )}
-                  </div>
-                  <span style={{ 
-                    padding: '0.4rem 0.75rem', 
-                    borderRadius: '8px', 
-                    fontSize: '0.75rem', 
-                    fontWeight: 800,
-                    background: statusStyle.bg,
-                    color: statusStyle.color,
-                    border: `1px solid ${statusStyle.color}44`,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.4rem'
-                  }}>
-                    {t.status === 'Siap Ambil' ? <CheckCircle size={14} /> : <Clock size={14} />}
-                    {t.status.toUpperCase()}
-                  </span>
-                </div>
+                      <button style={{ 
+                        background: allPaid ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 0, 132, 0.1)',
+                        color: allPaid ? '#D3D3D3' : '#FF0084',
+                        border: `1px solid ${allPaid ? 'rgba(255,255,255,0.1)' : '#FF0084'}`,
+                        padding: '0.5rem 1rem',
+                        borderRadius: '8px',
+                        fontSize: '0.8rem',
+                        fontWeight: 800,
+                        cursor: 'default'
+                      }}>
+                        {allPaid ? 'LUNAS' : 'BELUM BAYAR'}
+                      </button>
+                    </div>
 
-                <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                    <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Layanan:</span>
-                    <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{t.service_name}</span>
+                    <div style={{ display: 'flex', gap: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid var(--glass-border)' }}>
+                      <button 
+                        title="Cetak Nota" 
+                        onClick={() => { setSelectedTransaction(group as any); setIsReceiptOpen(true); }}
+                        style={{ flex: 1, height: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', color: 'white', fontSize: '0.85rem', cursor: 'pointer' }}
+                      >
+                        <Printer size={16} /> Nota
+                      </button>
+                      <button 
+                        title="Hapus" 
+                        onClick={async () => {
+                          if (window.confirm(`Hapus ${group.length} item dalam transaksi ini?`)) {
+                            try {
+                              for (const item of group) await api.deleteTransaction(item.id);
+                              fetchTransactions();
+                            } catch (e) {
+                              alert('Gagal menghapus transaksi');
+                            }
+                          }
+                        }}
+                        style={{ 
+                          width: '2.5rem', height: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(244, 63, 94, 0.1)', borderRadius: '8px', color: '#f43f5e', border: '1px solid rgba(244, 63, 94, 0.2)', cursor: 'pointer', transition: 'all 0.2s'
+                        }}
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Jumlah:</span>
-                    <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{t.weight} kg/pcs</span>
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.1rem' }}>Total Bayar:</p>
-                    <h3 style={{ fontSize: '1.4rem', fontWeight: 900, color: 'white' }}>
-                      Rp {t.total_price.toLocaleString('id-ID')}
-                    </h3>
-                  </div>
-                  <button style={{ 
-                    background: t.is_paid ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 0, 132, 0.1)',
-                    color: t.is_paid ? '#D3D3D3' : '#FF0084',
-                    border: `1px solid ${t.is_paid ? 'rgba(255,255,255,0.1)' : '#FF0084'}`,
-                    padding: '0.5rem 1rem',
-                    borderRadius: '8px',
-                    fontSize: '0.8rem',
-                    fontWeight: 800,
-                    cursor: 'default'
-                  }}>
-                    {t.is_paid ? 'LUNAS' : 'BELUM BAYAR'}
-                  </button>
-                </div>
-
-                <div style={{ display: 'flex', gap: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid var(--glass-border)' }}>
-                  <button 
-                    title="Cetak Nota" 
-                    onClick={() => { setSelectedTransaction(t); setIsReceiptOpen(true); }}
-                    style={{ flex: 1, height: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', color: 'white', fontSize: '0.85rem', cursor: 'pointer' }}
-                  >
-                    <Printer size={16} /> Nota
-                  </button>
-                  <button 
-                    title="Edit" 
-                    onClick={() => { setEditingTransaction(t); setIsEditOpen(true); }}
-                    style={{ 
-                      width: '2.5rem', height: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', color: 'white', border: '1px solid var(--glass-border)', cursor: 'pointer', transition: 'all 0.2s'
-                    }}
-                    onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
-                    onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
-                  >
-                    <Edit3 size={16} />
-                  </button>
-                  <button 
-                    title="Hapus" 
-                    onClick={() => handleDelete(t.id)}
-                    style={{ 
-                      width: '2.5rem', height: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(244, 63, 94, 0.1)', borderRadius: '8px', color: '#f43f5e', border: '1px solid rgba(244, 63, 94, 0.2)', cursor: 'pointer', transition: 'all 0.2s'
-                    }}
-                    onMouseOver={(e) => { e.currentTarget.style.background = '#f43f5e'; e.currentTarget.style.color = 'white'; }}
-                    onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(244, 63, 94, 0.1)'; e.currentTarget.style.color = '#f43f5e'; }}
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              </div>
-            );
-          })}
+                );
+              });
+          })()}
         </div>
       )}
       

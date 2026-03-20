@@ -4,7 +4,7 @@ import type { Transaction } from '../../types';
 interface ReceiptModalProps {
   isOpen: boolean;
   onClose: () => void;
-  transaction: Transaction;
+  transaction: Transaction | Transaction[];
   settings: any;
 }
 
@@ -14,6 +14,11 @@ export const ReceiptModal = ({ isOpen, onClose, transaction, settings }: Receipt
   const handlePrint = () => {
     window.print();
   };
+
+  const items = Array.isArray(transaction) ? transaction : [transaction];
+  const firstItem = items[0];
+  const totalPrice = items.reduce((sum, item) => sum + item.final_price, 0);
+  const receiptId = (firstItem.group_id || firstItem.id).slice(0, 8).toUpperCase();
 
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
@@ -57,24 +62,26 @@ export const ReceiptModal = ({ isOpen, onClose, transaction, settings }: Receipt
 
           <div style={{ borderTop: '1px dashed #ccc', borderBottom: '1px dashed #ccc', padding: '1rem 0', marginBottom: '1rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
-              <span>ID: {transaction.id.slice(0, 8).toUpperCase()}</span>
-              <span>{new Date(transaction.created_at).toLocaleDateString()}</span>
+              <span>ID: {receiptId}</span>
+              <span>{new Date(firstItem.created_at).toLocaleDateString()}</span>
             </div>
-            <div style={{ fontSize: '0.9rem', fontWeight: 700, marginTop: '0.5rem' }}>Pelanggan: {transaction.customer_name}</div>
-            {transaction.due_date && (
+            <div style={{ fontSize: '0.9rem', fontWeight: 700, marginTop: '0.5rem' }}>Pelanggan: {firstItem.customer_name}</div>
+            {firstItem.due_date && (
               <div style={{ fontSize: '0.8rem', marginTop: '0.25rem', color: '#444' }}>
-                Estimasi Selesai: {new Date(transaction.due_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                Estimasi Selesai: {new Date(firstItem.due_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
               </div>
             )}
           </div>
 
           <div style={{ marginBottom: '1.5rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-              <span>{transaction.service_name}</span>
-              <span>{transaction.weight} {transaction.unit || 'kg'}</span>
-            </div>
-            <div style={{ textAlign: 'right', fontWeight: 700, fontSize: '1.1rem', marginTop: '1rem' }}>
-              TOTAL: Rp {transaction.total_price.toLocaleString()}
+            {items.map(item => (
+              <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem', fontSize: '0.85rem' }}>
+                <span>{item.service_name}</span>
+                <span>{item.weight} {item.unit || 'kg'}</span>
+              </div>
+            ))}
+            <div style={{ textAlign: 'right', fontWeight: 700, fontSize: '1.1rem', marginTop: '1rem', borderTop: '1px solid #eee', paddingTop: '0.5rem' }}>
+              TOTAL: Rp {totalPrice.toLocaleString()}
             </div>
           </div>
 
