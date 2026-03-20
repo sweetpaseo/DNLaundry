@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { getSupabase } from './supabase'
 import { hashPassword, verifyPassword } from './crypto'
+import { env } from 'hono/adapter'
 
 type Bindings = {
   SUPABASE_URL: string
@@ -17,9 +18,8 @@ app.use('*', cors())
 // Security Middleware: X-API-KEY Protection
 app.use('/api/*', async (c, next) => {
   const apiKey = c.req.header('X-API-KEY')
-  const secretKey = c.env?.API_SECRET_KEY || 
-                    c.env?.VITE_API_SECRET_KEY || 
-                    (typeof process !== 'undefined' ? (process.env.API_SECRET_KEY || process.env.VITE_API_SECRET_KEY) : undefined)
+  const { API_SECRET_KEY, VITE_API_SECRET_KEY } = env(c)
+  const secretKey = API_SECRET_KEY || VITE_API_SECRET_KEY || (typeof process !== 'undefined' ? (process.env.API_SECRET_KEY || process.env.VITE_API_SECRET_KEY) : undefined)
   
   // Exclude health check from protection for easier debugging and status monitoring
   if (c.req.path === '/api/health') {
@@ -35,7 +35,7 @@ app.use('/api/*', async (c, next) => {
 // Health Check / Landing Page
 app.get('/api/health', async (c) => {
   try {
-    const supabase = getSupabase(c.env || {})
+    const supabase = getSupabase(c)
     const { data, error } = await supabase.from('laundry_settings').select('id').limit(1).single()
     if (error && error.code !== 'PGRST116') {
       return c.json({ status: 'error', database: 'error', message: error.message, code: error.code }, 500)
