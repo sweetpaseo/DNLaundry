@@ -28,11 +28,11 @@ export const OrderInput = () => {
   
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
   const [selectedTier, setSelectedTier] = useState<'normal' | 'member' | 'express' | 'special'>('normal');
-  const [amount, setAmount] = useState<number>(0);
+  const [amount, setAmount] = useState<number | string>(0);
   const [notes, setNotes] = useState('');
   const [dueDate, setDueDate] = useState<string>('');
   const [discountType, setDiscountType] = useState<'fixed' | 'percentage'>('fixed');
-  const [discountValue, setDiscountValue] = useState<number>(0);
+  const [discountValue, setDiscountValue] = useState<number | string>(0);
   const [filteredCustomers, setFilteredCustomers] = useState<Customer[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
@@ -137,7 +137,7 @@ export const OrderInput = () => {
 
   const addItem = () => {
     const srv = services.find(s => s.id === selectedServiceId);
-    if (!srv || amount <= 0) {
+    if (!srv || Number(amount) <= 0) {
       alert('Mohon pilih layanan dan masukkan jumlah');
       return;
     }
@@ -152,9 +152,9 @@ export const OrderInput = () => {
       service_id: selectedServiceId,
       service_name: srv.name,
       tier: selectedTier,
-      amount,
+      amount: Number(amount),
       price,
-      subtotal: price * amount,
+      subtotal: price * Number(amount),
       due_date: dueDate
     };
 
@@ -188,12 +188,12 @@ export const OrderInput = () => {
         let itemDiscountPercent = 0;
 
         if (discountType === 'percentage') {
-          itemDiscountPercent = discountValue;
-          itemDiscountAmount = (item.subtotal * discountValue) / 100;
+          itemDiscountPercent = Number(discountValue);
+          itemDiscountAmount = (item.subtotal * Number(discountValue)) / 100;
         } else if (discountType === 'fixed') {
           // Pro-rate fixed discount based on subtotal proportion
           const proportion = item.subtotal / grandTotal;
-          itemDiscountAmount = discountValue * proportion;
+          itemDiscountAmount = Number(discountValue) * proportion;
           itemDiscountPercent = (itemDiscountAmount / item.subtotal) * 100;
         }
 
@@ -382,7 +382,9 @@ export const OrderInput = () => {
                 type="number" 
                 step="0.1"
                 value={amount} 
-                onChange={(e) => setAmount(Number(e.target.value))}
+                onChange={(e) => setAmount(e.target.value === '' ? '' : Number(e.target.value))}
+                onFocus={() => { if (amount === 0 || amount === '0') setAmount(''); }}
+                onBlur={() => { if (amount === '') setAmount(0); }}
                 style={{ flex: '1 1 120px', height: '3.5rem', fontSize: '1.2rem', fontWeight: 700, textAlign: 'center' }} 
                 placeholder="0.0"
               />
@@ -456,7 +458,9 @@ export const OrderInput = () => {
                 <input 
                   type="number" 
                   value={discountValue}
-                  onChange={(e) => setDiscountValue(Number(e.target.value))}
+                  onChange={(e) => setDiscountValue(e.target.value === '' ? '' : Number(e.target.value))}
+                  onFocus={() => { if (discountValue === 0 || discountValue === '0') setDiscountValue(''); }}
+                  onBlur={() => { if (discountValue === '') setDiscountValue(0); }}
                   placeholder="0"
                   style={{ flex: 1, height: '3rem', fontSize: '1.1rem', fontWeight: 600 }}
                 />
@@ -493,11 +497,11 @@ export const OrderInput = () => {
               <p style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-muted)' }}>Rp {grandTotal.toLocaleString('id-ID')}</p>
             </div>
             
-            {discountValue > 0 && (
+            {Number(discountValue) > 0 && (
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem', borderTop: '1px dashed var(--glass-border)', paddingTop: '0.5rem' }}>
                 <p style={{ fontSize: '0.9rem', color: 'var(--accent)', fontWeight: 600 }}>Diskon ({discountType === 'percentage' ? `${discountValue}%` : 'Rp'}):</p>
                 <p style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--accent)' }}>
-                  - Rp {(discountType === 'percentage' ? (grandTotal * discountValue / 100) : discountValue).toLocaleString('id-ID')}
+                  - Rp {(discountType === 'percentage' ? (grandTotal * Number(discountValue) / 100) : Number(discountValue)).toLocaleString('id-ID')}
                 </p>
               </div>
             )}
@@ -506,7 +510,7 @@ export const OrderInput = () => {
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
               <span style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--primary)' }}>Rp</span>
               <h2 style={{ fontSize: '2.5rem', fontWeight: 900, color: 'white', letterSpacing: '-1px', lineHeight: 1 }}>
-                {Math.max(0, grandTotal - (discountType === 'percentage' ? (grandTotal * discountValue / 100) : discountValue)).toLocaleString('id-ID')}
+                {Math.max(0, grandTotal - (discountType === 'percentage' ? (grandTotal * Number(discountValue) / 100) : Number(discountValue))).toLocaleString('id-ID')}
               </h2>
             </div>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
