@@ -31,6 +31,10 @@ export const OrderInput = () => {
   const [amount, setAmount] = useState<number>(0);
   const [notes, setNotes] = useState('');
   const [dueDate, setDueDate] = useState<string>('');
+  const [discountType, setDiscountType] = useState<'fixed' | 'percentage'>('fixed');
+  const [discountValue, setDiscountValue] = useState<number>(0);
+  const [filteredCustomers, setFilteredCustomers] = useState<Customer[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -70,6 +74,17 @@ export const OrderInput = () => {
 
   const handleCustomerChange = (val: string) => {
     setCustomerName(val);
+    if (val.length > 0) {
+      const filtered = customers.filter(c => 
+        c.name.toLowerCase().includes(val.toLowerCase()) || 
+        c.phone.includes(val)
+      ).slice(0, 5);
+      setFilteredCustomers(filtered);
+      setShowSuggestions(true);
+    } else {
+      setShowSuggestions(false);
+    }
+
     const lowVal = val.toLowerCase();
     const foundCustomer = customers.find(c => c.name.toLowerCase() === lowVal || c.phone === val);
 
@@ -91,6 +106,26 @@ export const OrderInput = () => {
         setCustomerType('reseller');
         setSelectedTier('special');
       } else if (lowVal.includes('member')) {
+        setCustomerType('member');
+        setSelectedTier('member');
+      } else {
+        setCustomerType('normal');
+        setSelectedTier('normal');
+      }
+    }
+  };
+
+  const selectCustomer = (customer: Customer) => {
+    setCustomerName(customer.name);
+    setShowSuggestions(false);
+    
+    if (customer.member_type_id) {
+      const mType = memberTypes.find(m => m.id === customer.member_type_id);
+      const typeName = mType?.name.toLowerCase() || '';
+      if (typeName.includes('reseller')) {
+        setCustomerType('reseller');
+        setSelectedTier('special');
+      } else if (typeName.includes('member')) {
         setCustomerType('member');
         setSelectedTier('member');
       } else {
@@ -147,7 +182,21 @@ export const OrderInput = () => {
 
     try {
       const groupId = `ORD-${Date.now()}`;
+      
       const promises = orderItems.map(item => {
+        let itemDiscountAmount = 0;
+        let itemDiscountPercent = 0;
+
+        if (discountType === 'percentage') {
+          itemDiscountPercent = discountValue;
+          itemDiscountAmount = (item.subtotal * discountValue) / 100;
+        } else if (discountType === 'fixed') {
+          // Pro-rate fixed discount based on subtotal proportion
+          const proportion = item.subtotal / grandTotal;
+          itemDiscountAmount = discountValue * proportion;
+          itemDiscountPercent = (itemDiscountAmount / item.subtotal) * 100;
+        }
+
         const orderData = {
           customer_name: customerName,
           service_id: item.service_id,
@@ -155,7 +204,9 @@ export const OrderInput = () => {
           employee_id: selectedEmployeeId,
           weight: item.amount,
           total_price: item.subtotal,
-          final_price: item.subtotal,
+          discount_amount: itemDiscountAmount,
+          discount_percent: itemDiscountPercent,
+          final_price: item.subtotal - itemDiscountAmount,
           status: 'Baru',
           is_paid: false,
           due_date: item.due_date,
@@ -173,6 +224,7 @@ export const OrderInput = () => {
       setCustomerName('');
       setOrderItems([]);
       setNotes('');
+      setDiscountValue(0);
     } catch (error) {
       alert('Gagal membuat order');
     }
@@ -189,17 +241,55 @@ export const OrderInput = () => {
             <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Data Pelanggan</h3>
           </div>
           
-          <div className="form-group">
+          <div className="form-group" style={{ position: 'relative' }}>
             <div style={{ position: 'relative' }}>
               <input 
                 type="text" 
                 placeholder="Cari nama atau telepon..." 
                 value={customerName}
                 onChange={(e) => handleCustomerChange(e.target.value)}
+                onFocus={() => customerName.length > 0 && setShowSuggestions(true)}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                 style={{ width: '100%', paddingLeft: '2.5rem', height: '3.5rem', fontSize: '1rem' }} 
               />
               <Search size={20} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
             </div>
+
+            {/* Suggestions Dropdown */}
+            {showSuggestions && filteredCustomers.length > 0 && (
+              <div style={{
+                position: 'absolute',
+                top: '100%',
+                left: 0,
+                right: 0,
+                zIndex: 1000,
+                background: '#1a1a1a',
+                border: '1px solid var(--glass-border)',
+                borderRadius: '0 0 12px 12px',
+                boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+                marginTop: '-4px',
+                overflow: 'hidden'
+              }}>
+                {filteredCustomers.map(c => (
+                  <div 
+                    key={c.id} 
+                    onClick={() => selectCustomer(c)}
+                    style={{
+                      padding: '1rem',
+                      cursor: 'pointer',
+                      borderBottom: '1px solid rgba(255,255,255,0.05)',
+                      transition: 'all 0.2s',
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                  >
+                    <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>{c.name}</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{c.phone} {c.member_type ? `- ${c.member_type.name}` : ''}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+            
             <button 
               type="button" 
               onClick={() => setIsModalOpen(true)}
@@ -335,15 +425,35 @@ export const OrderInput = () => {
           )}
         </div>
 
-        {/* Step 3: Notes */}
+        {/* Step 3: Notes & Discount */}
         <div className="glass-card" style={{ padding: '1.5rem', borderLeft: '4px solid var(--primary)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
             <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255, 0, 132, 0.1)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>3</div>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Catatan Tambahan</h3>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Catatan & Diskon</h3>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.25rem' }}>
-            {/* Discount hidden as pricing is now tiered */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem' }}>
+            <div className="form-group">
+              <label style={{ display: 'block', marginBottom: '0.8rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>Diskon Khusus (Per Kasus)</label>
+              <div style={{ display: 'flex', gap: '0.75rem' }}>
+                <select 
+                  value={discountType}
+                  onChange={(e) => setDiscountType(e.target.value as 'fixed' | 'percentage')}
+                  style={{ width: '80px', height: '3rem' }}
+                >
+                  <option value="fixed">Rp</option>
+                  <option value="percentage">%</option>
+                </select>
+                <input 
+                  type="number" 
+                  value={discountValue}
+                  onChange={(e) => setDiscountValue(Number(e.target.value))}
+                  placeholder="0"
+                  style={{ flex: 1, height: '3rem', fontSize: '1.1rem', fontWeight: 600 }}
+                />
+              </div>
+            </div>
+
             <div className="form-group">
               <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>Catatan Khusus</label>
               <textarea 
@@ -369,11 +479,25 @@ export const OrderInput = () => {
           boxShadow: '0 10px 30px rgba(255, 0, 132, 0.2)'
         }}>
           <div>
-            <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Total Pembayaran ({orderItems.length} Layanan):</p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Total ({orderItems.length} Layanan):</p>
+              <p style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-muted)' }}>Rp {grandTotal.toLocaleString('id-ID')}</p>
+            </div>
+            
+            {discountValue > 0 && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem', borderTop: '1px dashed var(--glass-border)', paddingTop: '0.5rem' }}>
+                <p style={{ fontSize: '0.9rem', color: 'var(--accent)', fontWeight: 600 }}>Diskon ({discountType === 'percentage' ? `${discountValue}%` : 'Rp'}):</p>
+                <p style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--accent)' }}>
+                  - Rp {(discountType === 'percentage' ? (grandTotal * discountValue / 100) : discountValue).toLocaleString('id-ID')}
+                </p>
+              </div>
+            )}
+
+            <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Total Pembayaran Akhir:</p>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
               <span style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--primary)' }}>Rp</span>
               <h2 style={{ fontSize: '2.5rem', fontWeight: 900, color: 'white', letterSpacing: '-1px', lineHeight: 1 }}>
-                {grandTotal.toLocaleString('id-ID')}
+                {Math.max(0, grandTotal - (discountType === 'percentage' ? (grandTotal * discountValue / 100) : discountValue)).toLocaleString('id-ID')}
               </h2>
             </div>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
