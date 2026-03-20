@@ -31,7 +31,14 @@ export const ReceiptModal = ({ isOpen, onClose, transaction, settings }: Receipt
         </div>
 
         <div id="receipt-content" style={{ padding: '2rem', background: 'white', color: 'black', fontFamily: 'monospace' }}>
-          <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+          <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
+            {settings?.logo_url && (
+              <img 
+                src={settings.logo_url} 
+                alt="Logo" 
+                style={{ maxWidth: '80px', maxHeight: '80px', marginBottom: '0.75rem', objectFit: 'contain' }} 
+              />
+            )}
             <h2 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '0 0 0.25rem' }}>{settings?.name || 'Antigravity Laundry'}</h2>
             <div style={{ fontSize: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.1rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem' }}>

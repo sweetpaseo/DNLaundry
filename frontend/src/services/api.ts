@@ -1,5 +1,11 @@
+import { createClient } from '@supabase/supabase-js';
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8787/api';
 const API_SECRET_KEY = import.meta.env.VITE_API_SECRET_KEY || '';
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || '';
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const getHeaders = () => ({
   'Content-Type': 'application/json',
@@ -293,5 +299,22 @@ export const api = {
     } catch (e) {
       return false;
     }
+  },
+
+  async uploadLogo(file: File) {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `logo-${Date.now()}.${fileExt}`;
+    
+    const { data, error } = await supabase.storage
+      .from('laundry-assets')
+      .upload(fileName, file);
+
+    if (error) throw error;
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('laundry-assets')
+      .getPublicUrl(fileName);
+
+    return publicUrl;
   }
 };

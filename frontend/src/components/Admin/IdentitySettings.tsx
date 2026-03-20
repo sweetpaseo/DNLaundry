@@ -10,8 +10,26 @@ export const IdentitySettings = () => {
     phone: '',
     address: '',
     footer_text: '',
-    instagram: ''
+    instagram: '',
+    logo_url: ''
   });
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setSaving(true);
+    try {
+      const url = await api.uploadLogo(file);
+      setSettings(prev => ({ ...prev, logo_url: url }));
+      alert('Logo berhasil diunggah! Klik Simpan Perubahan untuk menetapkan.');
+    } catch (error: any) {
+      alert('Gagal unggah logo: ' + error.message);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const fetchSettings = async () => {
     try {
@@ -57,6 +75,37 @@ export const IdentitySettings = () => {
       </div>
 
       <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        {/* Logo Upload Section */}
+        <div style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '2rem', background: 'rgba(255,255,255,0.03)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+          <div style={{ position: 'relative', width: '100px', height: '100px', borderRadius: '16px', background: 'rgba(255,255,255,0.05)', border: '2px dashed var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+            {settings.logo_url ? (
+              <img src={settings.logo_url} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            ) : (
+              <Store size={40} style={{ opacity: 0.3 }} />
+            )}
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              onChange={handleLogoUpload} 
+              accept="image/*" 
+              style={{ display: 'none' }} 
+            />
+          </div>
+          <div>
+            <h5 style={{ marginBottom: '0.5rem', fontWeight: 600 }}>Logo Laundry</h5>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>Saran: Gambar PNG/JPG kotak (1:1) max 2MB.</p>
+            <button 
+              type="button" 
+              className="btn-secondary" 
+              style={{ fontSize: '0.8rem', padding: '0.5rem 1rem', background: 'rgba(255,255,255,0.1)', border: '1px solid var(--glass-border)', color: 'white', borderRadius: '6px', cursor: 'pointer' }}
+              onClick={() => fileInputRef.current?.click()}
+              disabled={saving}
+            >
+              {settings.logo_url ? 'Ganti Logo' : 'Unggah Logo'}
+            </button>
+          </div>
+        </div>
+
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(Min(100%, 300px), 1fr))', gap: '1.5rem' }}>
           {/* Left Column */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>

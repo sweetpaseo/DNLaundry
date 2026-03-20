@@ -5,10 +5,12 @@ import { api } from '../../services/api';
 
 interface LoginProps {
   onLoginSuccess: (user: any) => void;
-  businessName?: string;
+  settings?: any;
 }
 
-export const Login = ({ onLoginSuccess, businessName }: LoginProps) => {
+export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
+  const businessName = settings?.name;
+  const logoUrl = settings?.logo_url;
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -52,18 +54,23 @@ export const Login = ({ onLoginSuccess, businessName }: LoginProps) => {
       >
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <div style={{ 
-            width: 64, 
-            height: 64, 
-            borderRadius: '16px', 
-            background: 'var(--primary-gradient)', 
+            width: 80, 
+            height: 80, 
+            borderRadius: '20px', 
+            background: logoUrl ? 'transparent' : 'var(--primary-gradient)', 
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'center', 
             margin: '0 auto 1.5rem',
             color: 'white',
-            boxShadow: '0 10px 15px -3px rgba(255, 0, 132, 0.3)'
+            boxShadow: logoUrl ? 'none' : '0 10px 15px -3px rgba(255, 0, 132, 0.3)',
+            overflow: 'hidden'
           }}>
-            <Lock size={32} />
+            {logoUrl ? (
+              <img src={logoUrl} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            ) : (
+              <Lock size={32} />
+            )}
           </div>
           <h2 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '0.5rem' }}>Selamat Datang</h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Di {businessName || 'Antigravity Laundry'}</p>

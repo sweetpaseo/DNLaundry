@@ -72,7 +72,7 @@ function App() {
   };
 
   if (!user) {
-    return <Login onLoginSuccess={handleLoginSuccess} businessName={settings?.name} />;
+    return <Login onLoginSuccess={handleLoginSuccess} settings={settings} />;
   }
 
   const menuItems = [
