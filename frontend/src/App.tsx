@@ -1,0 +1,175 @@
+import { useState, useEffect } from 'react';
+import { Users, Settings, PlusCircle, List, LogOut, Calculator, Receipt } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { api } from './services/api';
+import { ExpenseModal } from './components/Expense/ExpenseModal';
+import { OrderInput } from './components/Transaction/OrderInput';
+import { TransactionList } from './components/Transaction/TransactionList';
+import { CustomerCRM } from './components/CRM/CustomerCRM';
+import { AdminDashboard } from './components/Admin/AdminDashboard';
+import { Login } from './components/Auth/Login';
+
+function App() {
+  const [user, setUser] = useState<any>(() => {
+    const saved = localStorage.getItem('laundry_user');
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [activeMenu, setActiveMenu] = useState<'transaksi' | 'pelanggan' | 'admin'>('transaksi');
+  const [activeTab, setActiveTab] = useState<'input' | 'list'>('input');
+  const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
+  const [settings, setSettings] = useState<any>(null);
+
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('laundry_user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('laundry_user');
+    }
+  }, [user]);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const data = await api.getSettings();
+        setSettings(data);
+      } catch (e) {
+        console.error('Failed to load settings');
+      }
+    };
+    fetchSettings();
+  }, []);
+
+  const handleLoginSuccess = (userData: any) => {
+    setUser(userData);
+  };
+
+  const handleLogout = () => {
+    if (window.confirm('Keluar dari sistem?')) {
+      setUser(null);
+      setActiveMenu('transaksi');
+    }
+  };
+
+  const handleSaveExpense = async (expense: any) => {
+    try {
+      await api.createExpense(expense);
+      alert('Pengeluaran berhasil dicatat!');
+      setIsExpenseModalOpen(false);
+    } catch (error) {
+      alert('Gagal mencatat pengeluaran');
+    }
+  };
+
+  if (!user) {
+    return <Login onLoginSuccess={handleLoginSuccess} businessName={settings?.name} />;
+  }
+
+  const menuItems = [
+    { id: 'transaksi', label: 'Transaksi', icon: <Calculator size={18} /> },
+    { id: 'pelanggan', label: 'Pelanggan', icon: <Users size={18} /> },
+    ...(user.role === 'owner' ? [{ id: 'admin', label: 'Admin', icon: <Settings size={18} /> }] : []),
+  ];
+
+  return (
+    <div className="container" style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="brand">
+          <h1 style={{ fontWeight: 800, background: 'linear-gradient(to right, #FF0084, #ff5eb3)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+            {settings?.name || 'Antigravity Laundry'}
+          </h1>
+          <p style={{ color: 'var(--text-muted)' }}>Sistem Kasir Laundry Profesional</p>
+        </div>
+        <div style={{ display: 'flex', gap: '1rem' }}>
+          <div className="glass-card" style={{ padding: '0.4rem 0.8rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <div style={{ width: 8, height: 8, borderRadius: '50%', background: user.role === 'owner' ? '#FF0084' : '#10b981' }}></div>
+            <span style={{ fontSize: '0.75rem' }}>{user.name} ({user.role === 'owner' ? 'Owner' : 'Staff'})</span>
+          </div>
+          <button 
+            className="glass-card" 
+            style={{ padding: '0.4rem', display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+            onClick={handleLogout}
+          >
+            <LogOut size={16} color="#f43f5e" />
+          </button>
+        </div>
+      </header>
+
+      <nav className="tab-nav">
+        {menuItems.map((item) => (
+          <button
+            key={item.id}
+            className={`tab-btn ${activeMenu === item.id ? 'active' : ''}`}
+            onClick={() => setActiveMenu(item.id as any)}
+          >
+            {item.icon}
+            {item.label}
+          </button>
+        ))}
+      </nav>
+
+      <main>
+        {activeMenu === 'transaksi' && (
+          <div>
+            <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
+              <button 
+                className={`tab-btn ${activeTab === 'input' ? 'active' : ''}`}
+                style={{ background: activeTab === 'input' ? 'rgba(255,255,255,0.1)' : 'transparent', border: '1px solid var(--glass-border)' }}
+                onClick={() => setActiveTab('input')}
+              >
+                <PlusCircle size={18} /> Input Order
+              </button>
+              <button 
+                className={`tab-btn ${activeTab === 'list' ? 'active' : ''}`}
+                style={{ background: activeTab === 'list' ? 'rgba(255,255,255,0.1)' : 'transparent', border: '1px solid var(--glass-border)' }}
+                onClick={() => setActiveTab('list')}
+              >
+                <List size={18} /> Daftar Transaksi
+              </button>
+              <button 
+                className="tab-btn"
+                style={{ background: 'rgba(244, 63, 94, 0.1)', border: '1px solid rgba(244, 63, 94, 0.2)', color: '#f43f5e', marginLeft: 'auto' }}
+                onClick={() => setIsExpenseModalOpen(true)}
+              >
+                <Receipt size={18} /> Catat Pengeluaran
+              </button>
+            </div>
+            
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div className="glass-card">
+                  {activeTab === 'input' ? <OrderInput /> : <TransactionList />}
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        )}
+
+        {activeMenu === 'pelanggan' && (
+          <div className="glass-card animate-fade-in">
+            <CustomerCRM />
+          </div>
+        )}
+
+        {activeMenu === 'admin' && (
+          <div className="glass-card animate-fade-in">
+            <AdminDashboard />
+          </div>
+        )}
+      </main>
+
+      <ExpenseModal 
+        isOpen={isExpenseModalOpen}
+        onClose={() => setIsExpenseModalOpen(false)}
+        onSave={handleSaveExpense}
+      />
+    </div>
+  );
+}
+
+export default App;

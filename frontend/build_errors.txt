@@ -1,0 +1,11 @@
+
+> frontend@0.0.0 build
+> tsc -b && vite build
+
+src/components/Admin/AdminDashboard.tsx(2,63): error TS6133: 'Save' is declared but its value is never read.
+src/components/Admin/CustomerTypeModal.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/components/Admin/ServiceModal.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/components/CRM/CustomerCRM.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/components/CRM/CustomerCRM.tsx(3,10): error TS1484: 'Customer' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/components/Transaction/TransactionList.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/components/Transaction/TransactionList.tsx(2,54): error TS6133: 'AlertCircle' is declared but its value is never read.
