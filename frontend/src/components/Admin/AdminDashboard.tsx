@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'; 
 import { 
   DollarSign, Package, TrendingUp, Settings, Users, Plus, Trash2, Power, 
   Briefcase, Calculator, History, Phone, Wallet, Receipt, Edit, Store
