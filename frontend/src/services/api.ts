@@ -20,6 +20,7 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
+    if (!res.ok) throw new Error('Gagal simpan data');
     return res.json();
   },
 
@@ -42,6 +43,7 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
+    if (!res.ok) throw new Error('Gagal simpan data');
     return res.json();
   },
   async updateCustomer(id: string, data: any) {
@@ -50,10 +52,12 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
+    if (!res.ok) throw new Error('Gagal simpan data');
     return res.json();
   },
   async deleteCustomer(id: string) {
     const res = await fetch(`${API_BASE_URL}/customers/${id}`, { method: 'DELETE' });
+    if (!res.ok) throw new Error('Gagal hapus data');
     return res.json();
   },
 
@@ -77,6 +81,7 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
+    if (!res.ok) throw new Error('Gagal simpan data');
     return res.json();
   },
 
@@ -115,6 +120,7 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
+    if (!res.ok) throw new Error('Gagal simpan data');
     return res.json();
   },
   async updateEmployee(id: string, data: any) {
@@ -123,10 +129,12 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
+    if (!res.ok) throw new Error('Gagal simpan data');
     return res.json();
   },
   async deleteEmployee(id: string) {
     const res = await fetch(`${API_BASE_URL}/employees/${id}`, { method: 'DELETE' });
+    if (!res.ok) throw new Error('Gagal hapus data');
     return res.json();
   },
 
@@ -146,10 +154,12 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
+    if (!res.ok) throw new Error('Gagal simpan data');
     return res.json();
   },
   async deleteIncentive(id: string) {
     const res = await fetch(`${API_BASE_URL}/incentives/${id}`, { method: 'DELETE' });
+    if (!res.ok) throw new Error('Gagal hapus data');
     return res.json();
   },
 
@@ -171,6 +181,7 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
+    if (!res.ok) throw new Error('Gagal simpan data');
     return res.json();
   },
   async updateExpense(id: string, data: any) {
@@ -179,10 +190,12 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
+    if (!res.ok) throw new Error('Gagal simpan data');
     return res.json();
   },
   async deleteExpense(id: string) {
     const res = await fetch(`${API_BASE_URL}/expenses/${id}`, { method: 'DELETE' });
+    if (!res.ok) throw new Error('Gagal hapus data');
     return res.json();
   },
 
@@ -201,20 +214,17 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(credentials),
     });
-    if (!res.ok) throw new Error('Login failed');
+    if (!res.ok) throw new Error('Username atau password salah');
     return res.json();
   },
   async changePassword(data: any) {
-    try {
-      const res = await fetch(`${API_BASE_URL}/auth/change-password`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      return await res.json();
-    } catch (e) {
-      return { success: true }; // Mock success
-    }
+    const res = await fetch(`${API_BASE_URL}/auth/change-password`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error('Gagal ganti password');
+    return res.json();
   },
 
   // Users
@@ -236,6 +246,7 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
+    if (!res.ok) throw new Error('Gagal simpan data');
     return res.json();
   },
   async updateUser(id: string, data: any) {
@@ -244,10 +255,12 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
+    if (!res.ok) throw new Error('Gagal simpan data');
     return res.json();
   },
   async deleteUser(id: string) {
     const res = await fetch(`${API_BASE_URL}/users/${id}`, { method: 'DELETE' });
+    if (!res.ok) throw new Error('Gagal hapus data');
     return res.json();
   },
 
@@ -270,20 +283,15 @@ export const api = {
     }
   },
   async updateSettings(data: any) {
-    try {
-      const res = await fetch(`${API_BASE_URL}/settings`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      if (!res.ok) throw new Error();
-      const result = await res.json();
-      localStorage.setItem('laundry_settings', JSON.stringify(result));
-      return result;
-    } catch (e) {
-      localStorage.setItem('laundry_settings', JSON.stringify(data));
-      return data;
-    }
+    const res = await fetch(`${API_BASE_URL}/settings`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error('Gagal simpan data');
+    const result = await res.json();
+    localStorage.setItem('laundry_settings', JSON.stringify(result));
+    return result;
   },
 
   async checkConnection() {
