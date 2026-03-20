@@ -9,7 +9,6 @@ interface LoginProps {
 }
 
 export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
-  const businessName = settings?.name;
   const logoUrl = settings?.logo_url;
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
