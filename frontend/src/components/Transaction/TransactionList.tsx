@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Printer, Trash2, Edit3, CheckCircle, Clock, Search, Loader2 } from 'lucide-react';
+import { Printer, Trash2, CheckCircle, Clock, Search, Loader2 } from 'lucide-react';
 import type { Transaction, TransactionStatus } from '../../types';
 import { api } from '../../services/api';
 import { ReceiptModal } from './ReceiptModal';
@@ -45,15 +45,6 @@ export const TransactionList = () => {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm('Apakah Anda yakin ingin menghapus transaksi ini?')) return;
-    try {
-      await api.deleteTransaction(id);
-      fetchTransactions();
-    } catch (error) {
-      alert('Gagal menghapus transaksi');
-    }
-  };
 
   useEffect(() => {
     fetchTransactions();
