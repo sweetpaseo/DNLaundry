@@ -1,36 +1,41 @@
 import { useState, useEffect } from 'react';
-import { Search, UserPlus, Phone, MapPin, MessageSquare, Edit, Trash2, Loader2 } from 'lucide-react';
-import type { Customer } from '../../types';
+import { Search, UserPlus, Phone, MapPin, MessageSquare, Edit, Trash2, Loader2, Star } from 'lucide-react';
+import type { Customer, MemberType } from '../../types';
 import { AddCustomerModal } from './AddCustomerModal';
 import { api } from '../../services/api';
 
 export const CustomerCRM = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
+  const [memberTypes, setMemberTypes] = useState<MemberType[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
 
-  const fetchCustomers = async () => {
+  const fetchData = async () => {
     try {
-      const data = await api.getCustomers();
-      setCustomers(data || []);
+      const [c, m] = await Promise.all([
+        api.getCustomers(),
+        api.getMemberTypes()
+      ]);
+      setCustomers(c || []);
+      setMemberTypes(m || []);
     } catch (error) {
-      console.error('Failed to fetch customers:', error);
+      console.error('Failed to fetch data:', error);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchCustomers();
+    fetchData();
   }, []);
 
   const handleDelete = async (id: string) => {
     if (!confirm('Hapus pelanggan ini?')) return;
     try {
       await api.deleteCustomer(id);
-      fetchCustomers();
+      fetchData();
     } catch (error) {
       alert('Gagal menghapus pelanggan');
     }
@@ -43,7 +48,7 @@ export const CustomerCRM = () => {
       } else {
         await api.createCustomer(customerData);
       }
-      fetchCustomers();
+      fetchData();
       setIsModalOpen(false);
       setEditingCustomer(null);
       alert('Perubahan berhasil disimpan!');
@@ -91,14 +96,15 @@ export const CustomerCRM = () => {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
                 <div>
                   <h4 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.25rem' }}>{customer.name}</h4>
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                     <span style={{ 
                       fontSize: '0.65rem', padding: '2px 8px', borderRadius: '4px', 
-                      background: customer.name.includes('VIP') ? 'rgba(255, 0, 132, 0.2)' : 'rgba(211, 211, 211, 0.1)',
-                      color: customer.name.includes('VIP') ? '#FF0084' : '#D3D3D3',
-                      border: `1px solid ${customer.name.includes('VIP') ? '#FF0084' : '#D3D3D3'}`
+                      background: 'rgba(255, 0, 132, 0.15)',
+                      color: '#FF0084',
+                      border: '1px solid rgba(255, 0, 132, 0.3)',
+                      display: 'flex', alignItems: 'center', gap: '4px'
                     }}>
-                      {customer.name.includes('VIP') ? 'VIP' : 'Member'}
+                      <Star size={10} /> {customer.member_type?.name || 'Reguler'}
                     </span>
                   </div>
                 </div>
@@ -157,6 +163,7 @@ export const CustomerCRM = () => {
         onClose={() => { setIsModalOpen(false); setEditingCustomer(null); }}
         onSave={handleSave}
         initialData={editingCustomer}
+        memberTypes={memberTypes}
       />
     </div>
   );

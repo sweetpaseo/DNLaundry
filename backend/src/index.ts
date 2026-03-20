@@ -91,17 +91,17 @@ customers.delete('/:id', async (c) => {
   return c.json({ success: true })
 })
 
-// Customer Types (Membership Levels)
-const customerTypes = new Hono<{ Bindings: Bindings }>()
+// Member Types (Jenis Member) API
+const memberTypes = new Hono<{ Bindings: Bindings }>()
 
-customerTypes.get('/', async (c) => {
+memberTypes.get('/', async (c) => {
   const supabase = getSupabase(c.env)
-  const { data, error } = await supabase.from('customer_types').select('*').order('discount_percent', { ascending: true })
+  const { data, error } = await supabase.from('customer_types').select('*').order('name', { ascending: true })
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data || [])
 })
 
-customerTypes.post('/', async (c) => {
+memberTypes.post('/', async (c) => {
   const body = await c.req.json()
   const supabase = getSupabase(c.env)
   const { data, error } = await supabase.from('customer_types').insert(body).select()
@@ -109,7 +109,7 @@ customerTypes.post('/', async (c) => {
   return c.json(data[0], 201)
 })
 
-customerTypes.put('/:id', async (c) => {
+memberTypes.put('/:id', async (c) => {
   const id = c.req.param('id')
   const body = await c.req.json()
   const supabase = getSupabase(c.env)
@@ -118,7 +118,7 @@ customerTypes.put('/:id', async (c) => {
   return c.json(data[0])
 })
 
-customerTypes.delete('/:id', async (c) => {
+memberTypes.delete('/:id', async (c) => {
   const id = c.req.param('id')
   const supabase = getSupabase(c.env)
   const { error } = await supabase.from('customer_types').delete().eq('id', id)
@@ -389,7 +389,7 @@ settings.put('/', async (c) => {
 
 app.route('/api/transactions', transactions)
 app.route('/api/customers', customers)
-app.route('/api/membership', customerTypes)
+app.route('/api/membership', memberTypes)
 app.route('/api/services', services)
 app.route('/api/employees', employees)
 app.route('/api/incentives', incentives)

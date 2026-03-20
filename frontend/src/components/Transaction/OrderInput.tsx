@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Plus, UserPlus } from 'lucide-react';
-import type { Service, Employee } from '../../types';
+import type { Service, Employee, Customer, MemberType } from '../../types';
 import { AddCustomerModal } from '../CRM/AddCustomerModal';
 import { api } from '../../services/api';
 
@@ -9,30 +9,39 @@ export const OrderInput = () => {
   const [customerName, setCustomerName] = useState('');
   const [services, setServices] = useState<Service[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [memberTypes, setMemberTypes] = useState<MemberType[]>([]);
   const [selectedServiceId, setSelectedServiceId] = useState<string>('');
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>('');
 
+  const fetchData = async () => {
+    try {
+      const [s, e, c, m] = await Promise.all([
+        api.getServices(), 
+        api.getEmployees(),
+        api.getCustomers(),
+        api.getMemberTypes()
+      ]);
+      const activeServices = s.filter((srv: Service) => srv.is_active);
+      const activeEmployees = e.filter((emp: Employee) => emp.is_active);
+      setServices(activeServices);
+      setEmployees(activeEmployees);
+      setCustomers(c || []);
+      setMemberTypes(m || []);
+      if (activeServices.length > 0) setSelectedServiceId(activeServices[0].id);
+      if (activeEmployees.length > 0) setSelectedEmployeeId(activeEmployees[0].id);
+    } catch (error) {
+      console.error('Failed to fetch order input data:', error);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [s, e] = await Promise.all([api.getServices(), api.getEmployees()]);
-        const activeServices = s.filter((srv: Service) => srv.is_active);
-        const activeEmployees = e.filter((emp: Employee) => emp.is_active);
-        setServices(activeServices);
-        setEmployees(activeEmployees);
-        if (activeServices.length > 0) setSelectedServiceId(activeServices[0].id);
-        if (activeEmployees.length > 0) setSelectedEmployeeId(activeEmployees[0].id);
-      } catch (error) {
-        console.error('Failed to fetch order input data:', error);
-      }
-    };
     fetchData();
   }, []);
+
   const [selectedTier, setSelectedTier] = useState<'normal' | 'member' | 'express' | 'special'>('normal');
   const [amount, setAmount] = useState<number>(0);
   const [notes, setNotes] = useState('');
-  const [discountType, setDiscountType] = useState<'percent' | 'fixed'>('percent');
-  const [discountValue, setDiscountValue] = useState<number>(0);
   const [total, setTotal] = useState<number>(0);
 
   useEffect(() => {
@@ -44,30 +53,31 @@ export const OrderInput = () => {
       else if (selectedTier === 'special') price = srv.price_special || 0;
       
       const subtotal = price * amount;
-      let discountAmount = 0;
-      if (discountType === 'percent') {
-        discountAmount = (subtotal * discountValue) / 100;
-      } else {
-        discountAmount = discountValue;
-      }
-      setTotal(Math.max(0, subtotal - discountAmount));
+      setTotal(Math.max(0, subtotal));
     }
-  }, [selectedServiceId, selectedTier, amount, discountType, discountValue, services]);
+  }, [selectedServiceId, selectedTier, amount, services]);
 
   const handleCustomerChange = (val: string) => {
     setCustomerName(val);
     const lowVal = val.toLowerCase();
     
-    // Auto-detect tier from name (legacy-style shortcut)
-    if (lowVal.includes('member')) setSelectedTier('member');
-    else if (lowVal.includes('express')) setSelectedTier('express');
-    else if (lowVal.includes('special')) setSelectedTier('special');
-    else setSelectedTier('normal');
+    // Check if the name matches a known customer with a member type
+    const foundCustomer = customers.find(c => 
+      c.name.toLowerCase() === lowVal || 
+      c.phone === val
+    );
+
+    if (foundCustomer && foundCustomer.member_type_id) {
+      // If customer is found and has a member type ID, auto-switch to member tier
+      setSelectedTier('member');
+    } else {
+      // Legacy name detection as fallback
+      if (lowVal.includes('member')) setSelectedTier('member');
+      else if (lowVal.includes('express')) setSelectedTier('express');
+      else if (lowVal.includes('special')) setSelectedTier('special');
+      else setSelectedTier('normal');
+    }
     
-    // Auto-discount logic for VIP
-    setDiscountType('percent');
-    if (lowVal.includes('vip')) setDiscountValue(10);
-    else setDiscountValue(0);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -100,7 +110,6 @@ export const OrderInput = () => {
       setCustomerName('');
       setAmount(0);
       setNotes('');
-      setDiscountValue(0);
     } catch (error) {
       alert('Gagal membuat order');
     }
@@ -217,39 +226,15 @@ export const OrderInput = () => {
           </div>
         </div>
 
-        {/* Step 3: Discount & Notes */}
+        {/* Step 3: Discount & Notes (Discount Hidden per user request) */}
         <div className="glass-card" style={{ padding: '1.5rem', borderLeft: '4px solid var(--primary)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
             <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255, 0, 132, 0.1)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>3</div>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Aksen Tambahan</h3>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Catatan Tambahan</h3>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.25rem' }}>
-            <div className="form-group">
-              <label style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>
-                Diskon
-                <div style={{ display: 'flex', gap: '0.25rem', background: 'rgba(255,255,255,0.05)', padding: '3px', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
-                  <button 
-                    type="button"
-                    onClick={() => setDiscountType('percent')}
-                    style={{ padding: '4px 12px', borderRadius: '6px', fontSize: '0.8rem', background: discountType === 'percent' ? 'var(--primary)' : 'transparent', color: 'white', border: 'none', cursor: 'pointer' }}
-                  >%</button>
-                  <button 
-                    type="button"
-                    onClick={() => setDiscountType('fixed')}
-                    style={{ padding: '4px 12px', borderRadius: '6px', fontSize: '0.8rem', background: discountType === 'fixed' ? 'var(--primary)' : 'transparent', color: 'white', border: 'none', cursor: 'pointer' }}
-                  >Rp</button>
-                </div>
-              </label>
-              <input 
-                type="number"
-                value={discountValue || ''} 
-                onChange={(e) => setDiscountValue(Number(e.target.value))}
-                placeholder={discountType === 'percent' ? '0%' : 'Rp 0'}
-                style={{ width: '100%', height: '3.5rem', fontSize: '1rem' }}
-              />
-            </div>
-
+            {/* Discount hidden as pricing is now tiered */}
             <div className="form-group">
               <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>Catatan Khusus</label>
               <textarea 
@@ -262,7 +247,7 @@ export const OrderInput = () => {
           </div>
         </div>
 
-        {/* Summary Bar (Desktop) / Final Card (Mobile) */}
+        {/* Summary Bar */}
         <div style={{ 
           marginTop: '1rem', 
           padding: '1.5rem', 
@@ -282,9 +267,9 @@ export const OrderInput = () => {
                 {total.toLocaleString('id-ID')}
               </h2>
             </div>
-            {discountValue > 0 && (
-              <p style={{ fontSize: '0.85rem', color: 'var(--primary)', fontWeight: 600, marginTop: '0.5rem' }}>
-                Hemat {discountType === 'percent' ? `${discountValue}%` : `Rp ${discountValue.toLocaleString()}`}
+            {selectedTier !== 'normal' && (
+              <p style={{ fontSize: '0.85rem', color: 'var(--accent)', fontWeight: 600, marginTop: '0.5rem', textTransform: 'uppercase' }}>
+                Harga Tier: {selectedTier}
               </p>
             )}
           </div>
@@ -308,13 +293,19 @@ export const OrderInput = () => {
       <AddCustomerModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)}
-        onSave={(customer) => {
-          setCustomerName(customer.name);
-          setDiscountType('percent');
-          if (customer.name.toLowerCase().includes('vip')) setDiscountValue(10);
-          else setDiscountValue(0);
+        onSave={async (customer) => {
+          try {
+            await api.createCustomer(customer);
+            fetchData(); // Refresh customers list
+            setCustomerName(customer.name);
+            if (customer.member_type_id) setSelectedTier('member');
+            alert('Pelanggan berhasil ditambahkan!');
+          } catch (error) {
+            alert('Gagal menambah pelanggan');
+          }
         }}
         initialData={null}
+        memberTypes={memberTypes}
       />
     </div>
   );

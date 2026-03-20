@@ -1,20 +1,23 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
-import { X, User, Phone, MapPin, Save } from 'lucide-react';
+import { X, User, Phone, MapPin, Save, Star } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import type { MemberType } from '../../types';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (customer: { id?: string; name: string; phone: string; address: string }) => void;
-  initialData?: { id?: string; name: string; phone: string; address: string } | null;
+  onSave: (customer: { id?: string; name: string; phone: string; address: string; member_type_id: string }) => void;
+  initialData?: { id?: string; name: string; phone: string; address: string; member_type_id?: string } | null;
+  memberTypes: MemberType[];
 }
 
-export const AddCustomerModal = ({ isOpen, onClose, onSave, initialData }: Props) => {
+export const AddCustomerModal = ({ isOpen, onClose, onSave, initialData, memberTypes }: Props) => {
   const [formData, setFormData] = React.useState({
     name: '',
     phone: '',
-    address: ''
+    address: '',
+    member_type_id: ''
   });
 
   React.useEffect(() => {
@@ -22,12 +25,13 @@ export const AddCustomerModal = ({ isOpen, onClose, onSave, initialData }: Props
       setFormData({
         name: initialData.name,
         phone: initialData.phone,
-        address: initialData.address
+        address: initialData.address,
+        member_type_id: initialData.member_type_id || ''
       });
     } else {
-      setFormData({ name: '', phone: '', address: '' });
+      setFormData({ name: '', phone: '', address: '', member_type_id: memberTypes[0]?.id || '' });
     }
-  }, [initialData, isOpen]);
+  }, [initialData, isOpen, memberTypes]);
 
   React.useEffect(() => {
     if (isOpen) {
@@ -41,7 +45,6 @@ export const AddCustomerModal = ({ isOpen, onClose, onSave, initialData }: Props
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave(initialData?.id ? { ...formData, id: initialData.id } : formData);
-    setFormData({ name: '', phone: '', address: '' });
     onClose();
   };
 
@@ -99,6 +102,22 @@ export const AddCustomerModal = ({ isOpen, onClose, onSave, initialData }: Props
                     onChange={(e) => setFormData({...formData, phone: e.target.value})}
                   />
                   <Phone size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>Jenis Member</label>
+                <div style={{ position: 'relative' }}>
+                  <select
+                    style={{ width: '100%', paddingLeft: '2.5rem' }}
+                    value={formData.member_type_id}
+                    onChange={(e) => setFormData({...formData, member_type_id: e.target.value})}
+                  >
+                    {memberTypes.map(type => (
+                      <option key={type.id} value={type.id}>{type.name}</option>
+                    ))}
+                  </select>
+                  <Star size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
                 </div>
               </div>
 

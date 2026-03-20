@@ -14,10 +14,9 @@ export interface Service {
 
 export type TransactionStatus = 'Baru' | 'Proses' | 'Siap Ambil';
 
-export interface CustomerType {
+export interface MemberType {
   id: string;
   name: string;
-  discount_percent: number;
 }
 
 export interface Customer {
@@ -25,8 +24,8 @@ export interface Customer {
   name: string;
   phone: string;
   address: string;
-  type_id: string;
-  type?: CustomerType;
+  member_type_id: string;
+  member_type?: MemberType;
   tags?: string[];
 }
 

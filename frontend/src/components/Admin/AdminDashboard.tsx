@@ -3,9 +3,9 @@ import {
   DollarSign, Package, TrendingUp, Settings, Users, Plus, Trash2, Power, 
   Briefcase, Calculator, History, Phone, Wallet, Receipt, Edit, Store
 } from 'lucide-react';
-import type { Service, CustomerType, Employee, Incentive, Transaction, Expense } from '../../types';
+import type { Service, MemberType, Employee, Incentive, Transaction, Expense } from '../../types';
 import { ServiceModal } from './ServiceModal';
-import { CustomerTypeModal } from './CustomerTypeModal';
+import { MemberTypeModal } from './MemberTypeModal';
 import { EmployeeModal } from './EmployeeModal';
 import { IncentiveModal } from './IncentiveModal';
 import { UserModal } from './UserModal';
@@ -30,7 +30,7 @@ const calculateCommission = (empId: string, trans: Transaction[], srvs: Service[
 };
 
 export const AdminDashboard = () => {
-  const [levels, setLevels] = React.useState<CustomerType[]>([]);
+  const [memberTypes, setMemberTypes] = React.useState<MemberType[]>([]);
   const [services, setServices] = React.useState<Service[]>([]);
   const [employees, setEmployees] = React.useState<Employee[]>([]);
   const [incentives, setIncentives] = React.useState<Incentive[]>([]);
@@ -42,8 +42,8 @@ export const AdminDashboard = () => {
   // Modal States
   const [isServiceModalOpen, setIsServiceModalOpen] = React.useState(false);
   const [editingService, setEditingService] = React.useState<Service | null>(null);
-  const [isLevelModalOpen, setIsLevelModalOpen] = React.useState(false);
-  const [editingLevel, setEditingLevel] = React.useState<CustomerType | null>(null);
+  const [isMemberTypeModalOpen, setIsMemberTypeModalOpen] = React.useState(false);
+  const [editingMemberType, setEditingMemberType] = React.useState<MemberType | null>(null);
   const [isEmployeeModalOpen, setIsEmployeeModalOpen] = React.useState(false);
   const [editingEmployee, setEditingEmployee] = React.useState<Employee | null>(null);
   const [isIncentiveModalOpen, setIsIncentiveModalOpen] = React.useState(false);
@@ -70,7 +70,7 @@ export const AdminDashboard = () => {
       const [t, s, l, e, i, ex, u] = await Promise.all([
         api.getTransactions(),
         api.getServices(),
-        api.getMembershipLevels(),
+        api.getMemberTypes(),
         api.getEmployees(),
         api.getIncentives(),
         api.getExpenses(),
@@ -78,7 +78,7 @@ export const AdminDashboard = () => {
       ]);
       setTransactions(t || []);
       setServices(s || []);
-      setLevels(l || []);
+      setMemberTypes(l || []);
       setEmployees(e || []);
       setIncentives(i || []);
       setExpenses(ex || []);
@@ -114,13 +114,13 @@ export const AdminDashboard = () => {
     }
   };
 
-  const deleteLevel = async (id: string) => {
-    if (window.confirm('Hapus level member ini?')) {
+  const deleteMemberType = async (id: string) => {
+    if (window.confirm('Hapus jenis member ini?')) {
       try {
-        await api.deleteMembershipLevel(id);
+        await api.deleteMemberType(id);
         fetchData();
       } catch (error) {
-        alert('Gagal menghapus level');
+        alert('Gagal menghapus jenis member');
       }
     }
   };
@@ -141,19 +141,19 @@ export const AdminDashboard = () => {
     }
   };
 
-  const handleSaveLevel = async (data: Partial<CustomerType>) => {
+  const handleSaveMemberType = async (data: Partial<MemberType>) => {
     try {
-      if (editingLevel) {
-        await api.updateMembershipLevel(editingLevel.id, data);
+      if (editingMemberType) {
+        await api.updateMemberType(editingMemberType.id, data);
       } else {
-        await api.createMembershipLevel(data);
+        await api.createMemberType(data);
       }
       fetchData();
-      setIsLevelModalOpen(false);
-      setEditingLevel(null);
+      setIsMemberTypeModalOpen(false);
+      setEditingMemberType(null);
       alert('Perubahan berhasil disimpan!');
     } catch (error) {
-      alert('Gagal menyimpan level');
+      alert('Gagal menyimpan jenis member');
     }
   };
 
@@ -479,16 +479,16 @@ export const AdminDashboard = () => {
             <div className="glass-card">
               <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <Users size={18} color="var(--accent)" /> Level Customer
+                  <Users size={18} color="var(--accent)" /> Jenis Member
                 </h4>
-                <button className="btn-primary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.75rem' }} onClick={() => { setEditingLevel(null); setIsLevelModalOpen(true); }}>
+                <button className="btn-primary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.75rem' }} onClick={() => { setEditingMemberType(null); setIsMemberTypeModalOpen(true); }}>
                   <Plus size={14} /> Baru
                 </button>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                {levels.map(level => (
-                  <div key={level.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
-                    <div style={{ fontWeight: 600, fontSize: '0.875rem' }}>{level.name} ({level.discount_percent}%)</div>
+                {memberTypes.map(type => (
+                  <div key={type.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+                    <div style={{ fontWeight: 600, fontSize: '0.875rem' }}>{type.name}</div>
                     <div style={{ display: 'flex', gap: '0.4rem' }}>
                       <button 
                         style={{ 
@@ -496,7 +496,7 @@ export const AdminDashboard = () => {
                         }} 
                         onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = 'white'; }}
                         onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = 'var(--text-muted)'; }}
-                        onClick={() => { setEditingLevel(level); setIsLevelModalOpen(true); }}
+                        onClick={() => { setEditingMemberType(type); setIsMemberTypeModalOpen(true); }}
                       >
                         <Settings size={12} />
                       </button>
@@ -506,7 +506,7 @@ export const AdminDashboard = () => {
                         }}
                         onMouseOver={(e) => { e.currentTarget.style.background = '#f43f5e'; e.currentTarget.style.color = 'white'; }}
                         onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(244, 63, 94, 0.1)'; e.currentTarget.style.color = '#f43f5e'; }}
-                        onClick={() => deleteLevel(level.id)}
+                        onClick={() => deleteMemberType(type.id)}
                       >
                         <Trash2 size={12} />
                       </button>
@@ -756,11 +756,11 @@ export const AdminDashboard = () => {
         initialData={editingService}
       />
 
-      <CustomerTypeModal
-        isOpen={isLevelModalOpen}
-        onClose={() => setIsLevelModalOpen(false)}
-        onSave={handleSaveLevel}
-        initialData={editingLevel}
+      <MemberTypeModal
+        isOpen={isMemberTypeModalOpen}
+        onClose={() => setIsMemberTypeModalOpen(false)}
+        onSave={handleSaveMemberType}
+        initialData={editingMemberType}
       />
 
       <EmployeeModal

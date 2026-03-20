@@ -109,8 +109,8 @@ export const api = {
     return res.json();
   },
 
-  // Membership
-  async getMembershipLevels() {
+  // Membership (Jenis Member)
+  async getMemberTypes() {
     try {
       const res = await fetch(`${API_BASE_URL}/membership`, { headers: getHeaders() });
       if (!res.ok) throw new Error();
@@ -119,7 +119,7 @@ export const api = {
       return [];
     }
   },
-  async createMembershipLevel(data: any) {
+  async createMemberType(data: any) {
     const res = await fetch(`${API_BASE_URL}/membership`, {
       method: 'POST',
       headers: getHeaders(),
@@ -128,7 +128,7 @@ export const api = {
     if (!res.ok) throw new Error('Gagal simpan data');
     return res.json();
   },
-  async updateMembershipLevel(id: string, data: any) {
+  async updateMemberType(id: string, data: any) {
     const res = await fetch(`${API_BASE_URL}/membership/${id}`, {
       method: 'PUT',
       headers: getHeaders(),
@@ -137,7 +137,7 @@ export const api = {
     if (!res.ok) throw new Error('Gagal simpan data');
     return res.json();
   },
-  async deleteMembershipLevel(id: string) {
+  async deleteMemberType(id: string) {
     const res = await fetch(`${API_BASE_URL}/membership/${id}`, { 
       method: 'DELETE',
       headers: getHeaders()
