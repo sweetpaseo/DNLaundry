@@ -305,7 +305,7 @@ export const api = {
     const fileExt = file.name.split('.').pop();
     const fileName = `logo-${Date.now()}.${fileExt}`;
     
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
       .from('laundry-assets')
       .upload(fileName, file);
 
