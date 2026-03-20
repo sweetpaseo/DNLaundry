@@ -34,14 +34,17 @@ export const UserModal = ({ isOpen, onClose, onSave, initialData }: UserModalPro
       });
     }
   }, [initialData, isOpen]);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // If editing and password is blank, we might want to exclude it from the update 
-    // but the backend handler will handle it or we can filter here.
-    const submissionData = { ...formData };
-    if (initialData && !submissionData.password) {
+    const submissionData = { 
+      ...formData,
+      name: formData.name.trim(),
+      username: formData.username.trim()
+    };
+    if (initialData && !formData.password.trim()) {
       delete (submissionData as any).password;
+    } else if (formData.password.trim()) {
+      submissionData.password = formData.password.trim();
     }
     onSave(submissionData);
   };

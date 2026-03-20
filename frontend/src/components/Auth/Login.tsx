@@ -21,7 +21,10 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
     setError('');
     
     try {
-      const user = await api.login({ username, password });
+      const user = await api.login({ 
+        username: username.trim(), 
+        password: password.trim() 
+      });
       onLoginSuccess(user);
     } catch (err) {
       setError('Username atau password salah');

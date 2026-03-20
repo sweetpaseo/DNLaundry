@@ -286,7 +286,7 @@ auth.post('/login', async (c) => {
   const { data, error } = await supabase
     .from('laundry_users')
     .select('id, username, name, role, password')
-    .eq('username', username)
+    .ilike('username', username)
     .single()
 
   if (error || !data || data.password !== password) {
