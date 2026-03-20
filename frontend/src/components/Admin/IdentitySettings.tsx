@@ -88,8 +88,8 @@ export const IdentitySettings = () => {
     try {
       await api.updateSettings(settings);
       alert('Pengaturan identitas berhasil disimpan!');
-    } catch (error) {
-      alert('Gagal menyimpan pengaturan');
+    } catch (error: any) {
+      alert('Gagal menyimpan pengaturan: ' + (error.message || 'Error tidak diketahui'));
     } finally {
       setSaving(false);
     }
