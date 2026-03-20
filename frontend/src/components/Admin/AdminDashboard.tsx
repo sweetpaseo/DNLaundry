@@ -225,7 +225,7 @@ export const AdminDashboard = () => {
   return (
     <div className="admin-dashboard">
       <div style={{ marginBottom: '2rem' }}>
-        <h3 style={{ fontSize: '1.25rem', fontWeight: 600 }}>Panel Admin Antigravity</h3>
+        <h3 style={{ fontSize: '1.25rem', fontWeight: 600 }}>Panel Admin Laundry</h3>
         <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Manajemen bisnis & payroll karyawan</p>
       </div>
 
@@ -656,7 +656,7 @@ export const AdminDashboard = () => {
         </div>
       ) : activeTab === 'identity' ? (
         <IdentitySettings />
-      ) : (
+      ) : activeTab === 'users' ? (
         /* Users Tab Content */
         <div className="glass-card" style={{ padding: '2rem' }}>
           <div style={{ marginBottom: '2rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
