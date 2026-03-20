@@ -5,6 +5,7 @@ import { api } from '../../services/api';
 export const IdentitySettings = () => {
   const [loading, setLoading] = React.useState(true);
   const [saving, setSaving] = React.useState(false);
+  const [isDragging, setIsDragging] = React.useState(false);
   const [settings, setSettings] = React.useState({
     name: '',
     phone: '',
@@ -15,20 +16,51 @@ export const IdentitySettings = () => {
   });
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
-  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement> | React.DragEvent) => {
+    let file: File | null = null;
+    
+    if ('dataTransfer' in e) {
+      // It's a drag event
+      e.preventDefault();
+      setIsDragging(false);
+      file = e.dataTransfer.files?.[0] || null;
+    } else {
+      // It's a change event
+      file = e.target.files?.[0] || null;
+    }
+
     if (!file) return;
+    
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Mohon pilih file gambar (PNG, JPG, dll)');
+      return;
+    }
+
+    // Validate size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      alert('Ukuran file terlalu besar (Maksimal 2MB)');
+      return;
+    }
 
     setSaving(true);
     try {
       const url = await api.uploadLogo(file);
-      setSettings(prev => ({ ...prev, logo_url: url }));
-      alert('Logo berhasil diunggah! Klik Simpan Perubahan untuk menetapkan.');
+      setSettings({ ...settings, logo_url: url });
     } catch (error: any) {
       alert('Gagal unggah logo: ' + error.message);
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
   };
 
   const fetchSettings = async () => {
@@ -76,34 +108,47 @@ export const IdentitySettings = () => {
 
       <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
         {/* Logo Upload Section - Centered and Above */}
-        <div style={{ 
-          display: 'flex', 
-          flexDirection: 'column', 
-          alignItems: 'center', 
-          gap: '1rem', 
-          background: 'rgba(255,255,255,0.03)', 
-          padding: '2rem', 
-          borderRadius: '16px', 
-          border: '1px solid var(--glass-border)',
-          marginBottom: '0.5rem'
-        }}>
+        <div 
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleLogoUpload}
+          style={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center', 
+            gap: '1rem', 
+            background: isDragging ? 'rgba(var(--primary-rgb), 0.1)' : 'rgba(255,255,255,0.03)', 
+            padding: '2.5rem', 
+            borderRadius: '24px', 
+            border: isDragging ? '2px dashed var(--primary)' : '1px solid var(--glass-border)',
+            transition: 'all 0.3s ease',
+            marginBottom: '0.5rem',
+            cursor: 'pointer',
+            position: 'relative'
+          }}
+          onClick={() => fileInputRef.current?.click()}
+        >
           <div style={{ 
             position: 'relative', 
-            width: '120px', 
-            height: '120px', 
-            borderRadius: '24px', 
+            width: '140px', 
+            height: '140px', 
+            borderRadius: '28px', 
             background: 'rgba(255,255,255,0.05)', 
-            border: '2px dashed var(--glass-border)', 
+            border: isDragging ? 'none' : '2px dashed var(--glass-border)', 
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'center', 
             overflow: 'hidden',
-            boxShadow: settings.logo_url ? '0 10px 25px rgba(0,0,0,0.2)' : 'none'
+            boxShadow: settings.logo_url ? '0 15px 35px rgba(0,0,0,0.3)' : 'none',
+            transform: isDragging ? 'scale(1.05)' : 'scale(1)',
+            transition: 'transform 0.2s ease'
           }}>
             {settings.logo_url ? (
-              <img src={settings.logo_url} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+              <img src={settings.logo_url} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '10px' }} />
             ) : (
-              <Store size={48} style={{ opacity: 0.2 }} />
+              <div style={{ textAlign: 'center', opacity: isDragging ? 0.8 : 0.4 }}>
+                <Store size={56} style={{ marginBottom: '0.5rem' }} />
+              </div>
             )}
             <input 
               type="file" 
@@ -114,26 +159,32 @@ export const IdentitySettings = () => {
             />
           </div>
           <div style={{ textAlign: 'center' }}>
-            <h5 style={{ marginBottom: '0.25rem', fontWeight: 700, fontSize: '1.1rem' }}>Logo Laundry</h5>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>Akan tampil di Halaman Login & Nota</p>
-            <button 
-              type="button" 
-              className="btn-secondary" 
-              style={{ 
-                fontSize: '0.85rem', 
-                padding: '0.6rem 1.5rem', 
-                background: 'var(--primary-gradient)', 
-                border: 'none', 
-                color: 'white', 
-                borderRadius: '8px', 
-                cursor: 'pointer',
-                fontWeight: 600
-              }}
-              onClick={() => fileInputRef.current?.click()}
-              disabled={saving}
-            >
-              {settings.logo_url ? 'Ganti Logo' : 'Unggah Logo Baru'}
-            </button>
+            <h5 style={{ marginBottom: '0.4rem', fontWeight: 700, fontSize: '1.2rem', color: isDragging ? 'var(--primary)' : 'inherit' }}>
+              {isDragging ? 'Lepaskan Gambar Di Sini' : 'Logo Laundry'}
+            </h5>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
+              {isDragging ? 'Siap diunggah!' : 'Tarik & Letakkan gambar di sini atau klik untuk pilih'}
+            </p>
+            {!isDragging && (
+              <button 
+                type="button" 
+                className="btn-secondary" 
+                style={{ 
+                  fontSize: '0.85rem', 
+                  padding: '0.7rem 2rem', 
+                  background: 'var(--primary-gradient)', 
+                  border: 'none', 
+                  color: 'white', 
+                  borderRadius: '10px', 
+                  cursor: 'pointer',
+                  fontWeight: 700,
+                  boxShadow: '0 4px 15px rgba(0,0,0,0.2)'
+                }}
+                disabled={saving}
+              >
+                {saving ? 'Sedang Mengunggah...' : (settings.logo_url ? 'Ganti Logo' : 'Unggah Logo Baru')}
+              </button>
+            )}
           </div>
         </div>
 
