@@ -6,6 +6,7 @@ export interface Service {
   price_express: number;
   price_special: number;
   unit: string;
+  price?: number;
   is_active: boolean;
   commission_type?: 'percentage' | 'fixed';
   commission_value?: number;

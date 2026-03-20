@@ -56,7 +56,11 @@ export const ServiceModal = ({ isOpen, onClose, onSave, initialData }: ServiceMo
           <button onClick={onClose} style={{ color: 'var(--text-muted)' }}><X size={20} /></button>
         </div>
 
-        <form onSubmit={(e) => { e.preventDefault(); onSave(formData); }} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <form onSubmit={(e) => { 
+          e.preventDefault(); 
+          // Include 'price' for backward compatibility with old DB schema
+          onSave({ ...formData, price: formData.price_normal }); 
+        }} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <div className="form-group">
               <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.875rem' }}>Nama Layanan</label>
