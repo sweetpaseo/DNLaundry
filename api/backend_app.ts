@@ -16,7 +16,9 @@ app.use('*', cors())
 // Security Middleware: X-API-KEY Protection
 app.use('/api/*', async (c, next) => {
   const apiKey = c.req.header('X-API-KEY')
-  const secretKey = c.env?.API_SECRET_KEY || (typeof process !== 'undefined' ? process.env.API_SECRET_KEY : undefined)
+  const secretKey = c.env?.API_SECRET_KEY || 
+                    c.env?.VITE_API_SECRET_KEY || 
+                    (typeof process !== 'undefined' ? (process.env.API_SECRET_KEY || process.env.VITE_API_SECRET_KEY) : undefined)
   
   // Skip check for health endpoint if needed, but for now, protect everything /api/*
   // Also pass through if we are in dev (localhost) and secret is not set? 
