@@ -14,7 +14,7 @@ dist-ssr/
 backend/.dev.vars
 backend/.env
 frontend/.env
-frontend/.env.production
+# frontend/.env.production
 
 # Editor
 .vscode/
