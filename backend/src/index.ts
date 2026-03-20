@@ -44,9 +44,17 @@ const transactions = new Hono<{ Bindings: Bindings }>()
 
 transactions.get('/', async (c) => {
   const supabase = getSupabase(c.env)
-  const { data, error } = await supabase.from('transactions').select('*')
+  const { data, error } = await supabase.from('transactions').select('*').order('created_at', { ascending: false })
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data)
+})
+
+transactions.post('/', async (c) => {
+  const body = await c.req.json()
+  const supabase = getSupabase(c.env)
+  const { data, error } = await supabase.from('transactions').insert(body).select()
+  if (error) return c.json({ error: error.message }, 500)
+  return c.json(data[0], 201)
 })
 
 transactions.put('/:id', async (c) => {
