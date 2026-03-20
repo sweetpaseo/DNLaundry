@@ -91,6 +91,23 @@ export const api = {
     if (!res.ok) throw new Error('Gagal simpan data');
     return res.json();
   },
+  async updateService(id: string, data: any) {
+    const res = await fetch(`${API_BASE_URL}/services/${id}`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error('Gagal simpan data');
+    return res.json();
+  },
+  async deleteService(id: string) {
+    const res = await fetch(`${API_BASE_URL}/services/${id}`, { 
+      method: 'DELETE',
+      headers: getHeaders()
+    });
+    if (!res.ok) throw new Error('Gagal hapus data');
+    return res.json();
+  },
 
   // Membership
   async getMembershipLevels() {
@@ -101,6 +118,32 @@ export const api = {
     } catch (e) {
       return [];
     }
+  },
+  async createMembershipLevel(data: any) {
+    const res = await fetch(`${API_BASE_URL}/membership`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error('Gagal simpan data');
+    return res.json();
+  },
+  async updateMembershipLevel(id: string, data: any) {
+    const res = await fetch(`${API_BASE_URL}/membership/${id}`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error('Gagal simpan data');
+    return res.json();
+  },
+  async deleteMembershipLevel(id: string) {
+    const res = await fetch(`${API_BASE_URL}/membership/${id}`, { 
+      method: 'DELETE',
+      headers: getHeaders()
+    });
+    if (!res.ok) throw new Error('Gagal hapus data');
+    return res.json();
   },
 
   // Employees

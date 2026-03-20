@@ -96,10 +96,8 @@ export const AdminDashboard = () => {
     const service = services.find(s => s.id === id);
     if (!service) return;
     try {
-      // In a real app, we'd have a putService method. For now, let's assume create handles upsert or add it to api.ts
-      // Actually, let's just use the current services state for toggle UI and assume backend handles it.
-      // Better: Update api.ts to include updateService.
-      setServices(services.map(s => s.id === id ? { ...s, is_active: !s.is_active } : s));
+      await api.updateService(id, { is_active: !service.is_active });
+      fetchData();
     } catch (error) {
       console.error('Failed to toggle service:', error);
     }
@@ -107,20 +105,33 @@ export const AdminDashboard = () => {
 
   const deleteService = async (id: string) => {
     if (window.confirm('Hapus layanan ini?')) {
-      // Assuming delete endpoint exists
-      setServices(services.filter(s => s.id !== id));
+      try {
+        await api.deleteService(id);
+        fetchData();
+      } catch (error) {
+        alert('Gagal menghapus layanan');
+      }
     }
   };
 
   const deleteLevel = async (id: string) => {
     if (window.confirm('Hapus level member ini?')) {
-      setLevels(levels.filter(l => l.id !== id));
+      try {
+        await api.deleteMembershipLevel(id);
+        fetchData();
+      } catch (error) {
+        alert('Gagal menghapus level');
+      }
     }
   };
 
   const handleSaveService = async (data: Partial<Service>) => {
     try {
-      await api.createService(data);
+      if (editingService) {
+        await api.updateService(editingService.id, data);
+      } else {
+        await api.createService(data);
+      }
       fetchData();
       setIsServiceModalOpen(false);
       alert('Perubahan berhasil disimpan!');
@@ -130,12 +141,17 @@ export const AdminDashboard = () => {
     }
   };
 
-  const handleSaveLevel = async (_data: Partial<CustomerType>) => {
+  const handleSaveLevel = async (data: Partial<CustomerType>) => {
     try {
-      // await api.createLevel(data); // Add if needed
+      if (editingLevel) {
+        await api.updateMembershipLevel(editingLevel.id, data);
+      } else {
+        await api.createMembershipLevel(data);
+      }
       fetchData();
       setIsLevelModalOpen(false);
       setEditingLevel(null);
+      alert('Perubahan berhasil disimpan!');
     } catch (error) {
       alert('Gagal menyimpan level');
     }
