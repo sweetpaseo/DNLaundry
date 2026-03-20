@@ -81,7 +81,7 @@ export const OrderInput = () => {
         created_at: new Date().toISOString()
       };
       await api.createTransaction(orderData);
-      alert(`Order Berhasil Dibuat!\nPelanggan: ${customerName}\nPetugas: ${emp.name}\nLayanan: ${srv.name}\nTotal: Rp ${total.toLocaleString()}`);
+      alert('Perubahan berhasil disimpan!');
       
       // Reset form
       setCustomerName('');

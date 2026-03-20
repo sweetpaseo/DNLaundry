@@ -46,6 +46,7 @@ export const CustomerCRM = () => {
       fetchCustomers();
       setIsModalOpen(false);
       setEditingCustomer(null);
+      alert('Perubahan berhasil disimpan!');
     } catch (error) {
       alert('Gagal menyimpan data');
     }
