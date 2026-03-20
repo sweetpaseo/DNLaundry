@@ -54,23 +54,21 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
       >
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <div style={{ 
-            width: 160, 
-            height: 160, 
+            width: 180, 
+            height: 180, 
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'center', 
-            margin: '0 auto 1.5rem',
+            margin: '0 auto 2rem',
             color: 'white',
             overflow: 'hidden',
           }}>
             {logoUrl ? (
               <img src={logoUrl} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
             ) : (
-              <Lock size={40} />
+              <Lock size={48} />
             )}
           </div>
-          <h2 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '0.5rem' }}>Selamat Datang</h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Di {businessName || 'Antigravity Laundry'}</p>
         </div>
 
         {error && (
