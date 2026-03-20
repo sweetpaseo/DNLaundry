@@ -54,22 +54,23 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
       >
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <div style={{ 
-            width: 80, 
-            height: 80, 
-            borderRadius: '20px', 
-            background: logoUrl ? 'transparent' : 'var(--primary-gradient)', 
+            width: 96, 
+            height: 96, 
+            borderRadius: '24px', 
+            background: logoUrl ? 'rgba(255,255,255,0.05)' : 'var(--primary-gradient)', 
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'center', 
             margin: '0 auto 1.5rem',
             color: 'white',
-            boxShadow: logoUrl ? 'none' : '0 10px 15px -3px rgba(255, 0, 132, 0.3)',
-            overflow: 'hidden'
+            boxShadow: logoUrl ? '0 20px 25px -5px rgba(0, 0, 0, 0.3)' : '0 10px 15px -3px rgba(255, 0, 132, 0.3)',
+            overflow: 'hidden',
+            border: logoUrl ? '1px solid var(--glass-border)' : 'none'
           }}>
             {logoUrl ? (
-              <img src={logoUrl} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+              <img src={logoUrl} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '10px' }} />
             ) : (
-              <Lock size={32} />
+              <Lock size={40} />
             )}
           </div>
           <h2 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '0.5rem' }}>Selamat Datang</h2>

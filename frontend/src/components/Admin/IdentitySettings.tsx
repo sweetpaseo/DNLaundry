@@ -75,13 +75,35 @@ export const IdentitySettings = () => {
       </div>
 
       <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-        {/* Logo Upload Section */}
-        <div style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '2rem', background: 'rgba(255,255,255,0.03)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
-          <div style={{ position: 'relative', width: '100px', height: '100px', borderRadius: '16px', background: 'rgba(255,255,255,0.05)', border: '2px dashed var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+        {/* Logo Upload Section - Centered and Above */}
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          gap: '1rem', 
+          background: 'rgba(255,255,255,0.03)', 
+          padding: '2rem', 
+          borderRadius: '16px', 
+          border: '1px solid var(--glass-border)',
+          marginBottom: '0.5rem'
+        }}>
+          <div style={{ 
+            position: 'relative', 
+            width: '120px', 
+            height: '120px', 
+            borderRadius: '24px', 
+            background: 'rgba(255,255,255,0.05)', 
+            border: '2px dashed var(--glass-border)', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            overflow: 'hidden',
+            boxShadow: settings.logo_url ? '0 10px 25px rgba(0,0,0,0.2)' : 'none'
+          }}>
             {settings.logo_url ? (
               <img src={settings.logo_url} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
             ) : (
-              <Store size={40} style={{ opacity: 0.3 }} />
+              <Store size={48} style={{ opacity: 0.2 }} />
             )}
             <input 
               type="file" 
@@ -91,17 +113,26 @@ export const IdentitySettings = () => {
               style={{ display: 'none' }} 
             />
           </div>
-          <div>
-            <h5 style={{ marginBottom: '0.5rem', fontWeight: 600 }}>Logo Laundry</h5>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>Saran: Gambar PNG/JPG kotak (1:1) max 2MB.</p>
+          <div style={{ textAlign: 'center' }}>
+            <h5 style={{ marginBottom: '0.25rem', fontWeight: 700, fontSize: '1.1rem' }}>Logo Laundry</h5>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>Akan tampil di Halaman Login & Nota</p>
             <button 
               type="button" 
               className="btn-secondary" 
-              style={{ fontSize: '0.8rem', padding: '0.5rem 1rem', background: 'rgba(255,255,255,0.1)', border: '1px solid var(--glass-border)', color: 'white', borderRadius: '6px', cursor: 'pointer' }}
+              style={{ 
+                fontSize: '0.85rem', 
+                padding: '0.6rem 1.5rem', 
+                background: 'var(--primary-gradient)', 
+                border: 'none', 
+                color: 'white', 
+                borderRadius: '8px', 
+                cursor: 'pointer',
+                fontWeight: 600
+              }}
               onClick={() => fileInputRef.current?.click()}
               disabled={saving}
             >
-              {settings.logo_url ? 'Ganti Logo' : 'Unggah Logo'}
+              {settings.logo_url ? 'Ganti Logo' : 'Unggah Logo Baru'}
             </button>
           </div>
         </div>
