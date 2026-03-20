@@ -7,6 +7,7 @@ type Bindings = {
   SUPABASE_URL: string
   SUPABASE_ANON_KEY: string
   API_SECRET_KEY: string
+  VITE_API_SECRET_KEY: string
 }
 
 const app = new Hono<{ Bindings: Bindings }>()
