@@ -56,19 +56,15 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
           <div style={{ 
             width: 160, 
             height: 160, 
-            borderRadius: '32px', 
-            background: logoUrl ? 'rgba(255,255,255,0.05)' : 'var(--primary-gradient)', 
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'center', 
             margin: '0 auto 1.5rem',
             color: 'white',
-            boxShadow: logoUrl ? '0 20px 25px -5px rgba(0, 0, 0, 0.3)' : '0 10px 15px -3px rgba(255, 0, 132, 0.3)',
             overflow: 'hidden',
-            border: logoUrl ? '1px solid var(--glass-border)' : 'none'
           }}>
             {logoUrl ? (
-              <img src={logoUrl} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '15px' }} />
+              <img src={logoUrl} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
             ) : (
               <Lock size={40} />
             )}
