@@ -129,9 +129,38 @@ export const ReceiptModal = ({ isOpen, onClose, transaction, settings }: Receipt
       <style>
         {`
           @media print {
-            body * { visibility: hidden; }
-            #receipt-content, #receipt-content * { visibility: visible; }
-            #receipt-content { position: absolute; left: 0; top: 0; width: 100%; }
+            @page {
+              margin: 0;
+              size: auto;
+            }
+            html, body {
+              margin: 0;
+              padding: 0;
+              background: white !important;
+              height: auto;
+            }
+            body * {
+              visibility: hidden;
+            }
+            #receipt-content, #receipt-content * {
+              visibility: visible !important;
+            }
+            #receipt-content {
+              position: absolute !important;
+              left: 0 !important;
+              top: 0 !important;
+              width: 80mm !important; /* Standard Thermal Ribbon Width */
+              margin: 0 !important;
+              padding: 4mm !important;
+              background: white !important;
+              box-shadow: none !important;
+            }
+            /* Hide modal artifacts */
+            .glass-card, .modal-overlay, .btn-primary, button {
+              border: none !important;
+              box-shadow: none !important;
+              background: transparent !important;
+            }
           }
         `}
       </style>
