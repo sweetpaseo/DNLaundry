@@ -168,13 +168,7 @@ export const TransactionList = () => {
                       ))}
                     </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div>
-                        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.1rem' }}>Total Bayar:</p>
-                        <h3 style={{ fontSize: '1.4rem', fontWeight: 900, color: 'white' }}>
-                          Rp {totalGroupPrice.toLocaleString('id-ID')}
-                        </h3>
-                      </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
                       <button style={{ 
                         background: allPaid ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 0, 132, 0.1)',
                         color: allPaid ? '#D3D3D3' : '#FF0084',
@@ -187,6 +181,12 @@ export const TransactionList = () => {
                       }}>
                         {allPaid ? 'LUNAS' : 'BELUM BAYAR'}
                       </button>
+                      <div style={{ textAlign: 'right' }}>
+                        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.1rem' }}>Total Bayar:</p>
+                        <h3 style={{ fontSize: '1.4rem', fontWeight: 900, color: 'white' }}>
+                          Rp {totalGroupPrice.toLocaleString('id-ID')}
+                        </h3>
+                      </div>
                     </div>
 
                     <div style={{ display: 'flex', gap: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid var(--glass-border)' }}>

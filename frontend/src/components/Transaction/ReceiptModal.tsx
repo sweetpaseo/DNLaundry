@@ -85,8 +85,13 @@ export const ReceiptModal = ({ isOpen, onClose, transaction, settings }: Receipt
                 </div>
               </div>
             ))}
-            <div style={{ textAlign: 'right', fontWeight: 700, fontSize: '1.1rem', marginTop: '1rem', borderTop: '2px solid #000', paddingTop: '0.5rem' }}>
-              TOTAL: Rp {totalPrice.toLocaleString()}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem', borderTop: '2px solid #000', paddingTop: '0.5rem' }}>
+              <span style={{ fontSize: '0.85rem', fontWeight: 800, border: '1px solid #000', padding: '2px 8px' }}>
+                {items.every(item => item.is_paid) ? 'LUNAS' : 'BELUM BAYAR'}
+              </span>
+              <div style={{ textAlign: 'right', fontWeight: 700, fontSize: '1.1rem' }}>
+                TOTAL: Rp {totalPrice.toLocaleString()}
+              </div>
             </div>
           </div>
 
