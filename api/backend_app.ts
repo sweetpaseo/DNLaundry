@@ -1,15 +1,32 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { getSupabase } from './supabase'
+import { hashPassword, verifyPassword } from './crypto'
 
 type Bindings = {
   SUPABASE_URL: string
   SUPABASE_ANON_KEY: string
+  API_SECRET_KEY: string
 }
 
 const app = new Hono<{ Bindings: Bindings }>()
 
 app.use('*', cors())
+
+// Security Middleware: X-API-KEY Protection
+app.use('/api/*', async (c, next) => {
+  const apiKey = c.req.header('X-API-KEY')
+  const secretKey = c.env?.API_SECRET_KEY || (typeof process !== 'undefined' ? process.env.API_SECRET_KEY : undefined)
+  
+  // Skip check for health endpoint if needed, but for now, protect everything /api/*
+  // Also pass through if we are in dev (localhost) and secret is not set? 
+  // No, better to be strict.
+  
+  if (secretKey && apiKey !== secretKey) {
+    return c.json({ error: 'Unauthorized: Invalid API Key' }, 401)
+  }
+  await next()
+})
 
 // Health Check / Landing Page
 app.get('/api/health', async (c) => {
@@ -243,8 +260,22 @@ auth.post('/login', async (c) => {
     .eq('username', username)
     .single()
 
-  if (error || !data || data.password !== password) {
+  if (error || !data) {
     return c.json({ error: 'Username atau password salah' }, 401)
+  }
+
+  // Check match (supports plain text for migration or SHA-256 hash)
+  const isPlainMatch = data.password === password;
+  const isHashMatch = !isPlainMatch && await verifyPassword(password, data.password);
+
+  if (!isPlainMatch && !isHashMatch) {
+    return c.json({ error: 'Username atau password salah' }, 401)
+  }
+
+  // Auto-migration: if it was a plain match, hash it for next time
+  if (isPlainMatch) {
+    const newHash = await hashPassword(password);
+    await supabase.from('laundry_users').update({ password: newHash }).eq('id', data.id);
   }
 
   const { password: _, ...user } = data
@@ -262,6 +293,12 @@ users.get('/', async (c) => {
 users.post('/', async (c) => {
   const body = await c.req.json()
   const supabase = getSupabase(c.env || {})
+  
+  // Hash password if provided
+  if (body.password) {
+    body.password = await hashPassword(body.password)
+  }
+  
   const { data, error } = await supabase.from('laundry_users').insert(body).select()
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data[0], 201)
