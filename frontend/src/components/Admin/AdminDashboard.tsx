@@ -250,7 +250,14 @@ export const AdminDashboard = () => {
       </div>
 
       {/* Tab Navigation (Moved Below Cards) */}
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem' }}>
+      <div style={{ 
+        display: 'flex', 
+        gap: '0.5rem 1rem', 
+        marginBottom: '2rem', 
+        borderBottom: '1px solid var(--glass-border)', 
+        paddingBottom: '0.5rem',
+        flexWrap: 'wrap'
+      }}>
         <button
           onClick={() => setActiveTab('management')}
           style={{
@@ -291,7 +298,7 @@ export const AdminDashboard = () => {
           onClick={() => setActiveTab('identity')}
           style={{
             display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 0', background: 'transparent', border: 'none', borderBottom: activeTab === 'identity' ? '2px solid var(--primary)' : '2px solid transparent', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600,
-            color: activeTab === 'identity' ? 'white' : 'var(--text-muted)', transition: 'all 0.2s'
+            color: activeTab === 'identity' ? 'white' : 'var(--text-muted)', transition: 'all 0.2s', flexShrink: 0
           }}
         >
           <Store size={16} color={activeTab === 'identity' ? 'var(--primary)' : 'var(--text-muted)'} /> Identitas Usaha
