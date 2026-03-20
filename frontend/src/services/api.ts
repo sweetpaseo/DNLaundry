@@ -5,7 +5,9 @@ const API_SECRET_KEY = import.meta.env.VITE_API_SECRET_KEY || '';
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || '';
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabase = (SUPABASE_URL && SUPABASE_ANON_KEY) 
+  ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) 
+  : null;
 
 const getHeaders = () => ({
   'Content-Type': 'application/json',
@@ -302,16 +304,21 @@ export const api = {
   },
 
   async uploadLogo(file: File) {
+    const client = supabase;
+    if (!client) {
+      throw new Error('Supabase Storage belum dikonfigurasi di Vercel (VITE_SUPABASE_URL/ANON_KEY missing)');
+    }
+    
     const fileExt = file.name.split('.').pop();
     const fileName = `logo-${Date.now()}.${fileExt}`;
     
-    const { error } = await supabase.storage
+    const { error } = await client.storage
       .from('laundry-assets')
       .upload(fileName, file);
 
     if (error) throw error;
 
-    const { data: { publicUrl } } = supabase.storage
+    const { data: { publicUrl } } = client.storage
       .from('laundry-assets')
       .getPublicUrl(fileName);
 
