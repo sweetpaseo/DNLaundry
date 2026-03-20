@@ -34,6 +34,23 @@ export const api = {
     if (!res.ok) throw new Error('Gagal simpan data');
     return res.json();
   },
+  async updateTransaction(id: string, data: any) {
+    const res = await fetch(`${API_BASE_URL}/transactions/${id}`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error('Gagal simpan data');
+    return res.json();
+  },
+  async deleteTransaction(id: string) {
+    const res = await fetch(`${API_BASE_URL}/transactions/${id}`, {
+      method: 'DELETE',
+      headers: getHeaders()
+    });
+    if (!res.ok) throw new Error('Gagal hapus data');
+    return res.json();
+  },
 
   // Customers
   async getCustomers() {
@@ -346,14 +363,14 @@ export const api = {
     }
   },
 
-  async uploadLogo(file: File) {
+  async uploadAsset(file: File, prefix: string = 'asset') {
     const client = supabase;
     if (!client) {
-      throw new Error('Supabase Storage belum dikonfigurasi di Vercel (VITE_SUPABASE_URL/ANON_KEY missing)');
+      throw new Error('Supabase Storage belum dikonfigurasi (VITE_SUPABASE_URL/ANON_KEY missing)');
     }
     
     const fileExt = file.name.split('.').pop();
-    const fileName = `logo-${Date.now()}.${fileExt}`;
+    const fileName = `${prefix}-${Date.now()}.${fileExt}`;
     
     const { error } = await client.storage
       .from('laundry-assets')
@@ -366,5 +383,13 @@ export const api = {
       .getPublicUrl(fileName);
 
     return publicUrl;
+  },
+
+  async uploadLogo(file: File) {
+    return this.uploadAsset(file, 'logo');
+  },
+
+  async uploadQRIS(file: File) {
+    return this.uploadAsset(file, 'qris');
   }
 };

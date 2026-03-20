@@ -49,12 +49,21 @@ transactions.get('/', async (c) => {
   return c.json(data)
 })
 
-transactions.post('/', async (c) => {
-  const supabase = getSupabase(c.env)
+transactions.put('/:id', async (c) => {
+  const id = c.req.param('id')
   const body = await c.req.json()
-  const { data, error } = await supabase.from('transactions').insert(body).select()
+  const supabase = getSupabase(c.env)
+  const { data, error } = await supabase.from('transactions').update(body).eq('id', id).select()
   if (error) return c.json({ error: error.message }, 500)
-  return c.json(data[0], 201)
+  return c.json(data[0])
+})
+
+transactions.delete('/:id', async (c) => {
+  const id = c.req.param('id')
+  const supabase = getSupabase(c.env)
+  const { error } = await supabase.from('transactions').delete().eq('id', id)
+  if (error) return c.json({ error: error.message }, 500)
+  return c.json({ success: true })
 })
 
 // Customers API

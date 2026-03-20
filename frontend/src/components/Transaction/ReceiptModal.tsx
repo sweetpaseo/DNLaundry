@@ -78,6 +78,25 @@ export const ReceiptModal = ({ isOpen, onClose, transaction, settings }: Receipt
             </div>
           </div>
 
+          {(settings?.bank_name || settings?.qris_url) && (
+            <div style={{ borderTop: '1px dashed #ccc', padding: '1rem 0', marginBottom: '1rem' }}>
+              <div style={{ fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.5rem', textAlign: 'center' }}>INFORMASI PEMBAYARAN</div>
+              {settings?.bank_name && (
+                <div style={{ fontSize: '0.75rem', textAlign: 'center', marginBottom: '0.5rem' }}>
+                  {settings.bank_name}<br />
+                  No: {settings.bank_account_number}<br />
+                  A.n: {settings.bank_account_name}
+                </div>
+              )}
+              {settings?.qris_url && (
+                <div style={{ textAlign: 'center' }}>
+                  <img src={settings.qris_url} alt="QRIS" style={{ maxWidth: '120px', maxHeight: '120px' }} />
+                  <div style={{ fontSize: '0.65rem' }}>Scan QRIS untuk pembayaran</div>
+                </div>
+              )}
+            </div>
+          )}
+
           <div style={{ textAlign: 'center', fontSize: '0.75rem', color: '#666', borderTop: '1px dashed #ccc', paddingTop: '1rem' }}>
             {settings?.footer_text || 'Terima kasih telah mempercayakan laundry Anda kepada kami!'}
           </div>

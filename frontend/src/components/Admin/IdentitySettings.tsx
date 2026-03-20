@@ -1,5 +1,5 @@
 import React from 'react';
-import { Store, Phone, MapPin, Save, Instagram, MessageSquare } from 'lucide-react';
+import { Store, Phone, MapPin, Save, Instagram, MessageSquare, Wallet, Users, DollarSign, Plus } from 'lucide-react';
 import { api } from '../../services/api';
 
 export const IdentitySettings = () => {
@@ -12,7 +12,11 @@ export const IdentitySettings = () => {
     address: '',
     footer_text: '',
     instagram: '',
-    logo_url: ''
+    logo_url: '',
+    bank_name: '',
+    bank_account_name: '',
+    bank_account_number: '',
+    qris_url: ''
   });
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -230,10 +234,105 @@ export const IdentitySettings = () => {
                 style={{ width: '100%' }}
               />
             </div>
+
+            <div style={{ marginTop: '0.5rem', padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+              <div style={{ marginBottom: '1rem', fontWeight: 700, fontSize: '0.9rem', color: 'var(--primary)' }}>Informasi Rekening Bank</div>
+              
+              <div className="form-group" style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontSize: '0.85rem' }}>
+                  <Wallet size={14} /> Nama Bank / Wallet
+                </label>
+                <input
+                  type="text"
+                  value={settings.bank_name}
+                  onChange={e => setSettings({ ...settings, bank_name: e.target.value })}
+                  placeholder="BCA, Mandiri, GoPay..."
+                  style={{ width: '100%' }}
+                />
+              </div>
+
+              <div className="form-group" style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontSize: '0.85rem' }}>
+                  <Users size={14} /> Nama Pemilik
+                </label>
+                <input
+                  type="text"
+                  value={settings.bank_account_name}
+                  onChange={e => setSettings({ ...settings, bank_account_name: e.target.value })}
+                  placeholder="Nama pemilik rekening"
+                  style={{ width: '100%' }}
+                />
+              </div>
+
+              <div className="form-group">
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontSize: '0.85rem' }}>
+                  <DollarSign size={14} /> Nomor Rekening
+                </label>
+                <input
+                  type="text"
+                  value={settings.bank_account_number}
+                  onChange={e => setSettings({ ...settings, bank_account_number: e.target.value })}
+                  placeholder="Nomor rekening / HP"
+                  style={{ width: '100%' }}
+                />
+              </div>
+            </div>
           </div>
 
           {/* Right Column */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            <div className="form-group">
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 600 }}>
+                <Store size={14} /> QRIS Pembayaran
+              </label>
+              <div 
+                style={{ 
+                  padding: '1.5rem', 
+                  background: 'rgba(255,255,255,0.03)', 
+                  border: '2px dashed var(--glass-border)', 
+                  borderRadius: '16px', 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  alignItems: 'center', 
+                  gap: '0.75rem',
+                  cursor: 'pointer',
+                  minHeight: '200px',
+                  justifyContent: 'center'
+                }}
+                onClick={() => {
+                  const input = document.createElement('input');
+                  input.type = 'file';
+                  input.accept = 'image/*';
+                  input.onchange = async (e: any) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    setSaving(true);
+                    try {
+                      const url = await api.uploadQRIS(file);
+                      setSettings({ ...settings, qris_url: url });
+                    } catch (err: any) {
+                      alert('Gagal unggah QRIS: ' + err.message);
+                    } finally {
+                      setSaving(false);
+                    }
+                  };
+                  input.click();
+                }}
+              >
+                {settings.qris_url ? (
+                  <div style={{ position: 'relative' }}>
+                    <img src={settings.qris_url} alt="QRIS" style={{ maxWidth: '100%', maxHeight: '180px', borderRadius: '8px' }} />
+                    <div style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: 'var(--primary)', fontWeight: 600, textAlign: 'center' }}>Klik untuk ganti QRIS</div>
+                  </div>
+                ) : (
+                  <div style={{ textAlign: 'center', opacity: 0.5 }}>
+                    <Plus size={32} style={{ marginBottom: '0.5rem' }} />
+                    <div style={{ fontSize: '0.85rem' }}>Klik untuk upload gambar QRIS</div>
+                  </div>
+                )}
+              </div>
+            </div>
+
             <div className="form-group">
               <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 600 }}>
                 <MapPin size={14} /> Alamat Lengkap
