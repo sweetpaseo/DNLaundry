@@ -29,7 +29,8 @@ export const AddCustomerModal = ({ isOpen, onClose, onSave, initialData, memberT
         member_type_id: initialData.member_type_id || ''
       });
     } else {
-      setFormData({ name: '', phone: '', address: '', member_type_id: memberTypes[0]?.id || '' });
+      const defaultType = memberTypes.find(m => m.name.toLowerCase().includes('normal')) || memberTypes[0];
+      setFormData({ name: '', phone: '', address: '', member_type_id: defaultType?.id || '' });
     }
   }, [initialData, isOpen, memberTypes]);
 
