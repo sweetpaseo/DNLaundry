@@ -83,14 +83,37 @@ export const TransactionList = () => {
         <div className="responsive-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 350px), 1fr))' }}>
           {filteredData.map(t => {
             const statusStyle = getStatusStyle(t.status);
+            const isOverdue = t.status !== 'Siap Ambil' && t.due_date && new Date() > new Date(t.due_date);
+            
             return (
-              <div key={t.id} className="glass-card animate-fade-in" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              <div key={t.id} className="glass-card animate-fade-in" style={{ 
+                padding: '1.5rem', 
+                display: 'flex', 
+                flexDirection: 'column', 
+                gap: '1.25rem',
+                border: isOverdue ? '2px solid #ef4444' : '1px solid var(--glass-border)',
+                boxShadow: isOverdue ? '0 0 15px rgba(239, 68, 68, 0.2)' : 'none'
+              }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <div>
                     <h4 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '0.2rem' }}>{t.customer_name}</h4>
                     <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                       <Clock size={14} /> {new Date(t.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}
                     </div>
+                    {t.due_date && (
+                      <div style={{ 
+                        fontSize: '0.75rem', 
+                        marginTop: '0.4rem',
+                        fontWeight: 700,
+                        color: isOverdue ? '#ef4444' : 'var(--text-muted)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.4rem'
+                      }}>
+                        <Clock size={12} /> Deadline: {new Date(t.due_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
+                        {isOverdue && <span style={{ background: '#ef4444', color: 'white', padding: '1px 6px', borderRadius: '4px', fontSize: '0.65rem' }}>TERLAMBAT</span>}
+                      </div>
+                    )}
                   </div>
                   <span style={{ 
                     padding: '0.4rem 0.75rem', 

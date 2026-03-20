@@ -61,6 +61,11 @@ export const ReceiptModal = ({ isOpen, onClose, transaction, settings }: Receipt
               <span>{new Date(transaction.created_at).toLocaleDateString()}</span>
             </div>
             <div style={{ fontSize: '0.9rem', fontWeight: 700, marginTop: '0.5rem' }}>Pelanggan: {transaction.customer_name}</div>
+            {transaction.due_date && (
+              <div style={{ fontSize: '0.8rem', marginTop: '0.25rem', color: '#444' }}>
+                Estimasi Selesai: {new Date(transaction.due_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+              </div>
+            )}
           </div>
 
           <div style={{ marginBottom: '1.5rem' }}>

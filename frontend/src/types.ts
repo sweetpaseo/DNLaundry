@@ -10,6 +10,7 @@ export interface Service {
   is_active: boolean;
   commission_type?: 'percentage' | 'fixed';
   commission_value?: number;
+  processing_days?: number;
 }
 
 export type TransactionStatus = 'Baru' | 'Proses' | 'Siap Ambil';
@@ -73,5 +74,6 @@ export interface Transaction {
   discount_percent: number;
   discount_amount: number;
   final_price: number;
+  due_date?: string;
   created_at: string;
 }

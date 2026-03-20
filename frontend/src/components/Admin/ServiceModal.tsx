@@ -18,7 +18,8 @@ export const ServiceModal = ({ isOpen, onClose, onSave, initialData }: ServiceMo
     price_express: 0,
     price_special: 0,
     unit: 'kg',
-    is_active: true
+    is_active: true,
+    processing_days: 0
   });
 
   useEffect(() => {
@@ -32,7 +33,8 @@ export const ServiceModal = ({ isOpen, onClose, onSave, initialData }: ServiceMo
         price_express: 0, 
         price_special: 0, 
         unit: 'kg', 
-        is_active: true 
+        is_active: true,
+        processing_days: 0
       });
     }
   }, [initialData, isOpen]);
@@ -152,6 +154,20 @@ export const ServiceModal = ({ isOpen, onClose, onSave, initialData }: ServiceMo
                 placeholder="0"
               />
             </div>
+          </div>
+
+          <div className="form-group">
+            <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.875rem' }}>Waktu Tambahan Produksi (Hari Selesai)</label>
+            <input 
+              type="number" 
+              value={formData.processing_days || 0}
+              onChange={(e) => setFormData({ ...formData, processing_days: Number(e.target.value) })}
+              style={{ width: '100%' }}
+              placeholder="Contoh: 3 untuk pengerjaan 3 hari"
+            />
+            <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+              *Digunakan untuk menghitung otomatis tanggal estimasi selesai (Deadline).
+            </p>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '0.5rem' }}>

@@ -43,6 +43,7 @@ export const OrderInput = () => {
   const [amount, setAmount] = useState<number>(0);
   const [notes, setNotes] = useState('');
   const [total, setTotal] = useState<number>(0);
+  const [dueDate, setDueDate] = useState<string>('');
 
   useEffect(() => {
     const srv = services.find(s => s.id === selectedServiceId);
@@ -54,6 +55,12 @@ export const OrderInput = () => {
       
       const subtotal = price * amount;
       setTotal(Math.max(0, subtotal));
+
+      // SLA Calculation
+      const days = srv.processing_days || 0;
+      const date = new Date();
+      date.setDate(date.getDate() + days);
+      setDueDate(date.toISOString());
     }
   }, [selectedServiceId, selectedTier, amount, services]);
 
@@ -101,6 +108,7 @@ export const OrderInput = () => {
         final_price: total,
         status: 'Baru',
         is_paid: false,
+        due_date: dueDate,
         created_at: new Date().toISOString()
       };
       await api.createTransaction(orderData);
@@ -272,6 +280,9 @@ export const OrderInput = () => {
                 Harga Tier: {selectedTier}
               </p>
             )}
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
+              Estimasi Selesai: <span style={{ color: 'white', fontWeight: 600 }}>{new Date(dueDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+            </p>
           </div>
           
           <button type="submit" className="btn-primary" style={{ 
