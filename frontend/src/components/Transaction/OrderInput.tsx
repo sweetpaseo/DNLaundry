@@ -4,6 +4,17 @@ import type { Service, Employee, Customer, MemberType } from '../../types';
 import { AddCustomerModal } from '../CRM/AddCustomerModal';
 import { api } from '../../services/api';
 
+interface OrderItem {
+  id: string; // Temporary local ID for list management
+  service_id: string;
+  service_name: string;
+  tier: string;
+  amount: number;
+  price: number;
+  subtotal: number;
+  due_date: string;
+}
+
 export const OrderInput = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [customerName, setCustomerName] = useState('');
@@ -14,6 +25,12 @@ export const OrderInput = () => {
   const [selectedServiceId, setSelectedServiceId] = useState<string>('');
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>('');
   const [customerType, setCustomerType] = useState<'normal' | 'member' | 'reseller'>('normal');
+  
+  const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
+  const [selectedTier, setSelectedTier] = useState<'normal' | 'member' | 'express' | 'special'>('normal');
+  const [amount, setAmount] = useState<number>(0);
+  const [notes, setNotes] = useState('');
+  const [dueDate, setDueDate] = useState<string>('');
 
   const fetchData = async () => {
     try {
@@ -40,23 +57,9 @@ export const OrderInput = () => {
     fetchData();
   }, []);
 
-  const [selectedTier, setSelectedTier] = useState<'normal' | 'member' | 'express' | 'special'>('normal');
-  const [amount, setAmount] = useState<number>(0);
-  const [notes, setNotes] = useState('');
-  const [total, setTotal] = useState<number>(0);
-  const [dueDate, setDueDate] = useState<string>('');
-
   useEffect(() => {
     const srv = services.find(s => s.id === selectedServiceId);
     if (srv) {
-      let price = srv.price_normal || 0;
-      if (selectedTier === 'member') price = srv.price_member || 0;
-      else if (selectedTier === 'express') price = srv.price_express || 0;
-      else if (selectedTier === 'special') price = srv.price_special || 0;
-      
-      const subtotal = price * amount;
-      setTotal(Math.max(0, subtotal));
-
       // SLA Calculation
       const days = srv.processing_days || 0;
       const date = new Date();
@@ -68,17 +71,11 @@ export const OrderInput = () => {
   const handleCustomerChange = (val: string) => {
     setCustomerName(val);
     const lowVal = val.toLowerCase();
-    
-    // Check if the name matches a known customer with a member type
-    const foundCustomer = customers.find(c => 
-      c.name.toLowerCase() === lowVal || 
-      c.phone === val
-    );
+    const foundCustomer = customers.find(c => c.name.toLowerCase() === lowVal || c.phone === val);
 
     if (foundCustomer && foundCustomer.member_type_id) {
       const mType = memberTypes.find(m => m.id === foundCustomer.member_type_id);
       const typeName = mType?.name.toLowerCase() || '';
-      
       if (typeName.includes('reseller')) {
         setCustomerType('reseller');
         setSelectedTier('special');
@@ -90,7 +87,6 @@ export const OrderInput = () => {
         setSelectedTier('normal');
       }
     } else {
-      // Legacy name detection as fallback
       if (lowVal.includes('reseller')) {
         setCustomerType('reseller');
         setSelectedTier('special');
@@ -104,36 +100,78 @@ export const OrderInput = () => {
     }
   };
 
+  const addItem = () => {
+    const srv = services.find(s => s.id === selectedServiceId);
+    if (!srv || amount <= 0) {
+      alert('Mohon pilih layanan dan masukkan jumlah');
+      return;
+    }
+
+    let price = srv.price_normal || 0;
+    if (selectedTier === 'member') price = srv.price_member || 0;
+    else if (selectedTier === 'express') price = srv.price_express || 0;
+    else if (selectedTier === 'special') price = srv.price_special || 0;
+
+    const newItem: OrderItem = {
+      id: Math.random().toString(36).substr(2, 9),
+      service_id: selectedServiceId,
+      service_name: srv.name,
+      tier: selectedTier,
+      amount,
+      price,
+      subtotal: price * amount,
+      due_date: dueDate
+    };
+
+    setOrderItems([...orderItems, newItem]);
+    setAmount(0);
+  };
+
+  const removeItem = (id: string) => {
+    setOrderItems(orderItems.filter(item => item.id !== id));
+  };
+
+  const grandTotal = orderItems.reduce((acc, item) => acc + item.subtotal, 0);
+  const maxDueDate = orderItems.length > 0 
+    ? new Date(Math.max(...orderItems.map(i => new Date(i.due_date).getTime()))).toISOString()
+    : dueDate;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const srv = services.find(s => s.id === selectedServiceId);
     const emp = employees.find(e => e.id === selectedEmployeeId);
     
-    if (!customerName || !srv || !emp) {
-      alert('Mohon lengkapi data order');
+    if (!customerName || orderItems.length === 0 || !emp) {
+      alert('Mohon lengkapi data order (Customer, Layanan, Petugas)');
       return;
     }
 
     try {
-      const orderData = {
-        customer_name: customerName,
-        service_id: selectedServiceId,
-        service_name: srv.name,
-        employee_id: selectedEmployeeId,
-        weight: amount,
-        total_price: total, // Simplified total
-        final_price: total,
-        status: 'Baru',
-        is_paid: false,
-        due_date: dueDate,
-        created_at: new Date().toISOString()
-      };
-      await api.createTransaction(orderData);
-      alert('Perubahan berhasil disimpan!');
+      const groupId = `ORD-${Date.now()}`;
+      const promises = orderItems.map(item => {
+        const orderData = {
+          customer_name: customerName,
+          service_id: item.service_id,
+          service_name: item.service_name,
+          employee_id: selectedEmployeeId,
+          weight: item.amount,
+          total_price: item.subtotal,
+          final_price: item.subtotal,
+          status: 'Baru',
+          is_paid: false,
+          due_date: item.due_date,
+          group_id: groupId,
+          notes: notes,
+          created_at: new Date().toISOString()
+        };
+        return api.createTransaction(orderData);
+      });
+
+      await Promise.all(promises);
+      alert('Semua pesanan berhasil disimpan!');
       
       // Reset form
       setCustomerName('');
-      setAmount(0);
+      setOrderItems([]);
       setNotes('');
     } catch (error) {
       alert('Gagal membuat order');
@@ -249,19 +287,55 @@ export const OrderInput = () => {
             <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>
               Jumlah ({services.find(s => s.id === selectedServiceId)?.unit})
             </label>
-            <input 
-              type="number" 
-              step="0.1"
-              value={amount} 
-              onChange={(e) => setAmount(Number(e.target.value))}
-              style={{ width: '100%', height: '3.5rem', fontSize: '1.2rem', fontWeight: 700, textAlign: 'center' }} 
-              placeholder="0.0"
-              required
-            />
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <input 
+                type="number" 
+                step="0.1"
+                value={amount} 
+                onChange={(e) => setAmount(Number(e.target.value))}
+                style={{ flex: 1, height: '3.5rem', fontSize: '1.2rem', fontWeight: 700, textAlign: 'center' }} 
+                placeholder="0.0"
+              />
+              <button 
+                type="button"
+                onClick={addItem}
+                className="btn-primary"
+                style={{ padding: '0 1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--accent-gradient)' }}
+              >
+                <Plus size={20} /> Tambah
+              </button>
+            </div>
           </div>
+
+          {/* List of Added Items */}
+          {orderItems.length > 0 && (
+            <div style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px dashed var(--glass-border)' }}>
+              <label style={{ display: 'block', marginBottom: '1rem', color: 'var(--text-muted)', fontSize: '0.875rem', fontWeight: 600 }}>Daftar Layanan Pesanan:</label>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                {orderItems.map(item => (
+                  <div key={item.id} style={{ padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                      <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>{item.service_name} <span style={{ color: 'var(--primary)', fontSize: '0.7rem', textTransform: 'uppercase' }}>({item.tier})</span></div>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{item.amount} {services.find(s => s.id === item.service_id)?.unit} x Rp {item.price.toLocaleString()}</div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                      <div style={{ fontWeight: 700, color: 'white' }}>Rp {item.subtotal.toLocaleString()}</div>
+                      <button 
+                        type="button"
+                        onClick={() => removeItem(item.id)}
+                        style={{ padding: '0.4rem', borderRadius: '8px', background: 'rgba(244, 63, 94, 0.1)', color: '#f43f5e', border: 'none', cursor: 'pointer' }}
+                      >
+                        <Plus size={14} style={{ transform: 'rotate(45deg)' }} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Step 3: Discount & Notes (Discount Hidden per user request) */}
+        {/* Step 3: Notes */}
         <div className="glass-card" style={{ padding: '1.5rem', borderLeft: '4px solid var(--primary)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
             <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255, 0, 132, 0.1)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>3</div>
@@ -295,20 +369,15 @@ export const OrderInput = () => {
           boxShadow: '0 10px 30px rgba(255, 0, 132, 0.2)'
         }}>
           <div>
-            <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Total Pembayaran:</p>
+            <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Total Pembayaran ({orderItems.length} Layanan):</p>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
               <span style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--primary)' }}>Rp</span>
               <h2 style={{ fontSize: '2.5rem', fontWeight: 900, color: 'white', letterSpacing: '-1px', lineHeight: 1 }}>
-                {total.toLocaleString('id-ID')}
+                {grandTotal.toLocaleString('id-ID')}
               </h2>
             </div>
-            {selectedTier !== 'normal' && (
-              <p style={{ fontSize: '0.85rem', color: 'var(--accent)', fontWeight: 600, marginTop: '0.5rem', textTransform: 'uppercase' }}>
-                Harga Tier: {selectedTier}
-              </p>
-            )}
             <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-              Estimasi Selesai: <span style={{ color: 'white', fontWeight: 600 }}>{new Date(dueDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+              Estimasi Selesai: <span style={{ color: 'white', fontWeight: 600 }}>{orderItems.length > 0 ? new Date(maxDueDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'}</span>
             </p>
           </div>
           
@@ -321,8 +390,10 @@ export const OrderInput = () => {
             alignItems: 'center', 
             justifyContent: 'center', 
             gap: '0.75rem',
-            boxShadow: '0 4px 15px rgba(255, 0, 132, 0.4)'
-          }}>
+            boxShadow: '0 4px 15px rgba(255, 0, 132, 0.4)',
+            opacity: orderItems.length > 0 ? 1 : 0.5,
+            cursor: orderItems.length > 0 ? 'pointer' : 'not-allowed'
+          }} disabled={orderItems.length === 0}>
             <Plus size={24} /> BUAT ORDER SEKARANG
           </button>
         </div>

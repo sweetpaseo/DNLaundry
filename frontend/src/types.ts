@@ -75,5 +75,6 @@ export interface Transaction {
   discount_amount: number;
   final_price: number;
   due_date?: string;
+  group_id?: string;
   created_at: string;
 }
