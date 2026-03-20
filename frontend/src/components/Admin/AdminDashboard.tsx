@@ -710,7 +710,7 @@ export const AdminDashboard = () => {
             )}
           </div>
         </div>
-      )}
+      ) : null}
 
       {/* Modals */}
       <ServiceModal
