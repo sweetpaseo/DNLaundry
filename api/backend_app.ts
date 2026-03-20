@@ -21,10 +21,7 @@ app.use('/api/*', async (c, next) => {
   const { API_SECRET_KEY, VITE_API_SECRET_KEY } = env(c)
   const secretKey = API_SECRET_KEY || VITE_API_SECRET_KEY || (typeof process !== 'undefined' ? (process.env.API_SECRET_KEY || process.env.VITE_API_SECRET_KEY) : undefined)
   
-  // Exclude health check from protection for easier debugging and status monitoring
-  if (c.req.path === '/api/health') {
-    return next()
-  }
+  // Security: protect all /api/ routes
 
   if (secretKey && apiKey !== secretKey) {
     return c.json({ error: 'Unauthorized: Invalid API Key' }, 401)
