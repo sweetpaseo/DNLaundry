@@ -164,10 +164,15 @@ export const TransactionList = () => {
                     </div>
 
                     <div style={{ padding: '0.75rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                      {group.map(item => (
-                        <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
-                          <span style={{ color: 'var(--text-muted)' }}>{item.service_name}</span>
-                          <span style={{ fontWeight: 600 }}>{item.weight} {item.unit || 'kg/pcs'}</span>
+                      {group.map((item, idx) => (
+                        <div key={item.id} style={{ display: 'flex', flexDirection: 'column', borderBottom: idx === group.length - 1 ? 'none' : '1px solid rgba(255,255,255,0.05)', paddingBottom: idx === group.length - 1 ? '0' : '0.5rem' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '0.15rem' }}>
+                            <span style={{ fontWeight: 600 }}>{item.service_name}</span>
+                            <span style={{ fontWeight: 700 }}>Rp {item.final_price.toLocaleString('id-ID')}</span>
+                          </div>
+                          <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'flex', justifyContent: 'space-between' }}>
+                            <span>{item.weight} {item.unit || 'kg'} x Rp {(item.final_price / item.weight).toLocaleString('id-ID')}</span>
+                          </div>
                         </div>
                       ))}
                     </div>

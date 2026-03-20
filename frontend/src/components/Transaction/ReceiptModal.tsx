@@ -75,12 +75,17 @@ export const ReceiptModal = ({ isOpen, onClose, transaction, settings }: Receipt
 
           <div style={{ marginBottom: '1.5rem' }}>
             {items.map(item => (
-              <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem', fontSize: '0.85rem' }}>
-                <span>{item.service_name}</span>
-                <span>{item.weight} {item.unit || 'kg'}</span>
+              <div key={item.id} style={{ marginBottom: '0.75rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 700 }}>
+                  <span>{item.service_name}</span>
+                  <span>Rp {item.final_price.toLocaleString()}</span>
+                </div>
+                <div style={{ fontSize: '0.75rem', color: '#666', marginTop: '0.1rem' }}>
+                  {item.weight} {item.unit || 'kg'} x Rp {(item.final_price / item.weight).toLocaleString()}
+                </div>
               </div>
             ))}
-            <div style={{ textAlign: 'right', fontWeight: 700, fontSize: '1.1rem', marginTop: '1rem', borderTop: '1px solid #eee', paddingTop: '0.5rem' }}>
+            <div style={{ textAlign: 'right', fontWeight: 700, fontSize: '1.1rem', marginTop: '1rem', borderTop: '2px solid #000', paddingTop: '0.5rem' }}>
               TOTAL: Rp {totalPrice.toLocaleString()}
             </div>
           </div>
