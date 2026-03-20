@@ -225,8 +225,8 @@ export const OrderInput = () => {
       setOrderItems([]);
       setNotes('');
       setDiscountValue(0);
-    } catch (error) {
-      alert('Gagal membuat order');
+    } catch (error: any) {
+      alert('Gagal membuat order: ' + (error.message || 'Error tidak diketahui'));
     }
   };
 
