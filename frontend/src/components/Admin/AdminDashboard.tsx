@@ -37,7 +37,7 @@ export const AdminDashboard = () => {
   const [transactions, setTransactions] = React.useState<Transaction[]>([]);
   const [expenses, setExpenses] = React.useState<Expense[]>([]);
 
-  const [activeTab, setActiveTab] = React.useState<'management' | 'payroll' | 'expenses' | 'users' | 'identity'>('management');
+  const [activeTab, setActiveTab] = React.useState<'rekap' | 'management' | 'payroll' | 'expenses' | 'users' | 'identity'>('rekap');
 
   // Modal States
   const [isServiceModalOpen, setIsServiceModalOpen] = React.useState(false);
@@ -229,25 +229,6 @@ export const AdminDashboard = () => {
         <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Manajemen bisnis & payroll karyawan</p>
       </div>
 
-      {/* Stats Overview */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.25rem', marginBottom: '2rem' }}>
-        {[
-          { label: 'Omzet Hari Ini', value: 'Rp 450.000', icon: <DollarSign size={20} />, color: '#FF0084' },
-          { label: 'Order Masuk', value: '12', icon: <Package size={20} />, color: '#D3D3D3' },
-          { label: 'Pelanggan Baru', value: '3', icon: <TrendingUp size={20} />, color: '#FF0084' },
-          { label: 'Pengeluaran Bln Ini', value: `Rp ${expenses.reduce((acc, ex) => acc + ex.amount, 0).toLocaleString()}`, icon: <Wallet size={20} />, color: '#D3D3D3' },
-        ].map(stat => (
-          <div key={stat.label} className="glass-card" style={{ padding: '1.25rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
-            <div style={{ padding: '0.75rem', borderRadius: '10px', background: `${stat.color}22`, color: stat.color }}>
-              {stat.icon}
-            </div>
-            <div>
-              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{stat.label}</p>
-              <h4 style={{ fontSize: '1.1rem', fontWeight: 700 }}>{stat.value}</h4>
-            </div>
-          </div>
-        ))}
-      </div>
 
       {/* Tab Navigation (Moved Below Cards) */}
       <div style={{ 
@@ -258,6 +239,15 @@ export const AdminDashboard = () => {
         paddingBottom: '0.5rem',
         flexWrap: 'wrap'
       }}>
+        <button
+          onClick={() => setActiveTab('rekap')}
+          style={{
+            display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 0', background: 'transparent', border: 'none', borderBottom: activeTab === 'rekap' ? '2px solid var(--primary)' : '2px solid transparent', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600,
+            color: activeTab === 'rekap' ? 'white' : 'var(--text-muted)', transition: 'all 0.2s', flexShrink: 0
+          }}
+        >
+          <TrendingUp size={16} color={activeTab === 'rekap' ? 'var(--primary)' : 'var(--text-muted)'} /> Rekap
+        </button>
         <button
           onClick={() => setActiveTab('management')}
           style={{
@@ -304,6 +294,27 @@ export const AdminDashboard = () => {
           <Store size={16} color={activeTab === 'identity' ? 'var(--primary)' : 'var(--text-muted)'} /> Identitas Usaha
         </button>
       </div>
+ 
+      {activeTab === 'rekap' && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.25rem', marginBottom: '2rem' }}>
+          {[
+            { label: 'Omzet Hari Ini', value: 'Rp 450.000', icon: <DollarSign size={20} />, color: '#FF0084' },
+            { label: 'Order Masuk', value: '12', icon: <Package size={20} />, color: '#D3D3D3' },
+            { label: 'Pelanggan Baru', value: '3', icon: <TrendingUp size={20} />, color: '#FF0084' },
+            { label: 'Pengeluaran Bln Ini', value: `Rp ${expenses.reduce((acc, ex) => acc + ex.amount, 0).toLocaleString()}`, icon: <Wallet size={20} />, color: '#D3D3D3' },
+          ].map(stat => (
+            <div key={stat.label} className="glass-card" style={{ padding: '1.25rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+              <div style={{ padding: '0.75rem', borderRadius: '10px', background: `${stat.color}22`, color: stat.color }}>
+                {stat.icon}
+              </div>
+              <div>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{stat.label}</p>
+                <h4 style={{ fontSize: '1.1rem', fontWeight: 700 }}>{stat.value}</h4>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {activeTab === 'management' ? (
         <div className="responsive-grid">
