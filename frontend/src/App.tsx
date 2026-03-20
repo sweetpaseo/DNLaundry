@@ -17,7 +17,13 @@ function App() {
   const [activeMenu, setActiveMenu] = useState<'transaksi' | 'pelanggan' | 'admin'>('transaksi');
   const [activeTab, setActiveTab] = useState<'input' | 'list'>('input');
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
-  const [settings, setSettings] = useState<any>(null);
+  const [settings, setSettings] = useState<any>({
+    name: 'DN Laundry',
+    address: 'Jl. Dewi Sartika A8/4, Jatiasih, Kota Bekasi. (Gmaps: DN Office)',
+    phone: '085122994050',
+    instagram: '@dnlaundry.id',
+    logo_url: null
+  });
   const [isOnline, setIsOnline] = useState(true);
 
   useEffect(() => {

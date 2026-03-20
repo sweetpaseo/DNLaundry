@@ -272,11 +272,11 @@ export const api = {
       const saved = localStorage.getItem('laundry_settings');
       if (saved) return JSON.parse(saved);
       return {
-        name: 'Antigravity Laundry',
-        phone: '081234567890',
-        address: 'Jl. Antigravity No. 123, Jakarta',
-        footer_text: 'Terima kasih telah mencuci di Antigravity Laundry!',
-        instagram: '@antigravity.laundry'
+        name: 'DN Laundry',
+        phone: '085122994050',
+        address: 'Jl. Dewi Sartika A8/4, Jatiasih, Kota Bekasi. (Gmaps: DN Office)',
+        footer_text: 'Terima kasih telah mempercayakan laundry Anda kepada kami!',
+        instagram: '@dnlaundry.id'
       };
     }
   },
