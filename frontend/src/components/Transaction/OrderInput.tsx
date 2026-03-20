@@ -377,22 +377,31 @@ export const OrderInput = () => {
             <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>
               Jumlah ({services.find(s => s.id === selectedServiceId)?.unit})
             </label>
-            <div style={{ display: 'flex', gap: '1rem' }}>
+            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
               <input 
                 type="number" 
                 step="0.1"
                 value={amount} 
                 onChange={(e) => setAmount(Number(e.target.value))}
-                style={{ flex: 1, height: '3.5rem', fontSize: '1.2rem', fontWeight: 700, textAlign: 'center' }} 
+                style={{ flex: '1 1 120px', height: '3.5rem', fontSize: '1.2rem', fontWeight: 700, textAlign: 'center' }} 
                 placeholder="0.0"
               />
               <button 
                 type="button"
                 onClick={addItem}
                 className="btn-primary"
-                style={{ padding: '0 1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--accent-gradient)' }}
+                style={{ 
+                  flex: '2 1 180px', 
+                  height: '3.5rem',
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  gap: '0.5rem', 
+                  background: 'var(--primary)',
+                  boxShadow: '0 4px 12px rgba(255, 0, 132, 0.3)'
+                }}
               >
-                <Plus size={20} /> Tambah
+                <Plus size={20} /> Tambahkan Item
               </button>
             </div>
           </div>
