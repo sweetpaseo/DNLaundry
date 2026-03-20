@@ -96,6 +96,18 @@ const memberTypes = new Hono<{ Bindings: Bindings }>()
 
 memberTypes.get('/', async (c) => {
   const supabase = getSupabase(c.env)
+  
+  // Auto-seed essential types if they don't exist
+  const { data: existing } = await supabase.from('customer_types').select('name')
+  const essential = ['Normal', 'Member', 'Reseller']
+  const existingNames = (existing || []).map(e => e.name.toLowerCase())
+  
+  for (const name of essential) {
+    if (!existingNames.includes(name.toLowerCase())) {
+      await supabase.from('customer_types').insert({ name })
+    }
+  }
+
   const { data, error } = await supabase.from('customer_types').select('*').order('name', { ascending: true })
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data || [])
