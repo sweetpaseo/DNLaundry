@@ -13,6 +13,7 @@ export const OrderInput = () => {
   const [memberTypes, setMemberTypes] = useState<MemberType[]>([]);
   const [selectedServiceId, setSelectedServiceId] = useState<string>('');
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>('');
+  const [customerType, setCustomerType] = useState<'normal' | 'member' | 'reseller'>('normal');
 
   const fetchData = async () => {
     try {
@@ -75,16 +76,32 @@ export const OrderInput = () => {
     );
 
     if (foundCustomer && foundCustomer.member_type_id) {
-      // If customer is found and has a member type ID, auto-switch to member tier
-      setSelectedTier('member');
+      const mType = memberTypes.find(m => m.id === foundCustomer.member_type_id);
+      const typeName = mType?.name.toLowerCase() || '';
+      
+      if (typeName.includes('reseller')) {
+        setCustomerType('reseller');
+        setSelectedTier('special');
+      } else if (typeName.includes('member')) {
+        setCustomerType('member');
+        setSelectedTier('member');
+      } else {
+        setCustomerType('normal');
+        setSelectedTier('normal');
+      }
     } else {
       // Legacy name detection as fallback
-      if (lowVal.includes('member')) setSelectedTier('member');
-      else if (lowVal.includes('express')) setSelectedTier('express');
-      else if (lowVal.includes('special')) setSelectedTier('special');
-      else setSelectedTier('normal');
+      if (lowVal.includes('reseller')) {
+        setCustomerType('reseller');
+        setSelectedTier('special');
+      } else if (lowVal.includes('member')) {
+        setCustomerType('member');
+        setSelectedTier('member');
+      } else {
+        setCustomerType('normal');
+        setSelectedTier('normal');
+      }
     }
-    
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -193,28 +210,38 @@ export const OrderInput = () => {
           <div className="form-group" style={{ marginTop: '1.25rem' }}>
             <label style={{ display: 'block', marginBottom: '0.8rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>Tier Harga Layanan</label>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem' }}>
-              {(['normal', 'member', 'express', 'special'] as const).map(tier => (
-                <button
-                  key={tier}
-                  type="button"
-                  onClick={() => setSelectedTier(tier)}
-                  style={{
-                    padding: '0.75rem 0.5rem',
-                    borderRadius: '10px',
-                    fontSize: '0.75rem',
-                    fontWeight: 700,
-                    textTransform: 'uppercase',
-                    border: '1px solid var(--glass-border)',
-                    cursor: 'pointer',
-                    background: selectedTier === tier ? 'var(--primary-gradient)' : 'rgba(255,255,255,0.03)',
-                    color: selectedTier === tier ? 'white' : 'var(--text-muted)',
-                    transition: 'all 0.2s',
-                    boxShadow: selectedTier === tier ? '0 4px 12px rgba(255, 0, 132, 0.2)' : 'none'
-                  }}
-                >
-                  {tier}
-                </button>
-              ))}
+              {(['normal', 'member', 'express', 'special'] as const).map(tier => {
+                const isAllowed = 
+                  (customerType === 'normal' && (tier === 'normal' || tier === 'express')) ||
+                  (customerType === 'member' && (tier === 'member' || tier === 'express')) ||
+                  (customerType === 'reseller' && (tier === 'special' || tier === 'express'));
+                
+                return (
+                  <button
+                    key={tier}
+                    type="button"
+                    disabled={!isAllowed}
+                    onClick={() => isAllowed && setSelectedTier(tier)}
+                    style={{
+                      padding: '0.75rem 0.5rem',
+                      borderRadius: '10px',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      border: '1px solid var(--glass-border)',
+                      cursor: isAllowed ? 'pointer' : 'not-allowed',
+                      background: selectedTier === tier ? 'var(--primary-gradient)' : 'rgba(255,255,255,0.03)',
+                      color: selectedTier === tier ? 'white' : 'var(--text-muted)',
+                      transition: 'all 0.2s',
+                      boxShadow: selectedTier === tier ? '0 4px 12px rgba(255, 0, 132, 0.2)' : 'none',
+                      opacity: isAllowed ? 1 : 0.3
+                    }}
+                    title={!isAllowed ? `Hanya untuk tipe ${tier === 'member' ? 'Member' : tier === 'special' ? 'Reseller' : 'Normal'}` : ''}
+                  >
+                    {tier}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
