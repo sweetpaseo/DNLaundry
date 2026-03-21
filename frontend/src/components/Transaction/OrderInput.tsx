@@ -93,8 +93,8 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
     const lowVal = val.toLowerCase();
     const foundCustomer = customers.find(c => c.name.toLowerCase() === lowVal || c.phone === val);
 
-    if (foundCustomer && foundCustomer.member_type_id) {
-      const mType = memberTypes.find(m => m.id === foundCustomer.member_type_id);
+    if (foundCustomer && foundCustomer.type_id) {
+      const mType = memberTypes.find(m => m.id === foundCustomer.type_id);
       const typeName = mType?.name.toLowerCase() || '';
       if (typeName.includes('reseller')) {
         setCustomerType('reseller');
@@ -124,8 +124,8 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
     setCustomerName(customer.name);
     setShowSuggestions(false);
     
-    if (customer.member_type_id) {
-      const mType = memberTypes.find(m => m.id === customer.member_type_id);
+    if (customer.type_id) {
+      const mType = memberTypes.find(m => m.id === customer.type_id);
       const typeName = mType?.name.toLowerCase() || '';
       if (typeName.includes('reseller')) {
         setCustomerType('reseller');
@@ -554,7 +554,7 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
             await api.createCustomer(customer);
             fetchData(); // Refresh customers list
             setCustomerName(customer.name);
-            if (customer.member_type_id) setSelectedTier('member');
+            if (customer.type_id) setSelectedTier('member');
             alert('Pelanggan berhasil ditambahkan!');
           } catch (error) {
             alert('Gagal menambah pelanggan');
