@@ -70,27 +70,27 @@ export const CustomerCRM = ({ currentUser }: Props) => {
 
   return (
     <div className="crm-container">
-      <div className="crm-header" style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 800 }}>Daftar Pelanggan</h2>
-        <div style={{ display: 'flex', gap: '1rem', flex: 1, maxWidth: '600px' }}>
-          <div style={{ position: 'relative', flex: 1 }}>
-            <input 
-              type="text" 
-              placeholder="Cari pelanggan..." 
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              style={{ width: '100%', paddingLeft: '2.5rem' }} 
-            />
-            <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-          </div>
-          <button 
-            onClick={() => { setEditingCustomer(null); setIsModalOpen(true); }}
-            className="btn-primary" 
-            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', whiteSpace: 'nowrap' }}
-          >
-            <UserPlus size={20} /> Tambah
-          </button>
+      <div className="crm-header-responsive">
+        <h2 className="crm-title" style={{ fontSize: '1.5rem', fontWeight: 800 }}>Daftar Pelanggan</h2>
+        
+        <div className="crm-search">
+          <input 
+            type="text" 
+            placeholder="Cari pelanggan..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ width: '100%', paddingLeft: '2.5rem' }} 
+          />
+          <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
         </div>
+
+        <button 
+          onClick={() => { setEditingCustomer(null); setIsModalOpen(true); }}
+          className="btn-primary crm-add" 
+          style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', whiteSpace: 'nowrap' }}
+        >
+          <UserPlus size={20} /> Tambah
+        </button>
       </div>
 
       {loading ? (

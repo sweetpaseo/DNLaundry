@@ -304,3 +304,43 @@ input:focus, select:focus {
 body.modal-open {
   overflow: hidden;
 }
+.crm-header-responsive {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.crm-header-responsive .crm-title {
+  order: 1;
+  margin: 0;
+}
+
+.crm-header-responsive .crm-search {
+  order: 2;
+  flex: 1;
+  max-width: 500px;
+  position: relative;
+}
+
+.crm-header-responsive .crm-add {
+  order: 3;
+}
+
+@media (max-width: 768px) {
+  .crm-header-responsive .crm-title {
+    flex: 1;
+  }
+  
+  .crm-header-responsive .crm-add {
+    order: 2;
+  }
+  
+  .crm-header-responsive .crm-search {
+    order: 3;
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+}
