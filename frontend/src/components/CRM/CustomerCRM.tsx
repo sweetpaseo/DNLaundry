@@ -52,8 +52,8 @@ export const CustomerCRM = () => {
       setIsModalOpen(false);
       setEditingCustomer(null);
       alert('Perubahan berhasil disimpan!');
-    } catch (error) {
-      alert('Gagal menyimpan data');
+    } catch (error: any) {
+      alert(`Gagal menyimpan data: ${error.message || 'Error tidak diketahui'}`);
     }
   };
 
