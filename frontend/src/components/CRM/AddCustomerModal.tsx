@@ -7,12 +7,15 @@ import type { MemberType } from '../../types';
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (customer: { id?: string; name: string; phone: string; address: string; member_type_id: string }) => void;
-  initialData?: { id?: string; name: string; phone: string; address: string; member_type_id?: string } | null;
+  onSave: (customer: { id?: string; name: string; phone: string; address: string; member_type_id: string; tags?: string[] }) => void;
+  initialData?: { id?: string; name: string; phone: string; address: string; member_type_id?: string; tags?: string[] } | null;
   memberTypes: MemberType[];
+  allCustomers: any[];
 }
 
-export const AddCustomerModal = ({ isOpen, onClose, onSave, initialData, memberTypes }: Props) => {
+import { generateNextId } from '../../utils/customer';
+
+export const AddCustomerModal = ({ isOpen, onClose, onSave, initialData, memberTypes, allCustomers }: Props) => {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -57,7 +60,15 @@ export const AddCustomerModal = ({ isOpen, onClose, onSave, initialData, memberT
     if (!dataToSave.member_type_id) {
       delete (dataToSave as any).member_type_id;
     }
-    onSave(initialData?.id ? { ...dataToSave, id: initialData.id } : dataToSave);
+    
+    // Auto-generate customer ID only for new customers
+    if (!initialData?.id) {
+      const nextIdTag = generateNextId(allCustomers);
+      const existingTags = (dataToSave as any).tags || [];
+      (dataToSave as any).tags = [...existingTags, nextIdTag];
+    }
+
+    onSave(initialData?.id ? { ...dataToSave, id: initialData.id, tags: (initialData as any).tags } : dataToSave);
     onClose();
   };
 

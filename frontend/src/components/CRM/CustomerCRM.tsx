@@ -4,6 +4,7 @@ import type { Customer, MemberType } from '../../types';
 import { AddCustomerModal } from './AddCustomerModal';
 import { api } from '../../services/api';
 import { getWhatsAppUrl } from '../../utils/whatsapp';
+import { getDisplayId, formatDisplayId } from '../../utils/customer';
 
 export const CustomerCRM = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -99,7 +100,7 @@ export const CustomerCRM = () => {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.4rem' }}>
                   <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>{customer.name}</h3>
                   <span style={{ fontSize: '0.7rem', fontWeight: 700, opacity: 0.5, background: 'rgba(255,255,255,0.1)', padding: '0.1rem 0.4rem', borderRadius: '4px', letterSpacing: '0.05em' }}>
-                    #{customer.id.slice(0, 8).toUpperCase()}
+                    {formatDisplayId(getDisplayId(customer))}
                   </span>
                 </div>
                   <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
@@ -179,6 +180,7 @@ export const CustomerCRM = () => {
         onSave={handleSave}
         initialData={editingCustomer}
         memberTypes={memberTypes}
+        allCustomers={customers}
       />
     </div>
   );

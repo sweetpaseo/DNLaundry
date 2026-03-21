@@ -3,6 +3,7 @@ import { Search, Plus, UserPlus } from 'lucide-react';
 import type { Service, Employee, Customer, MemberType } from '../../types';
 import { AddCustomerModal } from '../CRM/AddCustomerModal';
 import { api } from '../../services/api';
+import { getDisplayId, formatDisplayId } from '../../utils/customer';
 
 interface OrderItem {
   id: string; // Temporary local ID for list management
@@ -286,7 +287,7 @@ export const OrderInput = () => {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
                       <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>{c.name}</div>
                       <span style={{ fontSize: '0.65rem', fontWeight: 700, opacity: 0.4, background: 'rgba(255,255,255,0.1)', padding: '0.05rem 0.3rem', borderRadius: '4px' }}>
-                        #{c.id.slice(0, 8).toUpperCase()}
+                        {formatDisplayId(getDisplayId(c))}
                       </span>
                     </div>
                     <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{c.phone} {c.member_type ? `- ${c.member_type.name}` : ''}</div>
@@ -557,6 +558,7 @@ export const OrderInput = () => {
         }}
         initialData={null}
         memberTypes={memberTypes}
+        allCustomers={customers}
       />
     </div>
   );
