@@ -53,7 +53,11 @@ export const AddCustomerModal = ({ isOpen, onClose, onSave, initialData, memberT
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(initialData?.id ? { ...formData, id: initialData.id } : formData);
+    const dataToSave = { ...formData };
+    if (!dataToSave.member_type_id) {
+      delete (dataToSave as any).member_type_id;
+    }
+    onSave(initialData?.id ? { ...dataToSave, id: initialData.id } : dataToSave);
     onClose();
   };
 
