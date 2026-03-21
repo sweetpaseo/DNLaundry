@@ -283,7 +283,12 @@ export const OrderInput = () => {
                     onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
                     onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                   >
-                    <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>{c.name}</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
+                      <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>{c.name}</div>
+                      <span style={{ fontSize: '0.65rem', fontWeight: 700, opacity: 0.4, background: 'rgba(255,255,255,0.1)', padding: '0.05rem 0.3rem', borderRadius: '4px' }}>
+                        #{c.id.slice(0, 8).toUpperCase()}
+                      </span>
+                    </div>
                     <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{c.phone} {c.member_type ? `- ${c.member_type.name}` : ''}</div>
                   </div>
                 ))}

@@ -79,9 +79,17 @@ export const AddCustomerModal = ({ isOpen, onClose, onSave, initialData, memberT
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <User size={20} color="var(--primary)" /> {initialData ? 'Edit Pelanggan' : 'Tambah Pelanggan Baru'}
-              </h3>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <User size={20} color="var(--primary)" /> 
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 700 }}>
+                  {initialData ? 'Edit Pelanggan' : 'Tambah Pelanggan Baru'}
+                </h3>
+                {initialData?.id && (
+                  <span style={{ fontSize: '0.7rem', fontWeight: 700, opacity: 0.4, background: 'rgba(255,255,255,0.1)', padding: '0.1rem 0.4rem', borderRadius: '4px', letterSpacing: '0.05em' }}>
+                    #{initialData.id.slice(0, 8).toUpperCase()}
+                  </span>
+                )}
+              </div>
               <button onClick={onClose} style={{ background: 'transparent', color: 'var(--text-muted)' }}>
                 <X size={24} />
               </button>

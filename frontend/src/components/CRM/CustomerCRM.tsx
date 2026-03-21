@@ -96,7 +96,12 @@ export const CustomerCRM = () => {
             <div key={customer.id} className="glass-card animate-fade-in" style={{ padding: '1.5rem', position: 'relative' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
                 <div>
-                  <h4 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.25rem' }}>{customer.name}</h4>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.4rem' }}>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>{customer.name}</h3>
+                  <span style={{ fontSize: '0.7rem', fontWeight: 700, opacity: 0.5, background: 'rgba(255,255,255,0.1)', padding: '0.1rem 0.4rem', borderRadius: '4px', letterSpacing: '0.05em' }}>
+                    #{customer.id.slice(0, 8).toUpperCase()}
+                  </span>
+                </div>
                   <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                     <span style={{ 
                       fontSize: '0.65rem', padding: '2px 8px', borderRadius: '4px', 
