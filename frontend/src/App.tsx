@@ -177,7 +177,7 @@ function App() {
                 transition={{ duration: 0.2 }}
               >
                 <div className="glass-card">
-                  {activeTab === 'input' ? <OrderInput /> : <TransactionList />}
+                   {activeTab === 'input' ? <OrderInput currentUser={user} /> : <TransactionList />}
                 </div>
               </motion.div>
             </AnimatePresence>
@@ -186,7 +186,7 @@ function App() {
 
         {activeMenu === 'pelanggan' && (
           <div className="glass-card animate-fade-in">
-            <CustomerCRM />
+            <CustomerCRM currentUser={user} />
           </div>
         )}
 

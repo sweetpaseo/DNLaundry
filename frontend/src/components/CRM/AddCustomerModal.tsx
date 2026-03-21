@@ -1,49 +1,55 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { X, User, Phone, MapPin, Save, Star } from 'lucide-react';
+import { X, User, Phone, MapPin, Save, Star, Hash } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { MemberType } from '../../types';
+import { generateNextId } from '../../utils/customer';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   onSave: (customer: { id?: string; name: string; phone: string; address: string; member_type_id: string; tags?: string[]; customer_id?: string }) => void;
-  initialData?: { id?: string; name: string; phone: string; address: string; member_type_id?: string; tags?: string[] } | null;
+  initialData?: { id?: string; name: string; phone: string; address: string; member_type_id?: string; tags?: string[]; customer_id?: string; default_delivery_type?: 'Pickup' | 'Delivery' } | null;
   memberTypes: MemberType[];
   allCustomers: any[];
+  currentUser?: any;
 }
 
-import { generateNextId } from '../../utils/customer';
+export const AddCustomerModal = ({ isOpen, onClose, onSave, initialData, memberTypes, allCustomers, currentUser }: Props) => {
+  const isOwner = currentUser?.role === 'owner';
 
-export const AddCustomerModal = ({ isOpen, onClose, onSave, initialData, memberTypes, allCustomers }: Props) => {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
     address: '',
-    member_type_id: '',
-    default_delivery_type: 'Pickup' as 'Pickup' | 'Delivery'
+    member_type_id: memberTypes[0]?.id || '',
+    default_delivery_type: 'Pickup' as 'Pickup' | 'Delivery',
+    customer_id: ''
   });
 
   useEffect(() => {
     if (initialData) {
       setFormData({
-        name: initialData.name,
-        phone: initialData.phone,
-        address: initialData.address,
-        member_type_id: initialData.member_type_id || '',
-        default_delivery_type: (initialData as any).default_delivery_type || 'Pickup'
+        name: initialData.name || '',
+        phone: initialData.phone || '',
+        address: initialData.address || '',
+        member_type_id: initialData.member_type_id || memberTypes[0]?.id || '',
+        default_delivery_type: initialData.default_delivery_type || 'Pickup',
+        customer_id: initialData.customer_id || ''
       });
     } else {
+      // Auto-generate ID for new customers immediately
       const defaultType = memberTypes.find(m => m.name.toLowerCase().includes('normal')) || memberTypes[0];
       setFormData({ 
         name: '', 
         phone: '', 
         address: '', 
         member_type_id: defaultType?.id || '',
-        default_delivery_type: 'Pickup'
+        default_delivery_type: 'Pickup',
+        customer_id: generateNextId(allCustomers)
       });
     }
-  }, [initialData, isOpen, memberTypes]);
+  }, [initialData, isOpen, memberTypes, allCustomers]);
 
   useEffect(() => {
     if (isOpen) {
@@ -61,13 +67,10 @@ export const AddCustomerModal = ({ isOpen, onClose, onSave, initialData, memberT
       delete (dataToSave as any).member_type_id;
     }
     
-    // Auto-generate customer ID only for new customers
-    if (!initialData?.id) {
-      const nextId = generateNextId(allCustomers);
-      (dataToSave as any).customer_id = nextId;
-    }
-
-    onSave(initialData?.id ? { ...dataToSave, id: initialData.id, tags: (initialData as any).tags, customer_id: (initialData as any).customer_id } : dataToSave);
+    onSave(initialData?.id 
+      ? { ...dataToSave, id: initialData.id, tags: (initialData as any).tags } 
+      : dataToSave
+    );
     onClose();
   };
 
@@ -106,6 +109,36 @@ export const AddCustomerModal = ({ isOpen, onClose, onSave, initialData, memberT
             </div>
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div className="form-group" style={{ opacity: isOwner ? 1 : 0.8 }}>
+                <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>
+                  ID Pelanggan (Format: DNxxxxx)
+                </label>
+                <div style={{ position: 'relative' }}>
+                  <input 
+                    type="text" 
+                    required 
+                    readOnly={!isOwner}
+                    placeholder="DN00001"
+                    style={{ 
+                      width: '100%', 
+                      paddingLeft: '2.5rem',
+                      background: isOwner ? 'var(--glass-bg)' : 'rgba(255,255,255,0.05)',
+                      border: isOwner ? '1px solid var(--glass-border)' : '1px solid transparent',
+                      cursor: isOwner ? 'text' : 'not-allowed',
+                      color: isOwner ? 'white' : 'var(--text-muted)'
+                    }} 
+                    value={formData.customer_id}
+                    onChange={(e) => setFormData({...formData, customer_id: e.target.value.toUpperCase()})}
+                  />
+                  <Hash size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                </div>
+                {!isOwner && (
+                  <p style={{ fontSize: '0.65rem', color: 'var(--primary)', marginTop: '0.3rem', fontWeight: 500 }}>
+                    *Hanya Owner yang dapat mengubah ID secara manual
+                  </p>
+                )}
+              </div>
+
               <div className="form-group">
                 <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>Nama Lengkap</label>
                 <div style={{ position: 'relative' }}>

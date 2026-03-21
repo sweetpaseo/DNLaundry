@@ -6,7 +6,11 @@ import { api } from '../../services/api';
 import { getWhatsAppUrl } from '../../utils/whatsapp';
 import { getDisplayId, formatDisplayId } from '../../utils/customer';
 
-export const CustomerCRM = () => {
+interface Props {
+  currentUser?: any;
+}
+
+export const CustomerCRM = ({ currentUser }: Props) => {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [memberTypes, setMemberTypes] = useState<MemberType[]>([]);
   const [loading, setLoading] = useState(true);
@@ -181,6 +185,7 @@ export const CustomerCRM = () => {
         initialData={editingCustomer}
         memberTypes={memberTypes}
         allCustomers={customers}
+        currentUser={currentUser}
       />
     </div>
   );

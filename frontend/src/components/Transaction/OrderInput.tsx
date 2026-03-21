@@ -16,7 +16,11 @@ interface OrderItem {
   due_date: string;
 }
 
-export const OrderInput = () => {
+interface OrderInputProps {
+  currentUser?: any;
+}
+
+export const OrderInput = ({ currentUser }: OrderInputProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [customerName, setCustomerName] = useState('');
   const [services, setServices] = useState<Service[]>([]);
@@ -559,6 +563,7 @@ export const OrderInput = () => {
         initialData={null}
         memberTypes={memberTypes}
         allCustomers={customers}
+        currentUser={currentUser}
       />
     </div>
   );
