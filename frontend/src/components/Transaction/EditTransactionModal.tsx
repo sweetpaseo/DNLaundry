@@ -181,6 +181,10 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
 
                 {/* Live Summary */}
                 <div style={{ marginTop: '0.25rem', padding: '1rem', background: 'rgba(0,0,0,0.2)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '0.5rem', opacity: 0.8 }}>
+                    <span style={{ color: 'var(--text-muted)' }}>Saldo Terkini Pelanggan:</span>
+                    <span style={{ fontWeight: 600 }}>Rp {walletBalance.toLocaleString()}</span>
+                  </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '0.5rem' }}>
                     <span style={{ color: 'var(--text-muted)' }}>{groupTotal ? 'Total Tagihan Group:' : 'Total Tagihan:'}</span>
                     <span style={{ fontWeight: 700 }}>Rp {displayTotal.toLocaleString()}</span>
