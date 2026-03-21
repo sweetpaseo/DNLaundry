@@ -60,7 +60,10 @@ export const ReceiptModal = ({ isOpen, onClose, transaction, settings }: Receipt
       }
     }
     
-    message += `\n${settings?.footer_text || 'Terima kasih telah mempercayakan laundry Anda kepada kami!'}`;
+    message += `\n${settings?.footer_text || 'Terima kasih telah mempercayakan laundry Anda kepada kami!'}\n\n`;
+    message += `*${settings?.name}*\n`;
+    message += `WA: ${settings?.phone}\n`;
+    message += `Alamat: ${settings?.address}`;
 
     const whatsappUrl = getWhatsAppUrl(customerPhone, message);
     window.open(whatsappUrl, '_blank');

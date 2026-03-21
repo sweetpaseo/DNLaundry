@@ -106,7 +106,10 @@ export const TransactionList = () => {
       }
     }
 
-    message += `\nTerima kasih telah menggunakan layanan kami!`;
+    message += `\n${settings?.footer_text || 'Terima kasih telah menggunakan layanan kami!'}\n\n`;
+    message += `*${settings?.name}*\n`;
+    message += `WA: ${settings?.phone}\n`;
+    message += `Alamat: ${settings?.address}`;
 
     if (!firstTransaction) return;
 
