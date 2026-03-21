@@ -41,8 +41,7 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
   const [filteredCustomers, setFilteredCustomers] = useState<Customer[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [orderDate, setOrderDate] = useState(() => {
-    const now = new Date();
-    return new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+    return new Date().toISOString().split('T')[0];
   });
 
   const fetchData = async () => {
@@ -255,10 +254,10 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
               <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>Tgl Masuk Order</label>
               <div style={{ position: 'relative' }}>
                 <input 
-                  type="datetime-local" 
+                  type="date" 
                   value={orderDate}
                   onChange={(e) => setOrderDate(e.target.value)}
-                  style={{ width: '100%', paddingLeft: '2.5rem', height: '3.5rem', fontSize: '0.9rem' }} 
+                  style={{ width: '100%', paddingLeft: '2.5rem', height: '3.5rem', fontSize: '1rem' }} 
                 />
                 <Calendar size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
               </div>
