@@ -1,3 +1,4 @@
+import { useState, useEffect, FormEvent } from 'react';
 import { 
   DollarSign, Package, TrendingUp, Settings, Users, Plus, Trash2, Power, 
   Briefcase, Calculator, History, Phone, Wallet, Receipt, Edit, Store
@@ -30,33 +31,33 @@ const calculateCommission = (empId: string, trans: Transaction[], srvs: Service[
 };
 
 export const AdminDashboard = () => {
-  const [memberTypes, setMemberTypes] = React.useState<MemberType[]>([]);
-  const [services, setServices] = React.useState<Service[]>([]);
-  const [employees, setEmployees] = React.useState<Employee[]>([]);
-  const [incentives, setIncentives] = React.useState<Incentive[]>([]);
-  const [transactions, setTransactions] = React.useState<Transaction[]>([]);
-  const [expenses, setExpenses] = React.useState<Expense[]>([]);
+  const [memberTypes, setMemberTypes] = useState<MemberType[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [incentives, setIncentives] = useState<Incentive[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
 
-  const [activeTab, setActiveTab] = React.useState<'rekap' | 'management' | 'payroll' | 'expenses' | 'users' | 'identity' | 'wallet'>('rekap');
+  const [activeTab, setActiveTab] = useState<'rekap' | 'management' | 'payroll' | 'expenses' | 'users' | 'identity' | 'wallet'>('rekap');
 
   // Modal States
-  const [isServiceModalOpen, setIsServiceModalOpen] = React.useState(false);
-  const [editingService, setEditingService] = React.useState<Service | null>(null);
-  const [isMemberTypeModalOpen, setIsMemberTypeModalOpen] = React.useState(false);
-  const [editingMemberType, setEditingMemberType] = React.useState<MemberType | null>(null);
-  const [isEmployeeModalOpen, setIsEmployeeModalOpen] = React.useState(false);
-  const [editingEmployee, setEditingEmployee] = React.useState<Employee | null>(null);
-  const [isIncentiveModalOpen, setIsIncentiveModalOpen] = React.useState(false);
-  const [selectedEmployeeForIncentive, setSelectedEmployeeForIncentive] = React.useState<string | null>(null);
-  const [isExpenseModalOpen, setIsExpenseModalOpen] = React.useState(false);
-  const [editingExpense, setEditingExpense] = React.useState<Expense | null>(null);
-  const [isUserModalOpen, setIsUserModalOpen] = React.useState(false);
-  const [editingUser, setEditingUser] = React.useState<any>(null);
-  const [users, setUsers] = React.useState<any[]>([]);
+  const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
+  const [editingService, setEditingService] = useState<Service | null>(null);
+  const [isMemberTypeModalOpen, setIsMemberTypeModalOpen] = useState(false);
+  const [editingMemberType, setEditingMemberType] = useState<MemberType | null>(null);
+  const [isEmployeeModalOpen, setIsEmployeeModalOpen] = useState(false);
+  const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
+  const [isIncentiveModalOpen, setIsIncentiveModalOpen] = useState(false);
+  const [selectedEmployeeForIncentive, setSelectedEmployeeForIncentive] = useState<string | null>(null);
+  const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
+  const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<any>(null);
+  const [users, setUsers] = useState<any[]>([]);
 
   // Filter States
-  const [filterMonth, setFilterMonth] = React.useState<number | 'all'>(new Date().getMonth());
-  const [filterYear, setFilterYear] = React.useState<number | 'all'>(new Date().getFullYear());
+  const [filterMonth, setFilterMonth] = useState<number | 'all'>(new Date().getMonth());
+  const [filterYear, setFilterYear] = useState<number | 'all'>(new Date().getFullYear());
 
   const months = [
     'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
@@ -88,7 +89,7 @@ export const AdminDashboard = () => {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -104,164 +105,116 @@ export const AdminDashboard = () => {
   };
 
   const deleteService = async (id: string) => {
-    if (window.confirm('Hapus layanan ini?')) {
-      try {
-        await api.deleteService(id);
-        fetchData();
-      } catch (error) {
-        alert('Gagal menghapus layanan');
-      }
+    if (!window.confirm('Hapus layanan ini?')) return;
+    try {
+      await api.deleteService(id);
+      fetchData();
+    } catch (error) {
+      console.error('Failed to delete service:', error);
     }
   };
 
   const deleteMemberType = async (id: string) => {
-    if (window.confirm('Hapus jenis member ini?')) {
-      try {
-        await api.deleteMemberType(id);
-        fetchData();
-      } catch (error) {
-        alert('Gagal menghapus jenis member');
-      }
-    }
-  };
-
-  const handleSaveService = async (data: Partial<Service>) => {
+    if (!window.confirm('Hapus jenis member ini?')) return;
     try {
-      if (editingService) {
-        await api.updateService(editingService.id, data);
-      } else {
-        await api.createService(data);
-      }
+      await api.deleteMemberType(id);
       fetchData();
-      setIsServiceModalOpen(false);
-      alert('Perubahan berhasil disimpan!');
-      setEditingService(null);
     } catch (error) {
-      alert('Gagal menyimpan layanan');
+      console.error('Failed to delete member type:', error);
     }
   };
 
-  const handleSaveMemberType = async (data: Partial<MemberType>) => {
+  const deleteEmployee = async (id: string) => {
+    if (!window.confirm('Hapus staff ini?')) return;
     try {
-      if (editingMemberType) {
-        await api.updateMemberType(editingMemberType.id, data);
-      } else {
-        await api.createMemberType(data);
-      }
+      await api.deleteEmployee(id);
       fetchData();
-      setIsMemberTypeModalOpen(false);
-      setEditingMemberType(null);
-      alert('Perubahan berhasil disimpan!');
     } catch (error) {
-      alert('Gagal menyimpan jenis member');
-    }
-  };
-
-  const handleSaveEmployee = async (data: Partial<Employee>) => {
-    try {
-      if (editingEmployee) {
-        await api.updateEmployee(editingEmployee.id, data);
-      } else {
-        await api.createEmployee({ ...data, created_at: new Date().toISOString() });
-      }
-      fetchData();
-      setIsEmployeeModalOpen(false);
-      alert('Perubahan berhasil disimpan!');
-    } catch (error) {
-      alert('Gagal menyimpan karyawan');
-    }
-  };
-
-  const handleSaveIncentive = async (data: Partial<Incentive>) => {
-    if (selectedEmployeeForIncentive) {
-      try {
-        await api.createIncentive({ 
-          ...data, 
-          employee_id: selectedEmployeeForIncentive, 
-          created_at: new Date().toISOString() 
-        });
-        fetchData();
-        alert('Perubahan berhasil disimpan!');
-      } catch (error) {
-        alert('Gagal memberikan insentif');
-      }
-    }
-    setIsIncentiveModalOpen(false);
-  };
-
-  const handleSaveExpense = async (data: Partial<Expense>) => {
-    try {
-      if (editingExpense) {
-        await api.updateExpense(editingExpense.id, data);
-      } else {
-        await api.createExpense(data);
-      }
-      fetchData();
-      setIsExpenseModalOpen(false);
-      setEditingExpense(null);
-      alert('Perubahan berhasil disimpan!');
-    } catch (error) {
-      alert('Gagal menyimpan pengeluaran');
-    }
-  };
-
-  const deleteExpense = async (id: string) => {
-    if (window.confirm('Hapus catatan pengeluaran ini?')) {
-      try {
-        await api.deleteExpense(id);
-        fetchData();
-        alert('Perubahan berhasil disimpan!');
-      } catch (error) {
-        alert('Gagal menghapus pengeluaran');
-      }
-    }
-  };
-
-  const handleSaveUser = async (data: any) => {
-    try {
-      if (editingUser) {
-        await api.updateUser(editingUser.id, data);
-      } else {
-        await api.createUser(data);
-      }
-      fetchData();
-      setIsUserModalOpen(false);
-      setEditingUser(null);
-      alert('Perubahan berhasil disimpan!');
-    } catch (error) {
-      alert('Gagal menyimpan user');
+      console.error('Failed to delete employee:', error);
     }
   };
 
   const deleteUser = async (id: string) => {
-    if (window.confirm('Hapus user ini?')) {
-      try {
-        await api.deleteUser(id);
-        fetchData();
-        alert('Perubahan berhasil disimpan!');
-      } catch (error) {
-        alert('Gagal menghapus user');
-      }
+    if (!window.confirm('Hapus akses login user ini?')) return;
+    try {
+      await api.deleteUser(id);
+      fetchData();
+    } catch (error) {
+      console.error('Failed to delete user:', error);
     }
   };
 
+  const deleteExpense = async (id: string) => {
+    if (!window.confirm('Hapus pengeluaran ini?')) return;
+    try {
+      await api.deleteExpense(id);
+      fetchData();
+    } catch (error) {
+      console.error('Failed to delete expense:', error);
+    }
+  };
+
+  const filteredIncentives = incentives.filter(inc => {
+    const incDate = new Date(inc.created_at);
+    const monthMatch = filterMonth === 'all' || incDate.getMonth() === filterMonth;
+    const yearMatch = filterYear === 'all' || incDate.getFullYear() === filterYear;
+    return monthMatch && yearMatch;
+  });
+
+  const filteredExpenses = expenses.filter(exp => {
+    const expDate = new Date(exp.date);
+    const monthMatch = filterMonth === 'all' || expDate.getMonth() === filterMonth;
+    const yearMatch = filterYear === 'all' || expDate.getFullYear() === filterYear;
+    return monthMatch && yearMatch;
+  });
+
+  const filteredTransactions = transactions.filter(t => {
+    const tDate = new Date(t.created_at);
+    const monthMatch = filterMonth === 'all' || tDate.getMonth() === filterMonth;
+    const yearMatch = filterYear === 'all' || tDate.getFullYear() === filterYear;
+    return monthMatch && yearMatch;
+  });
+
+  const stats = {
+    revenue: filteredTransactions.filter(t => t.is_paid).reduce((acc, t) => acc + t.final_price, 0),
+    orders: filteredTransactions.length,
+    customers: new Set(filteredTransactions.map(t => t.customer_id)).size,
+    expenses: filteredExpenses.reduce((acc, e) => acc + e.amount, 0)
+  };
+
+  const profit = stats.revenue - stats.expenses;
+
   return (
-    <div className="admin-dashboard">
-      <div style={{ marginBottom: '2rem' }}>
-        <h3 style={{ fontSize: '1.25rem', fontWeight: 600 }}>Panel Admin Laundry</h3>
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Manajemen bisnis & payroll karyawan</p>
+    <div className="animate-fade-in">
+      {/* Header & Filter */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
+        <div>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.25rem' }}>Panel Dashboard</h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Kelola seluruh aspek bisnis laundry Anda di sini.</p>
+        </div>
+        
+        <div style={{ display: 'flex', gap: '0.75rem', background: 'var(--glass-bg)', padding: '0.5rem', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+          <select 
+            value={filterMonth} 
+            onChange={e => setFilterMonth(e.target.value === 'all' ? 'all' : parseInt(e.target.value))}
+            style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem', width: '120px' }}
+          >
+            <option value="all">Semua Bulan</option>
+            {months.map((m, i) => <option key={i} value={i}>{m}</option>)}
+          </select>
+          <select 
+            value={filterYear} 
+            onChange={e => setFilterYear(e.target.value === 'all' ? 'all' : parseInt(e.target.value))}
+            style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
+          >
+            <option value="all">Semua Tahun</option>
+            {years.map(y => <option key={y} value={y}>{y}</option>)}
+          </select>
+        </div>
       </div>
 
-
-      {/* Tab Navigation (Moved Below Cards) */}
-      <div style={{ 
-        display: 'flex', 
-        gap: '0.5rem 1rem', 
-        marginBottom: '2rem', 
-        borderBottom: '1px solid var(--glass-border)', 
-        paddingBottom: '0.5rem',
-        flexWrap: 'wrap'
-      }}>
+      {/* Tabs */}
+      <div style={{ display: 'flex', gap: '2rem', marginBottom: '2rem', borderBottom: '1px solid var(--glass-border)', overflowX: 'auto', paddingBottom: '2px' }} className="hide-scrollbar">
         <button
           onClick={() => setActiveTab('rekap')}
           style={{
@@ -269,40 +222,40 @@ export const AdminDashboard = () => {
             color: activeTab === 'rekap' ? 'white' : 'var(--text-muted)', transition: 'all 0.2s', flexShrink: 0
           }}
         >
-          <TrendingUp size={16} color={activeTab === 'rekap' ? 'var(--primary)' : 'var(--text-muted)'} /> Rekap
+          <TrendingUp size={16} color={activeTab === 'rekap' ? 'var(--primary)' : 'var(--text-muted)'} /> Ringkasan & Laporan
         </button>
         <button
           onClick={() => setActiveTab('management')}
           style={{
             display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 0', background: 'transparent', border: 'none', borderBottom: activeTab === 'management' ? '2px solid var(--primary)' : '2px solid transparent', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600,
-            color: activeTab === 'management' ? 'white' : 'var(--text-muted)', transition: 'all 0.2s'
+            color: activeTab === 'management' ? 'white' : 'var(--text-muted)', transition: 'all 0.2s', flexShrink: 0
           }}
         >
-          <Settings size={16} color={activeTab === 'management' ? 'var(--primary)' : 'var(--text-muted)'} /> Layanan & Karyawan
-        </button>
-        <button
-          onClick={() => setActiveTab('payroll')}
-          style={{
-            display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 0', background: 'transparent', border: 'none', borderBottom: activeTab === 'payroll' ? '2px solid var(--primary)' : '2px solid transparent', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600,
-            color: activeTab === 'payroll' ? 'white' : 'var(--text-muted)', transition: 'all 0.2s'
-          }}
-        >
-          <Calculator size={16} color={activeTab === 'payroll' ? 'var(--primary)' : 'var(--text-muted)'} /> Rangkuman Gaji
+          <Settings size={16} color={activeTab === 'management' ? 'var(--primary)' : 'var(--text-muted)'} /> Data Master
         </button>
         <button
           onClick={() => setActiveTab('expenses')}
           style={{
             display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 0', background: 'transparent', border: 'none', borderBottom: activeTab === 'expenses' ? '2px solid var(--primary)' : '2px solid transparent', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600,
-            color: activeTab === 'expenses' ? 'white' : 'var(--text-muted)', transition: 'all 0.2s'
+            color: activeTab === 'expenses' ? 'white' : 'var(--text-muted)', transition: 'all 0.2s', flexShrink: 0
           }}
         >
-          <Receipt size={16} color={activeTab === 'expenses' ? 'var(--primary)' : 'var(--text-muted)'} /> Pengeluaran
+          <DollarSign size={16} color={activeTab === 'expenses' ? 'var(--primary)' : 'var(--text-muted)'} /> Pengeluaran
+        </button>
+        <button
+          onClick={() => setActiveTab('payroll')}
+          style={{
+            display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 0', background: 'transparent', border: 'none', borderBottom: activeTab === 'payroll' ? '2px solid var(--primary)' : '2px solid transparent', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600,
+            color: activeTab === 'payroll' ? 'white' : 'var(--text-muted)', transition: 'all 0.2s', flexShrink: 0
+          }}
+        >
+          <Briefcase size={16} color={activeTab === 'payroll' ? 'var(--primary)' : 'var(--text-muted)'} /> Payroll & Insentif
         </button>
         <button
           onClick={() => setActiveTab('users')}
           style={{
             display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 0', background: 'transparent', border: 'none', borderBottom: activeTab === 'users' ? '2px solid var(--primary)' : '2px solid transparent', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600,
-            color: activeTab === 'users' ? 'white' : 'var(--text-muted)', transition: 'all 0.2s'
+            color: activeTab === 'users' ? 'white' : 'var(--text-muted)', transition: 'all 0.2s', flexShrink: 0
           }}
         >
           <Users size={16} color={activeTab === 'users' ? 'var(--primary)' : 'var(--text-muted)'} /> Manajemen User
@@ -326,113 +279,305 @@ export const AdminDashboard = () => {
           <Store size={16} color={activeTab === 'identity' ? 'var(--primary)' : 'var(--text-muted)'} /> Identitas Usaha
         </button>
       </div>
- 
-      {activeTab === 'rekap' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.25rem', marginBottom: '2rem' }}>
-          {[
-            { label: 'Omzet Hari Ini', value: 'Rp 450.000', icon: <DollarSign size={20} />, color: '#FF0084' },
-            { label: 'Order Masuk', value: '12', icon: <Package size={20} />, color: '#D3D3D3' },
-            { label: 'Pelanggan Baru', value: '3', icon: <TrendingUp size={20} />, color: '#FF0084' },
-            { label: 'Pengeluaran Bln Ini', value: `Rp ${expenses.reduce((acc, ex) => acc + ex.amount, 0).toLocaleString()}`, icon: <Wallet size={20} />, color: '#D3D3D3' },
-          ].map(stat => (
-            <div key={stat.label} className="glass-card" style={{ padding: '1.25rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
-              <div style={{ padding: '0.75rem', borderRadius: '10px', background: `${stat.color}22`, color: stat.color }}>
-                {stat.icon}
-              </div>
-              <div>
-                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{stat.label}</p>
-                <h4 style={{ fontSize: '1.1rem', fontWeight: 700 }}>{stat.value}</h4>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
 
-      {activeTab === 'management' ? (
-        <div className="responsive-grid">
-          {/* Price Management */}
-          <div className="glass-card">
-            <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Settings size={18} color="var(--primary)" /> Manajemen Layanan & Harga
+      {/* Tab Content */}
+      {activeTab === 'rekap' ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          {/* Stats Grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem' }}>
+            <div className="glass-card" style={{ padding: '1.5rem', background: 'var(--primary-gradient)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <span style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)', fontWeight: 600 }}>Total Pendapatan</span>
+                <DollarSign size={20} color="white" />
+              </div>
+              <h3 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'white' }}>Rp {stats.revenue.toLocaleString()}</h3>
+            </div>
+            
+            <div className="glass-card" style={{ padding: '1.5rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Total Biaya</span>
+                <Calculator size={20} color="#f87171" />
+              </div>
+              <h3 style={{ fontSize: '1.75rem', fontWeight: 800 }}>Rp {stats.expenses.toLocaleString()}</h3>
+            </div>
+
+            <div className="glass-card" style={{ padding: '1.5rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Profit Bersih</span>
+                <TrendingUp size={20} color={profit >= 0 ? '#4ade80' : '#f87171'} />
+              </div>
+              <h3 style={{ fontSize: '1.75rem', fontWeight: 800, color: profit >= 0 ? '#4ade80' : '#f87171' }}>
+                Rp {profit.toLocaleString()}
+              </h3>
+            </div>
+
+            <div className="glass-card" style={{ padding: '1.5rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Jumlah Pesanan</span>
+                <Package size={20} color="var(--primary)" />
+              </div>
+              <h3 style={{ fontSize: '1.75rem', fontWeight: 800 }}>{stats.orders}</h3>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem' }}>
+            <div className="glass-card" style={{ padding: '2rem' }}>
+              <h4 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <History size={18} color="var(--primary)" /> Perbandingan Pencapaian
               </h4>
-              <button
-                className="btn-primary"
-                style={{ padding: '0.4rem 1rem', fontSize: '0.8125rem' }}
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Modul grafik performa sedang dioptimasi di server.</p>
+            </div>
+          </div>
+        </div>
+      ) : activeTab === 'management' ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          {/* Services Section */}
+          <div className="glass-card" style={{ padding: '2rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h4 style={{ fontWeight: 700, fontSize: '1.1rem' }}>Layanan & Harga</h4>
+              <button 
                 onClick={() => { setEditingService(null); setIsServiceModalOpen(true); }}
+                className="btn-primary" 
+                style={{ padding: '0.5rem 1rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
               >
-                <Plus size={14} /> Layanan Baru
+                <Plus size={16} /> Tambah Layanan
               </button>
             </div>
-            <table className="responsive-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+            
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ textAlign: 'left', borderBottom: '1px solid var(--glass-border)', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                    <th style={{ padding: '1rem' }}>Layanan</th>
+                    <th style={{ padding: '1rem' }}>Harga</th>
+                    <th style={{ padding: '1rem' }}>Min/Waktu</th>
+                    <th style={{ padding: '1rem' }}>Komisi</th>
+                    <th style={{ padding: '1rem' }}>Status</th>
+                    <th style={{ padding: '1rem', textAlign: 'right' }}>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {services.map(srv => (
+                    <tr key={srv.id} style={{ borderBottom: '1px solid var(--glass-border)' }}>
+                      <td style={{ padding: '1rem', fontWeight: 600 }}>{srv.name}</td>
+                      <td style={{ padding: '1rem' }}>Rp {srv.price.toLocaleString()} / {srv.unit || 'kg'}</td>
+                      <td style={{ padding: '1rem' }}>{srv.min_weight} {srv.unit || 'kg'} / {srv.estimated_days} Hari</td>
+                      <td style={{ padding: '1rem', fontSize: '0.75rem' }}>
+                        {srv.commission_value > 0 ? (
+                          <span style={{ padding: '2px 8px', borderRadius: '4px', background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e' }}>
+                            {srv.commission_value}{srv.commission_type === 'percentage' ? '%' : ' Tetap'}
+                          </span>
+                        ) : '-'}
+                      </td>
+                      <td style={{ padding: '1rem' }}>
+                        <button 
+                          onClick={() => toggleService(srv.id)}
+                          style={{
+                            padding: '0.25rem 0.5rem', borderRadius: '99px', fontSize: '0.7rem', fontWeight: 600,
+                            background: srv.is_active ? 'rgba(34, 197, 94, 0.1)' : 'rgba(244, 63, 94, 0.1)',
+                            color: srv.is_active ? '#22c55e' : '#f43f5e', border: '1px solid currentColor'
+                          }}
+                        >
+                          {srv.is_active ? 'Aktif' : 'Nonaktif'}
+                        </button>
+                      </td>
+                      <td style={{ padding: '1rem', textAlign: 'right' }}>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+                          <button onClick={() => { setEditingService(srv); setIsServiceModalOpen(true); }} style={{ background: 'transparent', color: 'var(--text-muted)', padding: '0.25rem' }}>
+                            <Edit size={16} />
+                          </button>
+                          <button onClick={() => deleteService(srv.id)} style={{ background: 'transparent', color: '#f43f5e', padding: '0.25rem' }}>
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '2rem' }}>
+            {/* Member Types Section */}
+            <div className="glass-card" style={{ padding: '2rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                <h4 style={{ fontWeight: 700, fontSize: '1.1rem' }}>Tipe Pelanggan (Member)</h4>
+                <button 
+                  onClick={() => { setEditingMemberType(null); setIsMemberTypeModalOpen(true); }}
+                  className="btn-primary" 
+                  style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}
+                >
+                  <Plus size={16} />
+                </button>
+              </div>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ textAlign: 'left', borderBottom: '1px solid var(--glass-border)', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                      <th style={{ padding: '0.75rem' }}>Nama</th>
+                      <th style={{ padding: '0.75rem' }}>Diskon</th>
+                      <th style={{ padding: '0.75rem', textAlign: 'right' }}>Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {memberTypes.map(m => (
+                      <tr key={m.id} style={{ borderBottom: '1px solid var(--glass-border)' }}>
+                        <td style={{ padding: '0.75rem', fontWeight: 600 }}>{m.name}</td>
+                        <td style={{ padding: '0.75rem' }}>{m.discount_percent}%</td>
+                        <td style={{ padding: '0.75rem', textAlign: 'right' }}>
+                          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+                            <button onClick={() => { setEditingMemberType(m); setIsMemberTypeModalOpen(true); }} style={{ background: 'transparent', color: 'var(--text-muted)' }}>
+                              <Edit size={14} />
+                            </button>
+                            <button onClick={() => deleteMemberType(m.id)} style={{ background: 'transparent', color: '#f43f5e' }}>
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Employee Section */}
+            <div className="glass-card" style={{ padding: '2rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                <h4 style={{ fontWeight: 700, fontSize: '1.1rem' }}>Staff & Pegawai</h4>
+                <button 
+                  onClick={() => { setEditingEmployee(null); setIsEmployeeModalOpen(true); }}
+                  className="btn-primary" 
+                  style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}
+                >
+                  <Plus size={16} />
+                </button>
+              </div>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ textAlign: 'left', borderBottom: '1px solid var(--glass-border)', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                      <th style={{ padding: '0.75rem' }}>Nama</th>
+                      <th style={{ padding: '0.75rem' }}>Gaji Pokok</th>
+                      <th style={{ padding: '0.75rem', textAlign: 'right' }}>Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {employees.map(e => (
+                      <tr key={e.id} style={{ borderBottom: '1px solid var(--glass-border)' }}>
+                        <td style={{ padding: '0.75rem', fontWeight: 600 }}>{e.name}</td>
+                        <td style={{ padding: '0.75rem' }}>Rp {e.base_salary.toLocaleString()}</td>
+                        <td style={{ padding: '0.75rem', textAlign: 'right' }}>
+                          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+                            <button onClick={() => { setEditingEmployee(e); setIsEmployeeModalOpen(true); }} style={{ background: 'transparent', color: 'var(--text-muted)' }}>
+                              <Edit size={14} />
+                            </button>
+                            <button onClick={() => deleteEmployee(e.id)} style={{ background: 'transparent', color: '#f43f5e' }}>
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : activeTab === 'payroll' ? (
+        <div className="glass-card" style={{ padding: '2rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+            <div>
+              <h4 style={{ fontWeight: 700, fontSize: '1.1rem' }}>Rekap Gaji & Bonus Staff</h4>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Total insentif dihitung berdasarkan komisi per layanan yang diselesaikan.</p>
+            </div>
+          </div>
+          
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr style={{ borderBottom: '1px solid var(--glass-border)', color: 'var(--text-muted)', fontSize: '0.8125rem', textAlign: 'left' }}>
-                  <th style={{ padding: '0.75rem' }}>Layanan</th>
-                  <th style={{ padding: '0.75rem' }}>Komisi</th>
-                  <th style={{ padding: '0.75rem' }}>Status</th>
-                  <th style={{ padding: '0.75rem' }}>Aksi</th>
+                <tr style={{ textAlign: 'left', borderBottom: '1px solid var(--glass-border)', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                  <th style={{ padding: '1rem' }}>Nama Staff</th>
+                  <th style={{ padding: '1rem' }}>Gaji Pokok</th>
+                  <th style={{ padding: '1rem' }}>Komisi Layanan</th>
+                  <th style={{ padding: '1rem' }}>Bonus/Insentif Lain</th>
+                  <th style={{ padding: '1rem' }}>Total Diterima</th>
+                  <th style={{ padding: '1rem', textAlign: 'right' }}>Aksi</th>
                 </tr>
               </thead>
               <tbody>
-                {services.map(service => (
-                  <tr key={service.id} style={{ borderBottom: '1px solid var(--glass-border)', opacity: service.is_active ? 1 : 0.5 }}>
-                    <td style={{ padding: '1rem' }}>
-                      <div style={{ fontWeight: 600, marginBottom: '0.5rem' }}>{service.name}</div>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.4rem', fontSize: '0.7rem' }}>
-                        <div style={{ padding: '2px 6px', background: 'rgba(255,255,255,0.03)', borderRadius: '4px' }}>
-                          <span style={{ color: 'var(--text-muted)' }}>N:</span> Rp {service.price_normal?.toLocaleString()}
-                        </div>
-                        <div style={{ padding: '2px 6px', background: 'rgba(255, 0, 132, 0.05)', borderRadius: '4px', color: 'var(--primary)', fontWeight: 600 }}>
-                          <span>M:</span> Rp {service.price_member?.toLocaleString()}
-                        </div>
-                        <div style={{ padding: '2px 6px', background: 'rgba(0, 212, 255, 0.05)', borderRadius: '4px', color: 'var(--accent)' }}>
-                          <span>E:</span> Rp {service.price_express?.toLocaleString()}
-                        </div>
-                        <div style={{ padding: '2px 6px', background: 'rgba(251, 191, 36, 0.05)', borderRadius: '4px', color: '#fbbf24' }}>
-                          <span>S:</span> Rp {service.price_special?.toLocaleString()}
-                        </div>
-                      </div>
-                    </td>
-                    <td style={{ padding: '1rem' }}>
-                      {service.commission_value ? (
-                        <span style={{ fontSize: '0.875rem', color: 'var(--primary)', fontWeight: 600 }}>
-                          {service.commission_type === 'percentage' ? `${service.commission_value}%` : `Rp ${service.commission_value.toLocaleString()}`}
-                        </span>
-                      ) : '-'}
-                    </td>
-                    <td style={{ padding: '1rem' }}>
-                      <button
-                        onClick={() => toggleService(service.id)}
-                        style={{
-                          display: 'flex', alignItems: 'center', gap: '0.4rem', border: 'none', padding: '0.4rem 0.8rem', borderRadius: '20px', fontSize: '0.75rem', cursor: 'pointer',
-                          background: service.is_active ? 'rgba(16, 185, 129, 0.1)' : 'rgba(244, 63, 94, 0.1)',
-                          color: service.is_active ? '#10b981' : '#f43f5e'
-                        }}
-                      >
-                        <Power size={12} /> {service.is_active ? 'Aktif' : 'Nonaktif'}
-                      </button>
-                    </td>
-                    <td style={{ padding: '1rem' }}>
-                      <div style={{ display: 'flex', gap: '0.4rem', justifyContent: 'flex-end' }}>
+                {employees.map(e => {
+                  const commission = calculateCommission(e.id, filteredTransactions, services);
+                  const bonuses = filteredIncentives.filter(i => i.employee_id === e.id).reduce((acc, i) => acc + i.amount, 0);
+                  const total = e.base_salary + commission + bonuses;
+                  
+                  return (
+                    <tr key={e.id} style={{ borderBottom: '1px solid var(--glass-border)' }}>
+                      <td style={{ padding: '1rem', fontWeight: 600 }}>{e.name}</td>
+                      <td style={{ padding: '1rem' }}>Rp {e.base_salary.toLocaleString()}</td>
+                      <td style={{ padding: '1rem', color: '#4ade80', fontWeight: 600 }}>+ Rp {commission.toLocaleString()}</td>
+                      <td style={{ padding: '1rem', color: '#2dd4bf' }}>+ Rp {bonuses.toLocaleString()}</td>
+                      <td style={{ padding: '1rem', fontSize: '1.05rem', fontWeight: 800 }}>Rp {total.toLocaleString()}</td>
+                      <td style={{ padding: '1rem', textAlign: 'right' }}>
                         <button 
-                          style={{ 
-                            padding: '0.4rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)', border: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s'
-                          }} 
-                          onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = 'white'; }}
-                          onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = 'var(--text-muted)'; }}
-                          onClick={() => { setEditingService(service); setIsServiceModalOpen(true); }}
+                          onClick={() => { setSelectedEmployeeForIncentive(e.id); setIsIncentiveModalOpen(true); }}
+                          className="btn-secondary" 
+                          style={{ padding: '0.4rem 0.8rem', fontSize: '0.75rem', borderRadius: '8px' }}
                         >
-                          <Settings size={14} />
+                          <Plus size={14} /> Beri Bonus
                         </button>
-                        <button 
-                          style={{ 
-                            padding: '0.4rem', borderRadius: '8px', background: 'rgba(244, 63, 94, 0.1)', color: '#f43f5e', border: '1px solid rgba(244, 63, 94, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s'
-                          }}
-                          onMouseOver={(e) => { e.currentTarget.style.background = '#f43f5e'; e.currentTarget.style.color = 'white'; }}
-                          onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(244, 63, 94, 0.1)'; e.currentTarget.style.color = '#f43f5e'; }}
-                          onClick={() => deleteService(service.id)}
-                        >
-                          <Trash2 size={14} />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ) : activeTab === 'expenses' ? (
+        <div className="glass-card" style={{ padding: '2rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+            <h4 style={{ fontWeight: 700, fontSize: '1.1rem' }}>Daftar Pengeluaran Operasional</h4>
+            <button 
+              onClick={() => { setEditingExpense(null); setIsExpenseModalOpen(true); }}
+              className="btn-primary" 
+              style={{ padding: '0.5rem 1rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            >
+              <Plus size={16} /> Catat Pengeluaran
+            </button>
+          </div>
+          
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr style={{ textAlign: 'left', borderBottom: '1px solid var(--glass-border)', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                  <th style={{ padding: '1rem' }}>Tanggal</th>
+                  <th style={{ padding: '1rem' }}>Keterangan</th>
+                  <th style={{ padding: '1rem' }}>Kategori</th>
+                  <th style={{ padding: '1rem' }}>Jumlah</th>
+                  <th style={{ padding: '1rem', textAlign: 'right' }}>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredExpenses.map(exp => (
+                  <tr key={exp.id} style={{ borderBottom: '1px solid var(--glass-border)' }}>
+                    <td style={{ padding: '1rem' }}>{new Date(exp.date).toLocaleDateString()}</td>
+                    <td style={{ padding: '1rem', fontWeight: 600 }}>{exp.description}</td>
+                    <td style={{ padding: '1rem' }}>
+                      <span style={{ padding: '2px 8px', borderRadius: '4px', background: 'rgba(255,255,255,0.05)', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                        {exp.category}
+                      </span>
+                    </td>
+                    <td style={{ padding: '1rem', fontWeight: 700, color: '#f87171' }}>Rp {exp.amount.toLocaleString()}</td>
+                    <td style={{ padding: '1rem', textAlign: 'right' }}>
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+                        <button onClick={() => { setEditingExpense(exp); setIsExpenseModalOpen(true); }} style={{ background: 'transparent', color: 'var(--text-muted)' }}>
+                          <Edit size={16} />
+                        </button>
+                        <button onClick={() => deleteExpense(exp.id)} style={{ background: 'transparent', color: '#f43f5e' }}>
+                          <Trash2 size={16} />
                         </button>
                       </div>
                     </td>
@@ -440,263 +585,6 @@ export const AdminDashboard = () => {
                 ))}
               </tbody>
             </table>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            {/* Employee Management */}
-            <div className="glass-card">
-              <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <Briefcase size={18} color="var(--primary)" /> Manajemen Karyawan
-                </h4>
-                <button className="btn-primary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.75rem' }} onClick={() => { setEditingEmployee(null); setIsEmployeeModalOpen(true); }}>
-                  <Plus size={14} /> Tambah
-                </button>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                {employees.map(emp => (
-                  <div key={emp.id} style={{ padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div>
-                      <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{emp.name}</div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: '0.2rem', marginTop: '0.25rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                          <Phone size={10} /> {emp.phone}
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                          <History size={10} /> Gabung: {new Date(emp.join_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                        </div>
-                      </div>
-                    </div>
-                    <div style={{ display: 'flex', gap: '0.4rem' }}>
-                      <button 
-                        style={{ 
-                          padding: '0.4rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)', border: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s'
-                        }} 
-                        onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = 'white'; }}
-                        onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = 'var(--text-muted)'; }}
-                        onClick={() => { setEditingEmployee(emp); setIsEmployeeModalOpen(true); }}
-                      >
-                        <Settings size={12} />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Membership Management */}
-            <div className="glass-card">
-              <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <Users size={18} color="var(--accent)" /> Jenis Member
-                </h4>
-                <button className="btn-primary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.75rem' }} onClick={() => { setEditingMemberType(null); setIsMemberTypeModalOpen(true); }}>
-                  <Plus size={14} /> Baru
-                </button>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                {memberTypes.map(type => (
-                  <div key={type.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
-                    <div style={{ fontWeight: 600, fontSize: '0.875rem' }}>{type.name}</div>
-                    <div style={{ display: 'flex', gap: '0.4rem' }}>
-                      <button 
-                        style={{ 
-                          padding: '0.4rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)', border: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s'
-                        }} 
-                        onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = 'white'; }}
-                        onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = 'var(--text-muted)'; }}
-                        onClick={() => { setEditingMemberType(type); setIsMemberTypeModalOpen(true); }}
-                      >
-                        <Settings size={12} />
-                      </button>
-                      <button 
-                        style={{ 
-                          padding: '0.4rem', borderRadius: '8px', background: 'rgba(244, 63, 94, 0.1)', color: '#f43f5e', border: '1px solid rgba(244, 63, 94, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s'
-                        }}
-                        onMouseOver={(e) => { e.currentTarget.style.background = '#f43f5e'; e.currentTarget.style.color = 'white'; }}
-                        onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(244, 63, 94, 0.1)'; e.currentTarget.style.color = '#f43f5e'; }}
-                        onClick={() => deleteMemberType(type.id)}
-                      >
-                        <Trash2 size={12} />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : activeTab === 'payroll' ? (
-        /* Payroll Tab Content */
-        <div className="glass-card" style={{ padding: '2rem' }}>
-          <div style={{ marginBottom: '2rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-            <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', fontSize: '1.1rem' }}>
-              <History size={20} color="var(--primary)" /> Rangkuman Gaji & Komisi
-            </h4>
-            
-            {/* Filter Controls */}
-            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-              <select 
-                value={filterMonth} 
-                onChange={(e) => setFilterMonth(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-                style={{ padding: '0.4rem 0.8rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', fontSize: '0.8rem' }}
-              >
-                <option value="all">Semua Bulan</option>
-                {months.map((m, i) => (
-                  <option key={m} value={i}>{m}</option>
-                ))}
-              </select>
-              
-              <select 
-                value={filterYear} 
-                onChange={(e) => setFilterYear(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-                style={{ padding: '0.4rem 0.8rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', fontSize: '0.8rem' }}
-              >
-                <option value="all">Semua Tahun</option>
-                {years.map(y => (
-                  <option key={y} value={y}>{y}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            {employees.filter(e => e.is_active).map(emp => {
-              const filteredTransactions = transactions.filter(t => {
-                const date = new Date(t.created_at);
-                const monthMatch = filterMonth === 'all' || date.getMonth() === filterMonth;
-                const yearMatch = filterYear === 'all' || date.getFullYear() === filterYear;
-                return monthMatch && yearMatch;
-              });
-
-              const filteredIncentives = incentives.filter(i => {
-                const date = new Date(i.date);
-                const monthMatch = filterMonth === 'all' || date.getMonth() === filterMonth;
-                const yearMatch = filterYear === 'all' || date.getFullYear() === filterYear;
-                return i.employee_id === emp.id && monthMatch && yearMatch;
-              });
-
-              const commissionTotal = calculateCommission(emp.id, filteredTransactions, services);
-              const incentiveTotal = filteredIncentives.reduce((acc, i) => acc + i.amount, 0);
-              const grandTotal = emp.base_salary + commissionTotal + incentiveTotal;
-
-              return (
-                <div key={emp.id} className="glass-card" style={{ padding: '1.5rem', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--glass-border)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <div style={{ width: 44, height: 44, borderRadius: '12px', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700 }}>
-                        {emp.name.charAt(0)}
-                      </div>
-                      <div>
-                        <h5 style={{ fontSize: '1.1rem', fontWeight: 700 }}>{emp.name}</h5>
-                        <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{emp.phone}</p>
-                      </div>
-                    </div>
-                    <button
-                      className="btn-primary"
-                      style={{ padding: '0.5rem 1rem', fontSize: '0.8rem', background: 'rgba(255,255,255,0.05)', color: 'white' }}
-                      onClick={() => { setSelectedEmployeeForIncentive(emp.id); setIsIncentiveModalOpen(true); }}
-                    >
-                      + Berikan Insentif
-                    </button>
-                  </div>
-
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
-                    <div style={{ padding: '1rem', background: 'rgba(0,0,0,0.2)', borderRadius: '12px' }}>
-                      <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Gaji Pokok</p>
-                      <div style={{ fontWeight: 600, fontSize: '1rem' }}>Rp {emp.base_salary.toLocaleString()}</div>
-                    </div>
-                    <div style={{ padding: '1rem', background: 'rgba(0,0,0,0.2)', borderRadius: '12px' }}>
-                      <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Komisi Jasa</p>
-                      <div style={{ fontWeight: 600, fontSize: '1rem', color: 'var(--primary)' }}>+ Rp {commissionTotal.toLocaleString()}</div>
-                    </div>
-                    <div style={{ padding: '1rem', background: 'rgba(0,0,0,0.2)', borderRadius: '12px' }}>
-                      <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Insentif Manual</p>
-                      <div style={{ fontWeight: 600, fontSize: '1rem', color: 'var(--accent)' }}>+ Rp {incentiveTotal.toLocaleString()}</div>
-                    </div>
-                    <div style={{ padding: '1rem', background: 'var(--primary-gradient)', borderRadius: '12px' }}>
-                      <p style={{ fontSize: '0.75rem', opacity: 0.8, marginBottom: '0.25rem', color: 'white' }}>Total Diterima</p>
-                      <div style={{ fontWeight: 800, fontSize: '1.25rem', color: 'white' }}>Rp {grandTotal.toLocaleString()}</div>
-                    </div>
-                  </div>
-
-                  {filteredIncentives.length > 0 && (
-                    <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px dashed var(--glass-border)' }}>
-                      <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                        <Wallet size={12} /> Detail Insentif:
-                      </p>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                        {filteredIncentives.map(inc => (
-                          <div key={inc.id} style={{ padding: '0.3rem 0.6rem', background: 'rgba(255,255,255,0.05)', borderRadius: '6px', fontSize: '0.7rem' }}>
-                            <span style={{ color: 'var(--primary)' }}>Rp {inc.amount.toLocaleString()}</span> - {inc.description}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      ) : activeTab === 'expenses' ? (
-        /* Expenses Tab Content */
-        <div className="glass-card" style={{ padding: '2rem' }}>
-          <div style={{ marginBottom: '2rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', fontSize: '1.1rem' }}>
-              <Receipt size={20} color="var(--primary)" /> Histori Pengeluaran Kas Kecil
-            </h4>
-            <button 
-              onClick={() => { setEditingExpense(null); setIsExpenseModalOpen(true); }}
-              className="btn-primary" 
-              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', fontSize: '0.85rem' }}
-            >
-              <Plus size={18} /> Tambah Pengeluaran
-            </button>
-          </div>
-
-          <div style={{ display: 'grid', gap: '1rem' }}>
-            {expenses.length === 0 ? (
-              <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>Belum ada catatan pengeluaran.</div>
-            ) : (
-              expenses.map(ex => (
-                <div key={ex.id} className="glass-card" style={{ padding: '1.25rem', background: 'rgba(255,255,255,0.02)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-                  <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', minWidth: 'min(100%, 250px)', flex: 1 }}>
-                    <div style={{ padding: '0.75rem', borderRadius: '12px', background: 'rgba(244, 63, 94, 0.1)', color: '#f43f5e', flexShrink: 0 }}>
-                      <Wallet size={20} />
-                    </div>
-                    <div>
-                      <div style={{ fontWeight: 600, fontSize: '1rem' }}>{ex.description}</div>
-                      <div style={{ display: 'flex', gap: '1rem', marginTop: '0.25rem', flexWrap: 'wrap' }}>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.05)', padding: '0.1rem 0.5rem', borderRadius: '4px' }}>{ex.category}</span>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{new Date(ex.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', justifyContent: 'flex-end', minWidth: 'min(100%, 150px)', flex: '0 0 auto' }}>
-                    <div style={{ textAlign: 'right', marginRight: '0.5rem' }}>
-                      <div style={{ fontWeight: 700, color: '#f43f5e', fontSize: '1.1rem' }}>- Rp {ex.amount.toLocaleString()}</div>
-                    </div>
-                    <button 
-                      onClick={() => { setEditingExpense(ex); setIsExpenseModalOpen(true); }}
-                      style={{ padding: '0.5rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid var(--glass-border)', cursor: 'pointer', transition: 'all 0.2s' }}
-                      onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
-                      onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
-                    >
-                      <Edit size={16} />
-                    </button>
-                    <button 
-                      onClick={() => deleteExpense(ex.id)}
-                      style={{ padding: '0.5rem', borderRadius: '8px', background: 'rgba(244, 63, 94, 0.1)', color: '#f43f5e', border: '1px solid rgba(244, 63, 94, 0.2)', cursor: 'pointer', transition: 'all 0.2s' }}
-                      onMouseOver={(e) => { e.currentTarget.style.background = '#f43f5e'; e.currentTarget.style.color = 'white'; }}
-                      onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(244, 63, 94, 0.1)'; e.currentTarget.style.color = '#f43f5e'; }}
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                </div>
-              ))
-            )}
           </div>
         </div>
       ) : activeTab === 'identity' ? (
@@ -706,101 +594,93 @@ export const AdminDashboard = () => {
       ) : activeTab === 'users' ? (
         /* Users Tab Content */
         <div className="glass-card" style={{ padding: '2rem' }}>
-          <div style={{ marginBottom: '2rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', fontSize: '1.1rem' }}>
-              <Users size={20} color="var(--primary)" /> Manajemen Akses User
-            </h4>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <h4 style={{ fontWeight: 700, fontSize: '1.1rem' }}>Manajemen Akses Dashboard</h4>
             <button 
               onClick={() => { setEditingUser(null); setIsUserModalOpen(true); }}
               className="btn-primary" 
-              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', fontSize: '0.85rem' }}
+              style={{ padding: '0.5rem 1rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
             >
-              <Plus size={18} /> Tambah User
+              <Plus size={16} /> Buat User Baru
             </button>
           </div>
-
-          <div style={{ display: 'grid', gap: '1rem' }}>
-            {users.length === 0 ? (
-              <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>Belum ada data user.</div>
-            ) : (
-              users.map(u => (
-                <div key={u.id} className="glass-card" style={{ padding: '1.25rem', background: 'rgba(255,255,255,0.02)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-                  <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', minWidth: 'min(100%, 250px)', flex: 1 }}>
-                    <div style={{ width: 40, height: 40, borderRadius: '10px', background: 'var(--primary-gradient)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700 }}>
-                      {u.name.charAt(0)}
-                    </div>
-                    <div>
-                      <div style={{ fontWeight: 600, fontSize: '1rem' }}>{u.name}</div>
-                      <div style={{ display: 'flex', gap: '1rem', marginTop: '0.25rem', flexWrap: 'wrap' }}>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>@{u.username}</span>
-                        <span style={{ fontSize: '0.75rem', color: u.role === 'owner' ? 'var(--primary)' : 'var(--accent)', background: 'rgba(255,255,255,0.05)', padding: '0.1rem 0.5rem', borderRadius: '4px', textTransform: 'uppercase', fontWeight: 700 }}>{u.role}</span>
+          
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr style={{ textAlign: 'left', borderBottom: '1px solid var(--glass-border)', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                  <th style={{ padding: '1rem' }}>Username</th>
+                  <th style={{ padding: '1rem' }}>Role</th>
+                  <th style={{ padding: '1rem' }}>Dibuat Pada</th>
+                  <th style={{ padding: '1rem', textAlign: 'right' }}>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map(u => (
+                  <tr key={u.id} style={{ borderBottom: '1px solid var(--glass-border)' }}>
+                    <td style={{ padding: '1rem', fontWeight: 600 }}>{u.username}</td>
+                    <td style={{ padding: '1rem' }}>
+                      <span style={{ padding: '2px 8px', borderRadius: '4px', background: u.role === 'admin' ? 'rgba(59, 130, 246, 0.1)' : 'rgba(255,255,255,0.05)', color: u.role === 'admin' ? '#3b82f6' : 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 600 }}>
+                        {u.role.toUpperCase()}
+                      </span>
+                    </td>
+                    <td style={{ padding: '1rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>{new Date(u.created_at).toLocaleDateString()}</td>
+                    <td style={{ padding: '1rem', textAlign: 'right' }}>
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+                        <button onClick={() => { setEditingUser(u); setIsUserModalOpen(true); }} style={{ background: 'transparent', color: 'var(--text-muted)' }}>
+                          <Edit size={16} />
+                        </button>
+                        <button onClick={() => deleteUser(u.id)} style={{ background: 'transparent', color: '#f43f5e' }}>
+                          <Trash2 size={16} />
+                        </button>
                       </div>
-                    </div>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', justifyContent: 'flex-end', minWidth: 'min(100%, 150px)', flex: '0 0 auto' }}>
-                    <button 
-                      onClick={() => { setEditingUser(u); setIsUserModalOpen(true); }}
-                      style={{ padding: '0.5rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid var(--glass-border)', cursor: 'pointer', transition: 'all 0.2s' }}
-                    >
-                      <Edit size={16} />
-                    </button>
-                    <button 
-                      onClick={() => deleteUser(u.id)}
-                      disabled={u.username === 'admin'}
-                      style={{ padding: '0.5rem', borderRadius: '8px', background: 'rgba(244, 63, 94, 0.1)', color: '#f43f5e', border: '1px solid rgba(244, 63, 94, 0.2)', cursor: 'pointer', opacity: u.username === 'admin' ? 0.3 : 1 }}
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                </div>
-              ))
-            )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       ) : null}
 
       {/* Modals */}
-      <ServiceModal
-        isOpen={isServiceModalOpen}
-        onClose={() => setIsServiceModalOpen(false)}
-        onSave={handleSaveService}
-        initialData={editingService}
+      <ServiceModal 
+        isOpen={isServiceModalOpen} 
+        onClose={() => setIsServiceModalOpen(false)} 
+        onSave={fetchData} 
+        service={editingService} 
       />
-
       <MemberTypeModal
         isOpen={isMemberTypeModalOpen}
         onClose={() => setIsMemberTypeModalOpen(false)}
-        onSave={handleSaveMemberType}
-        initialData={editingMemberType}
+        onSave={fetchData}
+        memberType={editingMemberType}
       />
-
       <EmployeeModal
         isOpen={isEmployeeModalOpen}
         onClose={() => setIsEmployeeModalOpen(false)}
-        onSave={handleSaveEmployee}
-        initialData={editingEmployee}
+        onSave={fetchData}
+        employee={editingEmployee}
       />
-
       <IncentiveModal
         isOpen={isIncentiveModalOpen}
         onClose={() => setIsIncentiveModalOpen(false)}
-        onSave={handleSaveIncentive}
-        employeeName={employees.find(e => e.id === selectedEmployeeForIncentive)?.name || ''}
+        onSave={fetchData}
+        employeeId={selectedEmployeeForIncentive}
       />
-
       <ExpenseModal
         isOpen={isExpenseModalOpen}
-        onClose={() => { setIsExpenseModalOpen(false); setEditingExpense(null); }}
-        onSave={handleSaveExpense}
-        initialData={editingExpense}
+        onClose={() => setIsExpenseModalOpen(false)}
+        onSave={fetchData}
+        expense={editingExpense}
       />
-
       <UserModal
         isOpen={isUserModalOpen}
-        onClose={() => { setIsUserModalOpen(false); setEditingUser(null); }}
-        onSave={handleSaveUser}
-        initialData={editingUser}
+        onClose={() => setIsUserModalOpen(false)}
+        onSave={fetchData}
+        user={editingUser}
       />
     </div>
   );
 };
+破
