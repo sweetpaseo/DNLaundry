@@ -1,14 +1,13 @@
-```javascript
 import { useState, useEffect, useRef } from 'react';
 import { Store, MapPin, Save, Instagram, MessageSquare, Wallet, Users, DollarSign, Plus } from 'lucide-react';
 import { api } from '../../services/api';
 import { WhatsAppIcon } from '../Icons';
 
 export const IdentitySettings = () => {
-  const [loading, setLoading] = React.useState(true);
-  const [saving, setSaving] = React.useState(false);
-  const [isDragging, setIsDragging] = React.useState(false);
-  const [settings, setSettings] = React.useState({
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [settings, setSettings] = useState({
     name: '',
     phone: '',
     address: '',
@@ -20,7 +19,7 @@ export const IdentitySettings = () => {
     bank_account_number: '',
     qris_url: ''
   });
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement> | React.DragEvent) => {
     let file: File | null = null;
@@ -80,7 +79,7 @@ export const IdentitySettings = () => {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchSettings();
   }, []);
 
@@ -377,3 +376,4 @@ export const IdentitySettings = () => {
     </div>
   );
 };
+破

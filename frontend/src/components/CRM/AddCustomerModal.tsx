@@ -1,4 +1,3 @@
-```
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, User, Phone, MapPin, Save, Star } from 'lucide-react';
@@ -14,14 +13,14 @@ interface Props {
 }
 
 export const AddCustomerModal = ({ isOpen, onClose, onSave, initialData, memberTypes }: Props) => {
-  const [formData, setFormData] = React.useState({
+  const [formData, setFormData] = useState({
     name: '',
     phone: '',
     address: '',
     member_type_id: ''
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (initialData) {
       setFormData({
         name: initialData.name,
@@ -35,7 +34,7 @@ export const AddCustomerModal = ({ isOpen, onClose, onSave, initialData, memberT
     }
   }, [initialData, isOpen, memberTypes]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isOpen) {
       document.body.classList.add('modal-open');
     } else {
