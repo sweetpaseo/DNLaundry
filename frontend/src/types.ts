@@ -25,7 +25,7 @@ export interface Customer {
   name: string;
   phone: string;
   address: string;
-  member_type_id: string;
+  type_id: string;
   member_type?: MemberType;
   tags?: string[];
   customer_id?: string; // New dedicated column

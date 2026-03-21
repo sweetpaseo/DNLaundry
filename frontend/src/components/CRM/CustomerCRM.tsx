@@ -115,7 +115,7 @@ export const CustomerCRM = ({ currentUser }: Props) => {
                       border: '1px solid rgba(255, 0, 132, 0.3)',
                       display: 'flex', alignItems: 'center', gap: '4px'
                     }}>
-                      <Star size={10} /> {memberTypes.find(mt => mt.id === customer.member_type_id)?.name || customer.member_type?.name || 'Reguler'}
+                      <Star size={10} /> {memberTypes.find(mt => mt.id === customer.type_id)?.name || customer.member_type?.name || 'Reguler'}
                     </span>
                     <span style={{ 
                       fontSize: '0.65rem', padding: '2px 8px', borderRadius: '4px', 

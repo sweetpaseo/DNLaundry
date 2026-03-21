@@ -8,8 +8,8 @@ import { generateNextId } from '../../utils/customer';
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (customer: { id?: string; name: string; phone: string; address: string; member_type_id: string; tags?: string[]; customer_id?: string }) => void;
-  initialData?: { id?: string; name: string; phone: string; address: string; member_type_id?: string; tags?: string[]; customer_id?: string; default_delivery_type?: 'Pickup' | 'Delivery' } | null;
+  onSave: (customer: { id?: string; name: string; phone: string; address: string; type_id: string; tags?: string[]; customer_id?: string }) => void;
+  initialData?: { id?: string; name: string; phone: string; address: string; type_id?: string; tags?: string[]; customer_id?: string; default_delivery_type?: 'Pickup' | 'Delivery' } | null;
   memberTypes: MemberType[];
   allCustomers: any[];
   currentUser?: any;
@@ -22,7 +22,7 @@ export const AddCustomerModal = ({ isOpen, onClose, onSave, initialData, memberT
     name: '',
     phone: '',
     address: '',
-    member_type_id: memberTypes[0]?.id || '',
+    type_id: memberTypes[0]?.id || '',
     default_delivery_type: 'Pickup' as 'Pickup' | 'Delivery',
     customer_id: ''
   });
@@ -33,7 +33,7 @@ export const AddCustomerModal = ({ isOpen, onClose, onSave, initialData, memberT
         name: initialData.name || '',
         phone: initialData.phone || '',
         address: initialData.address || '',
-        member_type_id: initialData.member_type_id || memberTypes[0]?.id || '',
+        type_id: initialData.type_id || memberTypes[0]?.id || '',
         default_delivery_type: initialData.default_delivery_type || 'Pickup',
         customer_id: initialData.customer_id || ''
       });
@@ -44,7 +44,7 @@ export const AddCustomerModal = ({ isOpen, onClose, onSave, initialData, memberT
         name: '', 
         phone: '', 
         address: '', 
-        member_type_id: defaultType?.id || '',
+        type_id: defaultType?.id || '',
         default_delivery_type: 'Pickup',
         customer_id: generateNextId(allCustomers)
       });
@@ -63,8 +63,8 @@ export const AddCustomerModal = ({ isOpen, onClose, onSave, initialData, memberT
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const dataToSave = { ...formData };
-    if (!dataToSave.member_type_id) {
-      delete (dataToSave as any).member_type_id;
+    if (!dataToSave.type_id) {
+      delete (dataToSave as any).type_id;
     }
     
     onSave(initialData?.id 
@@ -174,8 +174,8 @@ export const AddCustomerModal = ({ isOpen, onClose, onSave, initialData, memberT
                 <div style={{ position: 'relative' }}>
                   <select
                     style={{ width: '100%', paddingLeft: '2.5rem' }}
-                    value={formData.member_type_id}
-                    onChange={(e) => setFormData({...formData, member_type_id: e.target.value})}
+                    value={formData.type_id}
+                    onChange={(e) => setFormData({...formData, type_id: e.target.value})}
                   >
                     {memberTypes.map(type => (
                       <option key={type.id} value={type.id}>{type.name}</option>
