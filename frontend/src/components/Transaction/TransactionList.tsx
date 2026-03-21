@@ -105,11 +105,14 @@ export const TransactionList = () => {
 
     message += `\nTerima kasih telah menggunakan layanan kami!`;
 
-    const customer = customers.find(c => c.id === firstTransaction.customer_id);
+    if (!firstTransaction) return;
+
+    const customerId = firstTransaction.customer_id || '';
+    const customer = customers.find(c => c.id === customerId);
     const recipientPhone = customer?.phone || (firstTransaction as any).customer?.phone || (firstTransaction as any).customers?.phone;
 
     if (!recipientPhone) {
-      alert(`Nomor WhatsApp pelanggan tidak ditemukan.\n(Pelanggan: ${firstTransaction.customer_name}, ID: ${firstTransaction.customer_id.slice(0,8)})`);
+      alert(`Nomor WhatsApp pelanggan tidak ditemukan.\n(Pelanggan: ${firstTransaction.customer_name || 'Tidak diketahui'}, ID: ${customerId ? customerId.slice(0,8) : 'N/A'})`);
       return;
     }
 
