@@ -4,7 +4,8 @@ import type { Transaction, TransactionStatus, Customer } from '../../types';
 import { api } from '../../services/api';
 import { ReceiptModal } from './ReceiptModal';
 import { EditTransactionModal } from './EditTransactionModal';
-import { WhatsAppIcon } from '../Icons'; // Assuming this path is correct based on the diff
+import { WhatsAppIcon } from '../Icons'; 
+import { getWhatsAppUrl } from '../../utils/whatsapp';
 
 export const TransactionList = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -86,8 +87,7 @@ export const TransactionList = () => {
     message += `Status Pembayaran: *${allPaid ? 'LUNAS' : 'BELUM BAYAR'}*\n`;
     message += `\nTerima kasih telah menggunakan layanan kami!`;
 
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/${settings.whatsapp_number}?text=${encodedMessage}`;
+    const whatsappUrl = getWhatsAppUrl(settings.whatsapp_number, message);
     window.open(whatsappUrl, '_blank');
   };
 

@@ -3,6 +3,7 @@ import { Search, UserPlus, Phone, MapPin, MessageSquare, Edit, Trash2, Loader2, 
 import type { Customer, MemberType } from '../../types';
 import { AddCustomerModal } from './AddCustomerModal';
 import { api } from '../../services/api';
+import { getWhatsAppUrl } from '../../utils/whatsapp';
 
 export const CustomerCRM = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -151,7 +152,7 @@ export const CustomerCRM = () => {
               </div>
 
               <a 
-                href={`https://wa.me/${customer.phone.replace(/[^0-9]/g, '')}`} 
+                href={getWhatsAppUrl(customer.phone)} 
                 target="_blank" rel="noreferrer"
                 style={{ 
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', 

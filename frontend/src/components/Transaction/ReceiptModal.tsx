@@ -2,6 +2,7 @@
 import { Printer, X, MapPin, Instagram } from 'lucide-react';
 import type { Transaction } from '../../types';
 import { WhatsAppIcon } from '../Icons';
+import { getWhatsAppUrl } from '../../utils/whatsapp';
 
 interface ReceiptModalProps {
   isOpen: boolean;
@@ -52,7 +53,7 @@ export const ReceiptModal = ({ isOpen, onClose, transaction, settings }: Receipt
     }
     message += `\n${settings?.footer_text || 'Terima kasih telah mempercayakan laundry Anda kepada kami!'}`;
 
-    const whatsappUrl = `https://wa.me/${customerPhone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = getWhatsAppUrl(customerPhone, message);
     window.open(whatsappUrl, '_blank');
   };
 
