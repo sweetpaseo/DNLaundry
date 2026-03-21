@@ -17,7 +17,8 @@ export const IdentitySettings = () => {
     bank_name: '',
     bank_account_name: '',
     bank_account_number: '',
-    qris_url: ''
+    qris_url: '',
+    qris_whatsapp_url: ''
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -277,22 +278,6 @@ export const IdentitySettings = () => {
                   style={{ width: '100%' }}
                 />
               </div>
-
-              <div className="form-group" style={{ marginTop: '0.5rem' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontSize: '0.85rem' }}>
-                  <Plus size={14} /> Link Manual Gambar QRIS (URL)
-                </label>
-                <input
-                  type="text"
-                  value={settings.qris_url || ''}
-                  onChange={e => setSettings({ ...settings, qris_url: e.target.value })}
-                  placeholder="https://domain-anda.com/qris.jpg"
-                  style={{ width: '100%', fontSize: '0.85rem' }}
-                />
-                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>
-                  *Gunakan kolom ini jika Anda ingin menggunakan link gambar luar (bukan upload).
-                </p>
-              </div>
             </div>
           </div>
 
@@ -348,6 +333,23 @@ export const IdentitySettings = () => {
                   </div>
                 )}
               </div>
+              
+              {/* Added Manual QRIS URL field exactly below upload area */}
+              <div style={{ marginTop: '1rem' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontSize: '0.85rem', fontWeight: 600 }}>
+                  <Plus size={14} color="var(--primary)" /> Link Manual Gambar QRIS (URL)
+                </label>
+                <input
+                  type="text"
+                  value={settings.qris_whatsapp_url || ''}
+                  onChange={e => setSettings({ ...settings, qris_whatsapp_url: e.target.value })}
+                  placeholder="https://domain-anda.com/qris.jpg"
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', fontSize: '0.85rem' }}
+                />
+                <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: '0.4rem', lineHeight: '1.4' }}>
+                  *Link ini khusus digunakan untuk dikirimkan melalui WhatsApp tagihan ke pelanggan karena API WhatsApp terkadang tidak bisa mengirim gambar langsung.
+                </p>
+              </div>
             </div>
 
             <div className="form-group">
@@ -392,4 +394,3 @@ export const IdentitySettings = () => {
     </div>
   );
 };
-

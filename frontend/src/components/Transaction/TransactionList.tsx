@@ -101,8 +101,8 @@ export const TransactionList = () => {
         message += `No. Rek: ${settings.bank_account_number}\n`;
         message += `A.n: ${settings.bank_account_name}\n`;
       }
-      if (settings.qris_url) {
-        message += `\nLink QRIS: ${settings.qris_url}\n`;
+      if (settings.qris_whatsapp_url || settings.qris_url) {
+        message += `\nLink QRIS: ${settings.qris_whatsapp_url || settings.qris_url}\n`;
       }
     }
 

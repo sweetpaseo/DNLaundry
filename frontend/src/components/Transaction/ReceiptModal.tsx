@@ -48,9 +48,18 @@ export const ReceiptModal = ({ isOpen, onClose, transaction, settings }: Receipt
     });
     message += `\n*TOTAL: Rp ${totalPrice.toLocaleString('id-ID')}*\n`;
     message += `Status Pembayaran: ${allPaid ? 'LUNAS' : 'BELUM BAYAR'}\n`;
-    if (allPaid && firstItem.payment_method) {
-      message += `Metode Pembayaran: ${firstItem.payment_method}\n`;
+    if (!allPaid && (settings?.bank_name || settings?.qris_whatsapp_url || settings?.qris_url)) {
+      message += `\n*Informasi Pembayaran (Transfer):*\n`;
+      if (settings.bank_name) {
+        message += `${settings.bank_name}\n`;
+        message += `No. Rek: ${settings.bank_account_number}\n`;
+        message += `A.n: ${settings.bank_account_name}\n`;
+      }
+      if (settings.qris_whatsapp_url || settings.qris_url) {
+        message += `\nLink QRIS: ${settings.qris_whatsapp_url || settings.qris_url}\n`;
+      }
     }
+    
     message += `\n${settings?.footer_text || 'Terima kasih telah mempercayakan laundry Anda kepada kami!'}`;
 
     const whatsappUrl = getWhatsAppUrl(customerPhone, message);
