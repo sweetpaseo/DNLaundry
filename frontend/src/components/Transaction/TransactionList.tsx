@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Printer, Trash2, CheckCircle, Clock, Search, Loader2 } from 'lucide-react';
+import { Printer, Trash2, CheckCircle, Clock, Search, Loader2, Edit3 } from 'lucide-react';
 import type { Transaction, TransactionStatus } from '../../types';
 import { api } from '../../services/api';
 import { ReceiptModal } from './ReceiptModal';
 import { EditTransactionModal } from './EditTransactionModal';
+import { WhatsAppIcon } from '../Icons'; // Assuming this path is correct based on the diff
 
 export const TransactionList = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -45,6 +46,49 @@ export const TransactionList = () => {
     }
   };
 
+  const handleDelete = async (groupId: string) => {
+    if (window.confirm(`Hapus semua item dalam transaksi ini?`)) {
+      try {
+        const groupItems = transactions.filter(t => (t.group_id || t.id) === groupId);
+        for (const item of groupItems) {
+          await api.deleteTransaction(item.id);
+        }
+        fetchTransactions();
+      } catch (e) {
+        alert('Gagal menghapus transaksi');
+      }
+    }
+  };
+
+  const handleWhatsAppShare = (group: Transaction[]) => {
+    if (!settings?.whatsapp_number) {
+      alert('Nomor WhatsApp toko belum diatur di pengaturan.');
+      return;
+    }
+
+    const firstTransaction = group[0];
+    const totalGroupPrice = group.reduce((sum, item) => sum + item.final_price, 0);
+    const allPaid = group.every(item => item.is_paid);
+
+    let message = `*Detail Transaksi Laundry*\n\n`;
+    message += `Nama Pelanggan: *${firstTransaction.customer_name}*\n`;
+    message += `Status: *${firstTransaction.status}*\n`;
+    message += `Tanggal Masuk: ${new Date(firstTransaction.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}\n`;
+    if (firstTransaction.due_date) {
+      message += `Estimasi Selesai: ${new Date(firstTransaction.due_date).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}\n`;
+    }
+    message += `\n*Daftar Layanan:*\n`;
+    group.forEach((item, index) => {
+      message += `${index + 1}. ${item.service_name} (${item.weight} ${item.unit || 'kg'}) - Rp ${item.final_price.toLocaleString('id-ID')}\n`;
+    });
+    message += `\nTotal Pembayaran: *Rp ${totalGroupPrice.toLocaleString('id-ID')}*\n`;
+    message += `Status Pembayaran: *${allPaid ? 'LUNAS' : 'BELUM BAYAR'}*\n`;
+    message += `\nTerima kasih telah menggunakan layanan kami!`;
+
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://wa.me/${settings.whatsapp_number}?text=${encodedMessage}`;
+    window.open(whatsappUrl, '_blank');
+  };
 
   useEffect(() => {
     fetchTransactions();
@@ -116,13 +160,14 @@ export const TransactionList = () => {
               .sort((a, b) => new Date(b[0].created_at).getTime() - new Date(a[0].created_at).getTime())
               .map(group => {
                 const t = group[0]; // Primary record
+                const groupId = t.group_id || t.id;
                 const totalGroupPrice = group.reduce((sum, item) => sum + item.final_price, 0);
                 const allPaid = group.every(item => item.is_paid);
                 const statusStyle = getStatusStyle(t.status); // Use first item's status
                 const isOverdue = t.status !== 'Siap Ambil' && t.due_date && new Date() > new Date(t.due_date);
                 
                 return (
-                  <div key={t.group_id || t.id} className="glass-card animate-fade-in" style={{ 
+                  <div key={groupId} className="glass-card animate-fade-in" style={{ 
                     padding: '1.5rem', 
                     display: 'flex', 
                     flexDirection: 'column', 
@@ -156,31 +201,36 @@ export const TransactionList = () => {
 
                     <div style={{ padding: '0.75rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                       {group.map((item, idx) => (
-                        <div key={item.id} style={{ display: 'flex', flexDirection: 'column', borderBottom: idx === group.length - 1 ? 'none' : '1px solid rgba(255,255,255,0.05)', paddingBottom: idx === group.length - 1 ? '0' : '0.5rem' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '0.15rem' }}>
-                            <span style={{ fontWeight: 600 }}>{item.service_name}</span>
-                            <span style={{ fontWeight: 700 }}>Rp {item.final_price.toLocaleString('id-ID')}</span>
+                        <div key={item.id} style={{ display: idx === 0 ? 'block' : 'block', borderTop: idx === 0 ? 'none' : '1px solid rgba(255,255,255,0.05)', paddingTop: idx === 0 ? '0' : '0.5rem' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.2rem' }}>
+                            <span style={{ fontWeight: 700, color: 'white' }}>{item.service_name}</span>
+                            <span style={{ fontWeight: 700, color: 'white' }}>Rp {item.final_price.toLocaleString()}</span>
                           </div>
-                          <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'flex', justifyContent: 'space-between' }}>
-                            <span>{item.weight} {item.unit || 'kg'} x Rp {(item.final_price / item.weight).toLocaleString('id-ID')}</span>
+                          <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                            {item.weight} {item.unit || 'kg'} x Rp {((item.total_price / item.weight)).toLocaleString()}
                           </div>
                         </div>
                       ))}
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-                      <button style={{ 
-                        background: allPaid ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 0, 132, 0.1)',
-                        color: allPaid ? '#D3D3D3' : '#FF0084',
-                        border: `1px solid ${allPaid ? 'rgba(255,255,255,0.1)' : '#FF0084'}`,
-                        padding: '0.5rem 1rem',
-                        borderRadius: '8px',
-                        fontSize: '0.8rem',
-                        fontWeight: 800,
-                        cursor: 'default'
-                      }}>
-                        {allPaid ? 'LUNAS' : 'BELUM BAYAR'}
-                      </button>
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <button style={{ 
+                          background: allPaid ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 0, 132, 0.1)',
+                          color: allPaid ? 'var(--text-muted)' : 'var(--primary)',
+                          border: `1px solid ${allPaid ? 'var(--glass-border)' : 'rgba(255, 0, 132, 0.2)'}`,
+                          padding: '0.4rem 0.8rem',
+                          borderRadius: '8px',
+                          fontSize: '0.7rem',
+                          fontWeight: 700,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.3rem'
+                        }}>
+                          {allPaid ? <CheckCircle size={14} /> : <Clock size={14} />}
+                          {allPaid ? 'LUNAS' : 'BELUM BAYAR'}
+                        </button>
+                      </div>
                       <div style={{ textAlign: 'right' }}>
                         <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.1rem' }}>Total Bayar:</p>
                         <h3 style={{ fontSize: '1.4rem', fontWeight: 900, color: 'white' }}>
@@ -197,21 +247,31 @@ export const TransactionList = () => {
                       >
                         <Printer size={16} /> Nota
                       </button>
+                      
                       <button 
-                        title="Hapus" 
-                        onClick={async () => {
-                          if (window.confirm(`Hapus ${group.length} item dalam transaksi ini?`)) {
-                            try {
-                              for (const item of group) await api.deleteTransaction(item.id);
-                              fetchTransactions();
-                            } catch (e) {
-                              alert('Gagal menghapus transaksi');
-                            }
-                          }
-                        }}
+                        onClick={() => handleWhatsAppShare(group)}
+                        className="btn-secondary"
+                        style={{ width: '2.5rem', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(37, 211, 102, 0.1)', border: '1px solid rgba(37, 211, 102, 0.2)', borderRadius: '8px' }}
+                        title="Kirim ke WhatsApp"
+                      >
+                        <WhatsAppIcon size={18} color="#25D366" />
+                      </button>
+
+                      <button 
+                        onClick={() => { setEditingTransaction(group[0]); setIsEditOpen(true); }}
+                        className="btn-secondary"
+                        style={{ width: '2.5rem', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255, 193, 7, 0.1)', border: '1px solid rgba(255, 193, 7, 0.2)', color: '#FFC107', borderRadius: '8px' }}
+                        title="Edit Transaksi"
+                      >
+                        <Edit3 size={16} />
+                      </button>
+
+                      <button 
+                        onClick={() => handleDelete(groupId)}
                         style={{ 
                           width: '2.5rem', height: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(244, 63, 94, 0.1)', borderRadius: '8px', color: '#f43f5e', border: '1px solid rgba(244, 63, 94, 0.2)', cursor: 'pointer', transition: 'all 0.2s'
                         }}
+                        title="Hapus Transaksi"
                       >
                         <Trash2 size={16} />
                       </button>

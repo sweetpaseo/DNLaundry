@@ -58,18 +58,22 @@ export interface Expense {
   created_at: string;
 }
 
+export type PaymentMethod = 'Cash' | 'Transfer Bank' | 'QRIS';
+
 export interface Transaction {
   id: string;
   customer_id: string;
   customer_name: string;
+  customer?: { phone: string };
   service_id: string;
   service_name: string;
-  employee_id?: string; // Linked employee
+  employee_id?: string;
   weight: number;
   unit?: string;
   total_price: number;
   status: TransactionStatus;
   is_paid: boolean;
+  payment_method?: PaymentMethod;
   notes: string;
   discount_percent: number;
   discount_amount: number;

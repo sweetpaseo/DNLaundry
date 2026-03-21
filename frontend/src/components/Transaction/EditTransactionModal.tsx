@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save } from 'lucide-react';
-import type { Transaction, TransactionStatus } from '../../types';
+import type { Transaction, TransactionStatus, PaymentMethod } from '../../types';
 
 interface EditTransactionModalProps {
   isOpen: boolean;
@@ -12,6 +12,7 @@ interface EditTransactionModalProps {
 export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction }: EditTransactionModalProps) => {
   const [status, setStatus] = useState<TransactionStatus>(transaction.status);
   const [isPaid, setIsPaid] = useState(transaction.is_paid);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(transaction.payment_method || 'Cash');
   const [notes, setNotes] = useState(transaction.notes || '');
   const [isSaving, setIsSaving] = useState(false);
 
@@ -19,6 +20,7 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction }: E
     if (transaction) {
       setStatus(transaction.status);
       setIsPaid(transaction.is_paid);
+      setPaymentMethod(transaction.payment_method || 'Cash');
       setNotes(transaction.notes || '');
     }
   }, [transaction, isOpen]);
@@ -32,6 +34,7 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction }: E
       await onSave(transaction.id, {
         status,
         is_paid: isPaid,
+        payment_method: paymentMethod,
         notes
       });
       onClose();
@@ -66,16 +69,33 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction }: E
             </select>
           </div>
 
-          <div className="form-group">
-            <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
-              <input 
-                type="checkbox" 
-                checked={isPaid} 
-                onChange={(e) => setIsPaid(e.target.checked)}
-                style={{ width: '20px', height: '20px' }}
-              />
-              <span style={{ fontWeight: 600 }}>Status Pembayaran (LUNAS)</span>
-            </label>
+          <div style={{ background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+            <div className="form-group" style={{ marginBottom: '1rem' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
+                <input 
+                  type="checkbox" 
+                  checked={isPaid} 
+                  onChange={(e) => setIsPaid(e.target.checked)}
+                  style={{ width: '18px', height: '18px' }}
+                />
+                <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>Status Pembayaran (LUNAS)</span>
+              </label>
+            </div>
+
+            {isPaid && (
+              <div className="form-group animate-slide-down">
+                <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.8rem' }}>Cara Pembayaran</label>
+                <select 
+                  value={paymentMethod} 
+                  onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
+                  style={{ width: '100%', height: '2.5rem', borderRadius: '8px' }}
+                >
+                  <option value="Cash" style={{ background: '#1a1a1a' }}>💵 Cash (Tunai)</option>
+                  <option value="Transfer Bank" style={{ background: '#1a1a1a' }}>🏦 Transfer Bank</option>
+                  <option value="QRIS" style={{ background: '#1a1a1a' }}>📱 QRIS</option>
+                </select>
+              </div>
+            )}
           </div>
 
           <div className="form-group">
