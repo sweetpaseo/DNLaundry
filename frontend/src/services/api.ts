@@ -31,7 +31,10 @@ export const api = {
       headers: getHeaders(),
       body: JSON.stringify(data),
     });
-    if (!res.ok) throw new Error('Gagal simpan data');
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Terjadi kesalahan sistem');
+    }
     return res.json();
   },
   async updateTransaction(id: string, data: any) {
@@ -40,7 +43,10 @@ export const api = {
       headers: getHeaders(),
       body: JSON.stringify(data),
     });
-    if (!res.ok) throw new Error('Gagal simpan data');
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Terjadi kesalahan sistem');
+    }
     return res.json();
   },
   async deleteTransaction(id: string) {
@@ -68,7 +74,10 @@ export const api = {
       headers: getHeaders(),
       body: JSON.stringify(data),
     });
-    if (!res.ok) throw new Error('Gagal simpan data');
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Terjadi kesalahan sistem');
+    }
     return res.json();
   },
   async updateCustomer(id: string, data: any) {
@@ -77,7 +86,10 @@ export const api = {
       headers: getHeaders(),
       body: JSON.stringify(data),
     });
-    if (!res.ok) throw new Error('Gagal simpan data');
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Terjadi kesalahan sistem');
+    }
     return res.json();
   },
   async deleteCustomer(id: string) {

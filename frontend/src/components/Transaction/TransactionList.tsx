@@ -314,6 +314,7 @@ export const TransactionList = () => {
           onClose={() => { setIsEditOpen(false); setEditingTransaction(null); }}
           onSave={handleUpdate}
           transaction={editingTransaction}
+          groupTotal={editingTransaction.group_id ? transactions.filter(t => t.group_id === editingTransaction.group_id).reduce((sum, t) => sum + t.final_price, 0) : undefined}
         />
       )}
       

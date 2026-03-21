@@ -8,9 +8,10 @@ interface EditTransactionModalProps {
   onClose: () => void;
   onSave: (id: string, data: Partial<Transaction>) => Promise<void>;
   transaction: Transaction;
+  groupTotal?: number;
 }
 
-export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction }: EditTransactionModalProps) => {
+export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, groupTotal }: EditTransactionModalProps) => {
   const [status, setStatus] = useState<TransactionStatus>(transaction.status);
   const [isPaid, setIsPaid] = useState(transaction.is_paid);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(transaction.payment_method || 'Cash');
@@ -40,19 +41,21 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction }: E
 
   if (!isOpen) return null;
 
+  const displayTotal = groupTotal || transaction.final_price;
+  
   // Live Calculations
   const walletBalance = customer?.wallet_balance || 0;
-  const usedWalletAmount = useWallet ? Math.min(walletBalance, transaction.final_price) : 0;
-  const remainingBill = transaction.final_price - usedWalletAmount;
+  const usedWalletAmount = useWallet ? Math.min(walletBalance, displayTotal) : 0;
+  const remainingBill = displayTotal - usedWalletAmount;
   const totalIn = amountReceived + usedWalletAmount;
-  const balance = totalIn - transaction.final_price;
+  const balance = totalIn - displayTotal;
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
     try {
       // 1. Determine new is_paid status
-      const willBePaid = totalIn >= transaction.final_price;
+      const willBePaid = totalIn >= displayTotal;
 
       // 2. Update Transaction
       await onSave(transaction.id, {
@@ -83,7 +86,8 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction }: E
 
       onClose();
     } catch (error) {
-      alert('Gagal mengupdate transaksi');
+      console.error('Update failed:', error);
+      alert(`Gagal mengupdate transaksi: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       setIsSaving(false);
     }
@@ -178,8 +182,8 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction }: E
                 {/* Live Summary */}
                 <div style={{ marginTop: '0.25rem', padding: '1rem', background: 'rgba(0,0,0,0.2)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '0.5rem' }}>
-                    <span style={{ color: 'var(--text-muted)' }}>Total Tagihan:</span>
-                    <span style={{ fontWeight: 700 }}>Rp {transaction.final_price.toLocaleString()}</span>
+                    <span style={{ color: 'var(--text-muted)' }}>{groupTotal ? 'Total Tagihan Group:' : 'Total Tagihan:'}</span>
+                    <span style={{ fontWeight: 700 }}>Rp {displayTotal.toLocaleString()}</span>
                   </div>
                   {useWallet && (
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '0.5rem', color: '#22c55e' }}>
