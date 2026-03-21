@@ -44,7 +44,7 @@ const transactions = new Hono<{ Bindings: Bindings }>()
 
 transactions.get('/', async (c) => {
   const supabase = getSupabase(c.env)
-  const { data, error } = await supabase.from('transactions').select('*, customer:customers(phone)').order('created_at', { ascending: false })
+  const { data, error } = await supabase.from('transactions').select('*, customer:customers(phone, customer_id)').order('created_at', { ascending: false })
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data)
 })

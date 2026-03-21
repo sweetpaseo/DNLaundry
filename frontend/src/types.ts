@@ -28,6 +28,7 @@ export interface Customer {
   member_type_id: string;
   member_type?: MemberType;
   tags?: string[];
+  customer_id?: string; // New dedicated column
   wallet_balance?: number;
   default_delivery_type?: 'Pickup' | 'Delivery';
 }
@@ -64,9 +65,10 @@ export type PaymentMethod = 'Cash' | 'Transfer Bank' | 'QRIS' | 'Wallet';
 
 export interface Transaction {
   id: string;
-  customer_id: string;
+  customer_id: string; // Foreign key UUID
+  customer_no?: string; // Sequential ID (e.g. DN00001) from customer table
   customer_name: string;
-  customer?: { phone: string };
+  customer?: { phone: string; customer_id?: string };
   service_id: string;
   service_name: string;
   employee_id?: string;

@@ -7,7 +7,7 @@ import type { MemberType } from '../../types';
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (customer: { id?: string; name: string; phone: string; address: string; member_type_id: string; tags?: string[] }) => void;
+  onSave: (customer: { id?: string; name: string; phone: string; address: string; member_type_id: string; tags?: string[]; customer_id?: string }) => void;
   initialData?: { id?: string; name: string; phone: string; address: string; member_type_id?: string; tags?: string[] } | null;
   memberTypes: MemberType[];
   allCustomers: any[];
@@ -63,12 +63,11 @@ export const AddCustomerModal = ({ isOpen, onClose, onSave, initialData, memberT
     
     // Auto-generate customer ID only for new customers
     if (!initialData?.id) {
-      const nextIdTag = generateNextId(allCustomers);
-      const existingTags = (dataToSave as any).tags || [];
-      (dataToSave as any).tags = [...existingTags, nextIdTag];
+      const nextId = generateNextId(allCustomers);
+      (dataToSave as any).customer_id = nextId;
     }
 
-    onSave(initialData?.id ? { ...dataToSave, id: initialData.id, tags: (initialData as any).tags } : dataToSave);
+    onSave(initialData?.id ? { ...dataToSave, id: initialData.id, tags: (initialData as any).tags, customer_id: (initialData as any).customer_id } : dataToSave);
     onClose();
   };
 
