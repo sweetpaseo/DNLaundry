@@ -77,7 +77,7 @@ export const TransactionList = () => {
     
     let message = `*DETAIL TRANSAKSI LAUNDRY*\n`;
     message += `No. Nota: *#${receiptId}*\n\n`;
-    const customer = customers.find(c => c.id === firstTransaction.customer_id);
+    const customer = customers.find(c => c.id === firstTransaction.customer_id) || customers.find(c => c.name === firstTransaction.customer_name);
     const customerDisplayId = customer ? getDisplayId(customer) : (firstTransaction.customer?.customer_id || `#DN-${(firstTransaction.customer_id || '').slice(0, 5).toUpperCase()}`);
     message += `Nama Pelanggan: *${firstTransaction.customer_name}* (${formatDisplayId(customerDisplayId)})\n`;
     message += `Status: *${firstTransaction.status}*\n`;
@@ -200,8 +200,8 @@ export const TransactionList = () => {
                 const statusStyle = getStatusStyle(t.status) || { bg: 'rgba(255,255,255,0.1)', color: 'white' };
                 const isOverdue = !['Siap Ambil', 'Siap Kirim'].includes(t.status) && t.due_date && new Date() > new Date(t.due_date);
                 
-                const customer = customers.find(c => c.id === t.customer_id);
-                const unpaidTransactions = transactions.filter(tr => tr.customer_id === t.customer_id && !tr.is_paid);
+                const customer = customers.find(c => c.id === t.customer_id) || customers.find(c => c.name === t.customer_name);
+                const unpaidTransactions = transactions.filter(tr => (tr.customer_id === t.customer_id || tr.customer_name === t.customer_name) && !tr.is_paid);
                 const totalDebt = unpaidTransactions.reduce((sum, tr) => sum + tr.final_price, 0);
                 
                 return (
