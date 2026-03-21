@@ -111,7 +111,7 @@ export const CustomerCRM = ({ currentUser }: Props) => {
                     {(() => {
                       const mType = memberTypes.find(mt => mt.id === customer.type_id) || customer.member_type;
                       const typeName = mType?.name || 'Reguler';
-                      const badgeClass = typeName.toLowerCase().includes('reseller') ? 'badge-reseller' : 
+                      const badgeClass = typeName.toLowerCase().includes('special') ? 'badge-special' : 
                                       typeName.toLowerCase().includes('member') ? 'badge-member' : 'badge-reguler';
                       return (
                         <span className={`badge-member-type ${badgeClass}`}>

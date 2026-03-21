@@ -29,7 +29,7 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
   const [memberTypes, setMemberTypes] = useState<MemberType[]>([]);
   const [selectedServiceId, setSelectedServiceId] = useState<string>('');
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>('');
-  const [customerType, setCustomerType] = useState<'normal' | 'member' | 'reseller'>('normal');
+  const [customerType, setCustomerType] = useState<'normal' | 'member' | 'special'>('normal');
   
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
   const [selectedTier, setSelectedTier] = useState<'normal' | 'member' | 'express' | 'special'>('normal');
@@ -99,8 +99,8 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
     if (foundCustomer && foundCustomer.type_id) {
       const mType = memberTypes.find(m => m.id === foundCustomer.type_id);
       const typeName = mType?.name.toLowerCase() || '';
-      if (typeName.includes('reseller')) {
-        setCustomerType('reseller');
+      if (typeName.includes('special')) {
+        setCustomerType('special');
         setSelectedTier('special');
       } else if (typeName.includes('member')) {
         setCustomerType('member');
@@ -110,8 +110,8 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
         setSelectedTier('normal');
       }
     } else {
-      if (lowVal.includes('reseller')) {
-        setCustomerType('reseller');
+      if (lowVal.includes('special')) {
+        setCustomerType('special');
         setSelectedTier('special');
       } else if (lowVal.includes('member')) {
         setCustomerType('member');
@@ -130,8 +130,8 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
     if (customer.type_id) {
       const mType = memberTypes.find(m => m.id === customer.type_id);
       const typeName = mType?.name.toLowerCase() || '';
-      if (typeName.includes('reseller')) {
-        setCustomerType('reseller');
+      if (typeName.includes('special')) {
+        setCustomerType('special');
         setSelectedTier('special');
       } else if (typeName.includes('member')) {
         setCustomerType('member');
@@ -368,17 +368,13 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
             <label style={{ display: 'block', marginBottom: '0.8rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>Tier Harga Layanan</label>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem' }}>
               {(['normal', 'member', 'express', 'special'] as const).map(tier => {
-                const isAllowed = 
-                  (customerType === 'normal' && (tier === 'normal' || tier === 'express')) ||
-                  (customerType === 'member' && (tier === 'member' || tier === 'express')) ||
-                  (customerType === 'reseller' && (tier === 'special' || tier === 'express'));
+                const isAllowed = true; // Allow all tiers for staff flexibility
                 
                 return (
                   <button
                     key={tier}
                     type="button"
-                    disabled={!isAllowed}
-                    onClick={() => isAllowed && setSelectedTier(tier)}
+                    onClick={() => setSelectedTier(tier)}
                     style={{
                       padding: '0.75rem 0.5rem',
                       borderRadius: '10px',
@@ -386,14 +382,12 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
                       fontWeight: 700,
                       textTransform: 'uppercase',
                       border: '1px solid var(--glass-border)',
-                      cursor: isAllowed ? 'pointer' : 'not-allowed',
+                      cursor: 'pointer',
                       background: selectedTier === tier ? 'var(--primary-gradient)' : 'rgba(255,255,255,0.03)',
                       color: selectedTier === tier ? 'white' : 'var(--text-muted)',
                       transition: 'all 0.2s',
                       boxShadow: selectedTier === tier ? '0 4px 12px rgba(255, 0, 132, 0.2)' : 'none',
-                      opacity: isAllowed ? 1 : 0.3
                     }}
-                    title={!isAllowed ? `Hanya untuk tipe ${tier === 'member' ? 'Member' : tier === 'special' ? 'Reseller' : 'Normal'}` : ''}
                   >
                     {tier}
                   </button>

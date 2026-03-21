@@ -125,7 +125,7 @@ customerTypes.get('/', async (c) => {
   
   // Auto-seed essential types if they don't exist
   const { data: existing } = await supabase.from('customer_types').select('name')
-  const essential = ['Normal', 'Member', 'Reseller']
+  const essential = ['Normal', 'Member', 'Special']
   const existingNames = (existing || []).map((e: any) => e.name.toLowerCase())
   
   for (const name of essential) {
