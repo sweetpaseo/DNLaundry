@@ -218,7 +218,7 @@ export const TransactionList = () => {
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.2rem' }}>
                         <h4 style={{ fontSize: '1.2rem', fontWeight: 800 }}>{t.customer_name}</h4>
                         <span style={{ fontSize: '0.65rem', fontWeight: 700, opacity: 0.4, background: 'rgba(255,255,255,0.1)', padding: '0.05rem 0.3rem', borderRadius: '4px' }}>
-                          {formatDisplayId(customer ? getDisplayId(customer) : (t.customer?.customer_id || `#DN-${t.customer_id.slice(0, 5).toUpperCase()}`))}
+                          {formatDisplayId(customer ? getDisplayId(customer) : (t.customer?.customer_id || (t.customer_id ? `#DN-${t.customer_id.slice(0, 5).toUpperCase()}` : '#DN-NEW')))}
                         </span>
                       </div>
                         <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
