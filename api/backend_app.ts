@@ -18,11 +18,9 @@ app.use('*', cors())
 // Security Middleware: X-API-KEY Protection
 app.use('/api/*', async (c, next) => {
   const apiKey = c.req.header('X-API-KEY')
-  const { API_SECRET_KEY, VITE_API_SECRET_KEY } = env(c)
-  const secretKey = API_SECRET_KEY || VITE_API_SECRET_KEY || (typeof process !== 'undefined' ? (process.env.API_SECRET_KEY || process.env.VITE_API_SECRET_KEY) : undefined)
+  const allEnv = env(c)
+  const secretKey = allEnv.API_SECRET_KEY || allEnv.VITE_API_SECRET_KEY || (typeof process !== 'undefined' ? (process.env.API_SECRET_KEY || process.env.VITE_API_SECRET_KEY) : undefined)
   
-  // Security: protect all /api/ routes
-
   if (secretKey && apiKey !== secretKey) {
     return c.json({ error: 'Unauthorized: Invalid API Key' }, 401)
   }
@@ -43,9 +41,6 @@ app.get('/api/health', async (c) => {
   }
 })
 
-// ... (Rest of the routes)
-// Note: I will use the exact same logic as backend/src/index.ts but as a single app.
-
 app.get('/api', (c) => {
   return c.html(`
     <body style="font-family: sans-serif; padding: 2rem; background: #0f172a; color: white;">
@@ -59,7 +54,7 @@ app.get('/api', (c) => {
 const transactions = new Hono<{ Bindings: Bindings }>()
 transactions.get('/', async (c) => {
   const supabase = getSupabase(c)
-  const { data, error } = await supabase.from('transactions').select('*, customers(phone)').order('created_at', { ascending: false })
+  const { data, error } = await supabase.from('transactions').select('*, customer:customers(phone, customer_id)').order('created_at', { ascending: false })
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data)
 })
@@ -71,6 +66,7 @@ transactions.post('/', async (c) => {
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data[0], 201)
 })
+
 transactions.put('/:id', async (c) => {
   const id = c.req.param('id')
   const body = await c.req.json()
@@ -92,25 +88,28 @@ transactions.delete('/:id', async (c) => {
 const customers = new Hono<{ Bindings: Bindings }>()
 customers.get('/', async (c) => {
   const supabase = getSupabase(c)
-  const { data, error } = await supabase.from('customers').select('*').order('created_at', { ascending: false })
+  const { data, error } = await supabase.from('customers').select('*, member_type:customer_types!type_id(*)').order('created_at', { ascending: false })
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data)
 })
+
 customers.post('/', async (c) => {
   const supabase = getSupabase(c)
   const body = await c.req.json()
-  const { data, error } = await supabase.from('customers').insert(body).select()
+  const { data, error } = await supabase.from('customers').insert(body).select('*, member_type:customer_types!type_id(*)')
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data[0], 201)
 })
+
 customers.put('/:id', async (c) => {
   const id = c.req.param('id')
   const body = await c.req.json()
   const supabase = getSupabase(c)
-  const { data, error } = await supabase.from('customers').update(body).eq('id', id).select()
+  const { data, error } = await supabase.from('customers').update(body).eq('id', id).select('*, member_type:customer_types!type_id(*)')
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data[0])
 })
+
 customers.delete('/:id', async (c) => {
   const id = c.req.param('id')
   const supabase = getSupabase(c)
@@ -119,14 +118,27 @@ customers.delete('/:id', async (c) => {
   return c.json({ success: true })
 })
 
-// Membership
+// Membership (Customer Types)
 const customerTypes = new Hono<{ Bindings: Bindings }>()
 customerTypes.get('/', async (c) => {
   const supabase = getSupabase(c)
-  const { data, error } = await supabase.from('customer_types').select('*').order('discount_percent', { ascending: true })
+  
+  // Auto-seed essential types if they don't exist
+  const { data: existing } = await supabase.from('customer_types').select('name')
+  const essential = ['Normal', 'Member', 'Reseller']
+  const existingNames = (existing || []).map((e: any) => e.name.toLowerCase())
+  
+  for (const name of essential) {
+    if (!existingNames.includes(name.toLowerCase())) {
+      await supabase.from('customer_types').insert({ name })
+    }
+  }
+
+  const { data, error } = await supabase.from('customer_types').select('*').order('name', { ascending: true })
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data || [])
 })
+
 customerTypes.post('/', async (c) => {
   const body = await c.req.json()
   const supabase = getSupabase(c)
@@ -134,6 +146,7 @@ customerTypes.post('/', async (c) => {
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data[0], 201)
 })
+
 customerTypes.put('/:id', async (c) => {
   const id = c.req.param('id')
   const body = await c.req.json()
@@ -142,6 +155,7 @@ customerTypes.put('/:id', async (c) => {
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data[0])
 })
+
 customerTypes.delete('/:id', async (c) => {
   const id = c.req.param('id')
   const supabase = getSupabase(c)
@@ -158,6 +172,7 @@ services.get('/', async (c) => {
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data || [])
 })
+
 services.post('/', async (c) => {
   const body = await c.req.json()
   const supabase = getSupabase(c)
@@ -165,6 +180,7 @@ services.post('/', async (c) => {
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data[0], 201)
 })
+
 services.put('/:id', async (c) => {
   const id = c.req.param('id')
   const body = await c.req.json()
@@ -173,6 +189,7 @@ services.put('/:id', async (c) => {
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data[0])
 })
+
 services.delete('/:id', async (c) => {
   const id = c.req.param('id')
   const supabase = getSupabase(c)
@@ -189,6 +206,7 @@ employees.get('/', async (c) => {
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data || [])
 })
+
 employees.post('/', async (c) => {
   const body = await c.req.json()
   const supabase = getSupabase(c)
@@ -196,6 +214,7 @@ employees.post('/', async (c) => {
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data[0], 201)
 })
+
 employees.put('/:id', async (c) => {
   const id = c.req.param('id')
   const body = await c.req.json()
@@ -204,6 +223,7 @@ employees.put('/:id', async (c) => {
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data[0])
 })
+
 employees.delete('/:id', async (c) => {
   const id = c.req.param('id')
   const supabase = getSupabase(c)
@@ -220,6 +240,7 @@ incentives.get('/', async (c) => {
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data || [])
 })
+
 incentives.post('/', async (c) => {
   const body = await c.req.json()
   const supabase = getSupabase(c)
@@ -227,6 +248,7 @@ incentives.post('/', async (c) => {
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data[0], 201)
 })
+
 incentives.delete('/:id', async (c) => {
   const id = c.req.param('id')
   const supabase = getSupabase(c)
@@ -235,29 +257,69 @@ incentives.delete('/:id', async (c) => {
   return c.json({ success: true })
 })
 
+// Expense Categories
+const expenseCategories = new Hono<{ Bindings: Bindings }>()
+expenseCategories.get('/', async (c) => {
+  const supabase = getSupabase(c)
+  const query = supabase.from('expense_categories').select('*').order('name', { ascending: true })
+  const cashType = c.req.query('cash_type')
+  if (cashType) query.eq('cash_type', cashType)
+  const { data, error } = await query
+  if (error) return c.json({ error: error.message }, 500)
+  return c.json(data || [])
+})
+expenseCategories.post('/', async (c) => {
+  const body = await c.req.json()
+  const supabase = getSupabase(c)
+  const { data, error } = await supabase.from('expense_categories').insert(body).select()
+  if (error) return c.json({ error: error.message }, 500)
+  return c.json(data[0], 201)
+})
+expenseCategories.put('/:id', async (c) => {
+  const id = c.req.param('id')
+  const body = await c.req.json()
+  const supabase = getSupabase(c)
+  const { data, error } = await supabase.from('expense_categories').update(body).eq('id', id).select()
+  if (error) return c.json({ error: error.message }, 500)
+  return c.json(data[0])
+})
+expenseCategories.delete('/:id', async (c) => {
+  const id = c.req.param('id')
+  const supabase = getSupabase(c)
+  const { error } = await supabase.from('expense_categories').delete().eq('id', id)
+  if (error) return c.json({ error: error.message }, 500)
+  return c.json({ success: true })
+})
+
 // Expenses
 const expenses = new Hono<{ Bindings: Bindings }>()
 expenses.get('/', async (c) => {
   const supabase = getSupabase(c)
-  const { data, error } = await supabase.from('laundry_expenses').select('*').order('date', { ascending: false })
+  const query = supabase.from('laundry_expenses').select('*, expense_category:expense_categories(*)').order('date', { ascending: false })
+  const cashType = c.req.query('cash_type')
+  if (cashType) query.eq('cash_type', cashType)
+  const { data, error } = await query
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data || [])
 })
+
 expenses.post('/', async (c) => {
   const body = await c.req.json()
   const supabase = getSupabase(c)
-  const { data, error } = await supabase.from('laundry_expenses').insert(body).select()
+  const { data, error } = await supabase.from('laundry_expenses').insert(body).select('*, expense_category:expense_categories(*)')
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data[0], 201)
 })
+
 expenses.put('/:id', async (c) => {
   const id = c.req.param('id')
   const body = await c.req.json()
   const supabase = getSupabase(c)
-  const { data, error } = await supabase.from('laundry_expenses').update(body).eq('id', id).select()
+  const { data, error } = await supabase.from('laundry_expenses').update(body).eq('id', id).select('*, expense_category:expense_categories(*)')
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data[0])
 })
+
 expenses.delete('/:id', async (c) => {
   const id = c.req.param('id')
   const supabase = getSupabase(c)
@@ -272,28 +334,25 @@ auth.post('/login', async (c) => {
   const { username, password } = await c.req.json()
   const supabase = getSupabase(c)
   
-  const { data, error } = await supabase
-    .from('laundry_users')
-    .select('id, username, name, role, password')
-    .eq('username', username)
-    .single()
-
-  if (error || !data) {
-    return c.json({ error: 'Username atau password salah' }, 401)
+  // Seed first owner if no users exist
+  const { count, error: countErr } = await supabase.from('laundry_users').select('*', { count: 'exact', head: true })
+  if (!countErr && count === 0) {
+    const hashed = await hashPassword('admin123')
+    await supabase.from('laundry_users').insert({ username: 'admin', password: hashed, name: 'Original Owner', role: 'owner' })
   }
 
-  // Check match (supports plain text for migration or SHA-256 hash)
-  const isPlainMatch = data.password === password;
-  const isHashMatch = !isPlainMatch && await verifyPassword(password, data.password);
+  const { data, error } = await supabase.from('laundry_users').select('id, username, name, role, password').ilike('username', username).single()
 
-  if (!isPlainMatch && !isHashMatch) {
-    return c.json({ error: 'Username atau password salah' }, 401)
-  }
+  if (error || !data) return c.json({ error: 'Username atau password salah' }, 401)
 
-  // Auto-migration: if it was a plain match, hash it for next time
-  if (isPlainMatch) {
-    const newHash = await hashPassword(password);
-    await supabase.from('laundry_users').update({ password: newHash }).eq('id', data.id);
+  const hashedInput = await hashPassword(password)
+  const isMatch = data.password === hashedInput || data.password === password; // Support migration from plain text
+
+  if (!isMatch) return c.json({ error: 'Username atau password salah' }, 401)
+  
+  if (data.password === password) { // Auto-migrate to hash
+    const newHash = await hashPassword(password)
+    await supabase.from('laundry_users').update({ password: newHash }).eq('id', data.id)
   }
 
   const { password: _, ...user } = data
@@ -311,12 +370,7 @@ users.get('/', async (c) => {
 users.post('/', async (c) => {
   const body = await c.req.json()
   const supabase = getSupabase(c)
-  
-  // Hash password if provided
-  if (body.password) {
-    body.password = await hashPassword(body.password)
-  }
-  
+  if (body.password) body.password = await hashPassword(body.password)
   const { data, error } = await supabase.from('laundry_users').insert(body).select()
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data[0], 201)
@@ -348,6 +402,7 @@ app.route('/api/membership', customerTypes)
 app.route('/api/services', services)
 app.route('/api/employees', employees)
 app.route('/api/incentives', incentives)
+app.route('/api/expense-categories', expenseCategories)
 app.route('/api/expenses', expenses)
 app.route('/api/auth', auth)
 app.route('/api/users', users)
