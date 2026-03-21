@@ -137,8 +137,8 @@ export const AdminDashboard = () => {
       setIsServiceModalOpen(false);
       alert('Perubahan berhasil disimpan!');
       setEditingService(null);
-    } catch (error) {
-      alert('Gagal menyimpan layanan');
+    } catch (error: any) {
+      alert('Gagal menyimpan layanan: ' + (error.message || 'Error tidak diketahui'));
     }
   };
 
@@ -369,6 +369,7 @@ export const AdminDashboard = () => {
               <thead>
                 <tr style={{ borderBottom: '1px solid var(--glass-border)', color: 'var(--text-muted)', fontSize: '0.8125rem', textAlign: 'left' }}>
                   <th style={{ padding: '0.75rem' }}>Layanan</th>
+                  <th style={{ padding: '0.75rem' }}>Waktu</th>
                   <th style={{ padding: '0.75rem' }}>Komisi</th>
                   <th style={{ padding: '0.75rem' }}>Status</th>
                   <th style={{ padding: '0.75rem' }}>Aksi</th>
@@ -393,6 +394,12 @@ export const AdminDashboard = () => {
                           <span>S:</span> Rp {service.price_special?.toLocaleString()}
                         </div>
                       </div>
+                    </td>
+                    <td style={{ padding: '1rem' }}>
+                      <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-main)' }}>
+                        {service.processing_days || 0} Hari
+                      </div>
+                      <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>Estimasi Selesai</div>
                     </td>
                     <td style={{ padding: '1rem' }}>
                       {service.commission_value ? (

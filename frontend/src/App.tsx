@@ -144,7 +144,7 @@ function App() {
       <main>
         {activeMenu === 'transaksi' && (
           <div>
-            <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
+            <div className="sub-nav">
               <button 
                 className={`tab-btn ${activeTab === 'input' ? 'active' : ''}`}
                 style={{ background: activeTab === 'input' ? 'rgba(255,255,255,0.1)' : 'transparent', border: '1px solid var(--glass-border)' }}

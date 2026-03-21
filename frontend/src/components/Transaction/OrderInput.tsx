@@ -235,7 +235,7 @@ export const OrderInput = () => {
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
         
         {/* Step 1: Customer */}
-        <div className="glass-card" style={{ padding: '1.5rem', borderLeft: '4px solid var(--primary)' }}>
+        <div className="glass-card" style={{ padding: '1.5rem', borderLeft: '4px solid var(--primary)', position: 'relative', zIndex: 3 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
             <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255, 0, 132, 0.1)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>1</div>
             <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Data Pelanggan</h3>
@@ -301,7 +301,7 @@ export const OrderInput = () => {
         </div>
 
         {/* Step 2: Service & Amount & Employee */}
-        <div className="glass-card" style={{ padding: '1.5rem', borderLeft: '4px solid var(--primary)' }}>
+        <div className="glass-card" style={{ padding: '1.5rem', borderLeft: '4px solid var(--primary)', position: 'relative', zIndex: 2 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
             <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255, 0, 132, 0.1)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>2</div>
             <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Pilih Layanan & Petugas</h3>
@@ -437,7 +437,7 @@ export const OrderInput = () => {
         </div>
 
         {/* Step 3: Notes & Discount */}
-        <div className="glass-card" style={{ padding: '1.5rem', borderLeft: '4px solid var(--primary)' }}>
+        <div className="glass-card" style={{ padding: '1.5rem', borderLeft: '4px solid var(--primary)', position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
             <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255, 0, 132, 0.1)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>3</div>
             <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Catatan & Diskon</h3>
