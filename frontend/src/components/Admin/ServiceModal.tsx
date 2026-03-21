@@ -121,7 +121,7 @@ export const ServiceModal = ({ isOpen, onClose, onSave, initialData }: ServiceMo
               />
             </div>
             <div className="form-group">
-              <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.875rem', color: '#fbbf24' }}>Harga Special (Rp)</label>
+              <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.875rem', color: '#fbbf24' }}>Harga Reseller (Rp)</label>
               <input 
                 type="number" 
                 required

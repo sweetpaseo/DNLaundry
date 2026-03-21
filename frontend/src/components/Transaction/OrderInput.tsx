@@ -31,7 +31,7 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>('');
   
   const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
-  const [selectedTier, setSelectedTier] = useState<'normal' | 'member' | 'express' | 'special'>('normal');
+  const [selectedTier, setSelectedTier] = useState<'normal' | 'member' | 'express' | 'reseller'>('normal');
   const [amount, setAmount] = useState<number | string>(0);
   const [notes, setNotes] = useState('');
   const [dueDate, setDueDate] = useState<string>('');
@@ -98,16 +98,16 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
     if (foundCustomer && foundCustomer.type_id) {
       const mType = memberTypes.find(m => m.id === foundCustomer.type_id);
       const typeName = mType?.name.toLowerCase() || '';
-      if (typeName.includes('special')) {
-        setSelectedTier('special');
+      if (typeName.includes('reseller')) {
+        setSelectedTier('reseller');
       } else if (typeName.includes('member')) {
         setSelectedTier('member');
       } else {
         setSelectedTier('normal');
       }
     } else {
-      if (lowVal.includes('special')) {
-        setSelectedTier('special');
+      if (lowVal.includes('reseller')) {
+        setSelectedTier('reseller');
       } else if (lowVal.includes('member')) {
         setSelectedTier('member');
       } else {
@@ -123,8 +123,8 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
     if (customer.type_id) {
       const mType = memberTypes.find(m => m.id === customer.type_id);
       const typeName = mType?.name.toLowerCase() || '';
-      if (typeName.includes('special')) {
-        setSelectedTier('special');
+      if (typeName.includes('reseller')) {
+        setSelectedTier('reseller');
       } else if (typeName.includes('member')) {
         setSelectedTier('member');
       } else {
@@ -143,7 +143,7 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
     let price = srv.price_normal || 0;
     if (selectedTier === 'member') price = srv.price_member || 0;
     else if (selectedTier === 'express') price = srv.price_express || 0;
-    else if (selectedTier === 'special') price = srv.price_special || 0;
+    else if (selectedTier === 'reseller') price = srv.price_special || 0;
 
     const newItem: OrderItem = {
       id: Math.random().toString(36).substr(2, 9),
@@ -357,7 +357,7 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
           <div className="form-group" style={{ marginTop: '1.25rem' }}>
             <label style={{ display: 'block', marginBottom: '0.8rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>Tier Harga Layanan</label>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem' }}>
-              {(['normal', 'member', 'express', 'special'] as const).map(tier => {
+              {(['normal', 'member', 'express', 'reseller'] as const).map(tier => {
                 return (
                   <button
                     key={tier}
