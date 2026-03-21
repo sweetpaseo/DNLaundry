@@ -346,13 +346,7 @@ export const api = {
     } catch (e) {
       const saved = localStorage.getItem('laundry_settings');
       if (saved) return JSON.parse(saved);
-      return {
-        name: 'DN Laundry',
-        phone: '085122994050',
-        address: 'Jl. Dewi Sartika A8/4, Jatiasih, Kota Bekasi. (Gmaps: DN Office)',
-        footer_text: 'Terima kasih telah mempercayakan laundry Anda kepada kami!',
-        instagram: '@dnlaundry.id'
-      };
+      return null;
     }
   },
   async updateSettings(data: any) {

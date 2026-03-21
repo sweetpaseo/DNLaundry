@@ -1,4 +1,5 @@
 import { useState, useEffect, type FormEvent } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Save, Wallet, CheckCircle2, AlertCircle } from 'lucide-react';
 import type { Transaction, TransactionStatus, PaymentMethod, Customer } from '../../types';
 import { api } from '../../services/api';
@@ -38,6 +39,15 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
       });
     }
   }, [transaction, isOpen]);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add('modal-open');
+    } else {
+      document.body.classList.remove('modal-open');
+    }
+    return () => document.body.classList.remove('modal-open');
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -93,9 +103,9 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
     }
   };
 
-  return (
+  return createPortal(
     <div className="modal-overlay">
-      <div className="modal-content glass-card animate-scale-in" style={{ width: 'min(95%, 480px)', padding: '0', maxHeight: '90vh', overflowY: 'auto' }}>
+      <div className="modal-content glass-card animate-scale-in" style={{ width: 'min(95%, 480px)', padding: '0', maxHeight: '90vh', overflowY: 'auto', border: '1px solid var(--glass-border)' }}>
         <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, background: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(10px)', zIndex: 10 }}>
           <div>
             <h3 style={{ fontSize: '1.1rem', fontWeight: 800 }}>Edit Transaksi</h3>
@@ -268,6 +278,7 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

@@ -163,12 +163,7 @@ services.get('/', async (c) => {
   const supabase = getSupabase(c.env)
   const { data, error } = await supabase.from('services').select('*').order('name', { ascending: true })
   if (error) return c.json({ error: error.message }, 500)
-  return c.json(data || [
-    { id: '1', name: 'Cuci Kering', price: 6000, unit: 'kg', is_active: true },
-    { id: '2', name: 'Setrika', price: 4000, unit: 'kg', is_active: true },
-    { id: '3', name: 'Express', price: 10000, unit: 'kg', is_active: true },
-    { id: '4', name: 'Bedcover', price: 25000, unit: 'pcs', is_active: true }
-  ])
+  return c.json(data || [])
 })
 
 services.post('/', async (c) => {
@@ -410,13 +405,7 @@ settings.get('/', async (c) => {
     return c.json({ error: error.message }, 500)
   }
   
-  return c.json(data || {
-    name: 'Antigravity Laundry',
-    phone: '081234567890',
-    address: 'Jl. Antigravity No. 123, Jakarta',
-    footer_text: 'Terima kasih telah mencuci di Antigravity Laundry!',
-    instagram: '@antigravity.laundry'
-  })
+  return c.json(data || null)
 })
 
 settings.put('/', async (c) => {

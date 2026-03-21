@@ -54,10 +54,11 @@ export const AdminDashboard = () => {
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<any>(null);
   const [users, setUsers] = useState<any[]>([]);
+  const [customers, setCustomers] = useState<any[]>([]);
 
-  // Filter States
-  const [filterMonth, setFilterMonth] = useState<number | 'all'>(new Date().getMonth());
-  const [filterYear, setFilterYear] = useState<number | 'all'>(new Date().getFullYear());
+  // Filter States - Default to 'all' to show comprehensive data
+  const [filterMonth, setFilterMonth] = useState<number | 'all'>('all');
+  const [filterYear, setFilterYear] = useState<number | 'all'>('all');
 
   const months = [
     'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
@@ -68,30 +69,75 @@ export const AdminDashboard = () => {
 
   const fetchData = async () => {
     try {
-      const [t, s, l, e, i, ex, u] = await Promise.all([
+      const results = await Promise.allSettled([
         api.getTransactions(),
         api.getServices(),
         api.getMemberTypes(),
         api.getEmployees(),
         api.getIncentives(),
         api.getExpenses(),
-        api.getUsers()
+        api.getUsers(),
+        api.getCustomers()
       ]);
-      setTransactions(t || []);
-      setServices(s || []);
-      setMemberTypes(l || []);
-      setEmployees(e || []);
-      setIncentives(i || []);
-      setExpenses(ex || []);
-      setUsers(u || []);
+
+      const [t, s, l, e, i, ex, u, c] = results;
+
+      if (t.status === 'fulfilled') setTransactions(t.value || []);
+      if (s.status === 'fulfilled') setServices(s.value || []);
+      if (l.status === 'fulfilled') setMemberTypes(l.value || []);
+      if (e.status === 'fulfilled') setEmployees(e.value || []);
+      if (i.status === 'fulfilled') setIncentives(i.value || []);
+      if (ex.status === 'fulfilled') setExpenses(ex.value || []);
+      if (u.status === 'fulfilled') setUsers(u.value || []);
+      if (c.status === 'fulfilled') setCustomers(c.value || []);
+
+      // If anything failed, log it but don't stop everything
+      results.forEach((r, idx) => {
+        if (r.status === 'rejected') {
+          console.warn(`Admin fetch error [index ${idx}]:`, r.reason);
+        }
+      });
+
     } catch (error) {
-      console.error('Failed to fetch admin data:', error);
+      console.error('Unexpected admin fetch failure:', error);
     }
   };
 
   useEffect(() => {
     fetchData();
   }, []);
+
+  // Calculate Filtered Stats
+  const getFilteredStats = () => {
+    const filteredTransactions = transactions.filter(t => {
+      const date = new Date(t.created_at);
+      const mMatch = filterMonth === 'all' || date.getMonth() === filterMonth;
+      const yMatch = filterYear === 'all' || date.getFullYear() === filterYear;
+      return mMatch && yMatch;
+    });
+
+    const filteredCustomers = customers.filter(c => {
+      if (!c.created_at) return filterMonth === 'all' && filterYear === 'all';
+      const date = new Date(c.created_at);
+      const mMatch = filterMonth === 'all' || date.getMonth() === filterMonth;
+      const yMatch = filterYear === 'all' || date.getFullYear() === filterYear;
+      return mMatch && yMatch;
+    });
+
+    const omzetTotal = filteredTransactions
+      .filter(t => t.is_paid)
+      .reduce((acc, t) => acc + t.final_price, 0);
+
+    // Count unique orders (by group_id or ID) to match the Transaction List cards
+    const uniqueOrders = new Set(filteredTransactions.map(t => t.group_id || t.id));
+    const orderTotal = uniqueOrders.size;
+    
+    const pelangganTotal = filteredCustomers.length;
+
+    return { omzetTotal, orderTotal, pelangganTotal };
+  };
+
+  const stats = getFilteredStats();
 
   const toggleService = async (id: string) => {
     const service = services.find(s => s.id === id);
@@ -328,28 +374,58 @@ export const AdminDashboard = () => {
         </button>
       </div>
  
-      {activeTab === 'rekap' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.25rem', marginBottom: '2rem' }}>
-          {[
-            { label: 'Omzet Hari Ini', value: 'Rp 450.000', icon: <DollarSign size={20} />, color: '#FF0084' },
-            { label: 'Order Masuk', value: '12', icon: <Package size={20} />, color: '#D3D3D3' },
-            { label: 'Pelanggan Baru', value: '3', icon: <TrendingUp size={20} />, color: '#FF0084' },
-            { label: 'Pengeluaran Bln Ini', value: `Rp ${expenses.reduce((acc, ex) => acc + ex.amount, 0).toLocaleString()}`, icon: <Wallet size={20} />, color: '#D3D3D3' },
-          ].map(stat => (
-            <div key={stat.label} className="glass-card" style={{ padding: '1.25rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
-              <div style={{ padding: '0.75rem', borderRadius: '10px', background: `${stat.color}22`, color: stat.color }}>
-                {stat.icon}
-              </div>
-              <div>
-                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{stat.label}</p>
-                <h4 style={{ fontSize: '1.1rem', fontWeight: 700 }}>{stat.value}</h4>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+      {activeTab === 'rekap' ? (
+        <>
+          {/* Rekap Filter Bar */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1.5rem', gap: '0.5rem' }}>
+            <select 
+              value={filterMonth} 
+              onChange={(e) => setFilterMonth(e.target.value === 'all' ? 'all' : Number(e.target.value))}
+              style={{ padding: '0.4rem 0.8rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', fontSize: '0.8rem' }}
+            >
+              <option value="all">Semua Bulan</option>
+              {months.map((m, i) => (
+                <option key={m} value={i}>{m}</option>
+              ))}
+            </select>
+            
+            <select 
+              value={filterYear} 
+              onChange={(e) => setFilterYear(e.target.value === 'all' ? 'all' : Number(e.target.value))}
+              style={{ padding: '0.4rem 0.8rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', fontSize: '0.8rem' }}
+            >
+              <option value="all">Semua Tahun</option>
+              {years.map(y => (
+                <option key={y} value={y}>{y}</option>
+              ))}
+            </select>
+          </div>
 
-      {activeTab === 'management' ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.25rem', marginBottom: '2rem' }}>
+            {[
+              { label: 'Total Omzet (Filter)', value: `Rp ${stats.omzetTotal.toLocaleString()}`, icon: <DollarSign size={20} />, color: '#FF0084' },
+              { label: 'Order Masuk (Filter)', value: stats.orderTotal.toString(), icon: <Package size={20} />, color: '#D3D3D3' },
+              { label: 'Pelanggan Baru (Filter)', value: stats.pelangganTotal.toString(), icon: <TrendingUp size={20} />, color: '#FF0084' },
+              { label: 'Pengeluaran (Filter)', value: `Rp ${expenses.filter(ex => {
+                const d = new Date(ex.date);
+                const m = filterMonth === 'all' || d.getMonth() === filterMonth;
+                const y = filterYear === 'all' || d.getFullYear() === filterYear;
+                return m && y;
+              }).reduce((acc, ex) => acc + ex.amount, 0).toLocaleString()}`, icon: <Wallet size={20} />, color: '#D3D3D3' },
+            ].map(stat => (
+              <div key={stat.label} className="glass-card" style={{ padding: '1.25rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                <div style={{ padding: '0.75rem', borderRadius: '10px', background: `${stat.color}22`, color: stat.color }}>
+                  {stat.icon}
+                </div>
+                <div>
+                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{stat.label}</p>
+                  <h4 style={{ fontSize: '1.1rem', fontWeight: 700 }}>{stat.value}</h4>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      ) : activeTab === 'management' ? (
         <div className="responsive-grid">
           {/* Price Management */}
           <div className="glass-card">

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Save } from 'lucide-react';
 import type { Incentive } from '../../types';
@@ -16,6 +16,15 @@ export const IncentiveModal = ({ isOpen, onClose, onSave, employeeName }: Incent
     description: '',
     date: new Date().toISOString().split('T')[0]
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add('modal-open');
+    } else {
+      document.body.classList.remove('modal-open');
+    }
+    return () => document.body.classList.remove('modal-open');
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
