@@ -72,19 +72,37 @@ export const TransactionList = () => {
     const totalGroupPrice = group.reduce((sum, item) => sum + item.final_price, 0);
     const allPaid = group.every(item => item.is_paid);
 
-    let message = `*Detail Transaksi Laundry*\n\n`;
+    const receiptId = (firstTransaction.group_id || firstTransaction.id).slice(0, 8).toUpperCase();
+    
+    let message = `*DETAIL TRANSAKSI LAUNDRY*\n`;
+    message += `No. Nota: *#${receiptId}*\n\n`;
     message += `Nama Pelanggan: *${firstTransaction.customer_name}*\n`;
     message += `Status: *${firstTransaction.status}*\n`;
     message += `Tanggal Masuk: ${new Date(firstTransaction.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}\n`;
     if (firstTransaction.due_date) {
       message += `Estimasi Selesai: ${new Date(firstTransaction.due_date).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}\n`;
     }
+    
     message += `\n*Daftar Layanan:*\n`;
     group.forEach((item, index) => {
       message += `${index + 1}. ${item.service_name} (${item.weight} ${item.unit || 'kg'}) - Rp ${item.final_price.toLocaleString('id-ID')}\n`;
     });
+    
     message += `\nTotal Pembayaran: *Rp ${totalGroupPrice.toLocaleString('id-ID')}*\n`;
     message += `Status Pembayaran: *${allPaid ? 'LUNAS' : 'BELUM BAYAR'}*\n`;
+
+    if (!allPaid && (settings?.bank_name || settings?.qris_url)) {
+      message += `\n*Informasi Pembayaran (Transfer):*\n`;
+      if (settings.bank_name) {
+        message += `${settings.bank_name}\n`;
+        message += `No. Rek: ${settings.bank_account_number}\n`;
+        message += `A.n: ${settings.bank_account_name}\n`;
+      }
+      if (settings.qris_url) {
+        message += `\nLink QRIS: ${settings.qris_url}\n`;
+      }
+    }
+
     message += `\nTerima kasih telah menggunakan layanan kami!`;
 
     const customer = customers.find(c => c.id === firstTransaction.customer_id);
