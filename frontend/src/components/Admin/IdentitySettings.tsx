@@ -277,6 +277,22 @@ export const IdentitySettings = () => {
                   style={{ width: '100%' }}
                 />
               </div>
+
+              <div className="form-group" style={{ marginTop: '0.5rem' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontSize: '0.85rem' }}>
+                  <Plus size={14} /> Link Manual Gambar QRIS (URL)
+                </label>
+                <input
+                  type="text"
+                  value={settings.qris_url || ''}
+                  onChange={e => setSettings({ ...settings, qris_url: e.target.value })}
+                  placeholder="https://domain-anda.com/qris.jpg"
+                  style={{ width: '100%', fontSize: '0.85rem' }}
+                />
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>
+                  *Gunakan kolom ini jika Anda ingin menggunakan link gambar luar (bukan upload).
+                </p>
+              </div>
             </div>
           </div>
 
