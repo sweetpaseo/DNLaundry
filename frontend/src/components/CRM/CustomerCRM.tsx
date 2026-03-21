@@ -108,15 +108,17 @@ export const CustomerCRM = ({ currentUser }: Props) => {
                   </span>
                 </div>
                   <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                    <span style={{ 
-                      fontSize: '0.65rem', padding: '2px 8px', borderRadius: '4px', 
-                      background: 'rgba(255, 0, 132, 0.15)',
-                      color: '#FF0084',
-                      border: '1px solid rgba(255, 0, 132, 0.3)',
-                      display: 'flex', alignItems: 'center', gap: '4px'
-                    }}>
-                      <Star size={10} /> {memberTypes.find(mt => mt.id === customer.type_id)?.name || customer.member_type?.name || 'Reguler'}
-                    </span>
+                    {(() => {
+                      const mType = memberTypes.find(mt => mt.id === customer.type_id) || customer.member_type;
+                      const typeName = mType?.name || 'Reguler';
+                      const badgeClass = typeName.toLowerCase().includes('reseller') ? 'badge-reseller' : 
+                                      typeName.toLowerCase().includes('member') ? 'badge-member' : 'badge-reguler';
+                      return (
+                        <span className={`badge-member-type ${badgeClass}`}>
+                          <Star size={10} /> {typeName}
+                        </span>
+                      );
+                    })()}
                     <span style={{ 
                       fontSize: '0.65rem', padding: '2px 8px', borderRadius: '4px', 
                       background: customer.default_delivery_type === 'Delivery' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(16, 185, 129, 0.15)',
