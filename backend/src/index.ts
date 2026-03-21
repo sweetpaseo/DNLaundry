@@ -78,7 +78,7 @@ transactions.delete('/:id', async (c) => {
 const customers = new Hono<{ Bindings: Bindings }>()
 customers.get('/', async (c) => {
   const supabase = getSupabase(c.env)
-  const { data, error } = await supabase.from('customers').select('*').order('created_at', { ascending: false })
+  const { data, error } = await supabase.from('customers').select('*, member_type:customer_types(*)').order('created_at', { ascending: false })
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data)
 })
@@ -86,7 +86,7 @@ customers.get('/', async (c) => {
 customers.post('/', async (c) => {
   const supabase = getSupabase(c.env)
   const body = await c.req.json()
-  const { data, error } = await supabase.from('customers').insert(body).select()
+  const { data, error } = await supabase.from('customers').insert(body).select('*, member_type:customer_types(*)')
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data[0], 201)
 })
@@ -95,7 +95,7 @@ customers.put('/:id', async (c) => {
   const id = c.req.param('id')
   const body = await c.req.json()
   const supabase = getSupabase(c.env)
-  const { data, error } = await supabase.from('customers').update(body).eq('id', id).select()
+  const { data, error } = await supabase.from('customers').update(body).eq('id', id).select('*, member_type:customer_types(*)')
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data[0])
 })
