@@ -246,7 +246,7 @@ export const api = {
   // Expense Categories
   async getExpenseCategories(cashType?: 'petty' | 'main') {
     try {
-      const url = new URL(`${API_BASE_URL}/expense-categories`);
+      const url = new URL(`${API_BASE_URL}/expense-categories`, window.location.origin);
       if (cashType) url.searchParams.append('cash_type', cashType);
       
       const res = await fetch(url.toString(), { headers: getHeaders() });
@@ -286,7 +286,7 @@ export const api = {
   // Expenses
   async getExpenses(cashType?: 'petty' | 'main') {
     try {
-      const url = new URL(`${API_BASE_URL}/expenses`);
+      const url = new URL(`${API_BASE_URL}/expenses`, window.location.origin);
       if (cashType) url.searchParams.append('cash_type', cashType);
 
       const res = await fetch(url.toString(), { headers: getHeaders() });
