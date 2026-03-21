@@ -106,10 +106,10 @@ export const TransactionList = () => {
     message += `\nTerima kasih telah menggunakan layanan kami!`;
 
     const customer = customers.find(c => c.id === firstTransaction.customer_id);
-    const recipientPhone = customer?.phone || firstTransaction.customer?.phone;
+    const recipientPhone = customer?.phone || (firstTransaction as any).customer?.phone || (firstTransaction as any).customers?.phone;
 
     if (!recipientPhone) {
-      alert('Nomor WhatsApp pelanggan tidak ditemukan.');
+      alert(`Nomor WhatsApp pelanggan tidak ditemukan.\n(Pelanggan: ${firstTransaction.customer_name}, ID: ${firstTransaction.customer_id.slice(0,8)})`);
       return;
     }
 
