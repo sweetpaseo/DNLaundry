@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 export const WhatsAppIcon = ({ size = 20, color = "currentColor" }: { size?: number, color?: string }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill={color} xmlns="http://www.w3.org/2000/svg">

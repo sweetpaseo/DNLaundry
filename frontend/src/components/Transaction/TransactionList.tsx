@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Printer, Trash2, CheckCircle, Clock, Search, Loader2, Edit3 } from 'lucide-react';
-import type { Transaction, TransactionStatus } from '../../types';
+import { Printer, Trash2, CheckCircle, Clock, Search, Loader2, Edit3, Wallet } from 'lucide-react';
+import type { Transaction, TransactionStatus, Customer } from '../../types';
 import { api } from '../../services/api';
 import { ReceiptModal } from './ReceiptModal';
 import { EditTransactionModal } from './EditTransactionModal';
@@ -16,6 +16,7 @@ export const TransactionList = () => {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [settings, setSettings] = useState<any>(null);
+  const [customers, setCustomers] = useState<Customer[]>([]);
 
   const fetchTransactions = async () => {
     try {
@@ -93,6 +94,7 @@ export const TransactionList = () => {
   useEffect(() => {
     fetchTransactions();
     api.getSettings().then(setSettings).catch(() => {});
+    api.getCustomers().then(setCustomers).catch(() => {});
   }, []);
 
   const filteredData = transactions
@@ -166,6 +168,10 @@ export const TransactionList = () => {
                 const statusStyle = getStatusStyle(t.status); // Use first item's status
                 const isOverdue = t.status !== 'Siap Ambil' && t.due_date && new Date() > new Date(t.due_date);
                 
+                const customer = customers.find(c => c.id === t.customer_id);
+                const unpaidTransactions = transactions.filter(tr => tr.customer_id === t.customer_id && !tr.is_paid);
+                const totalDebt = unpaidTransactions.reduce((sum, tr) => sum + tr.final_price, 0);
+                
                 return (
                   <div key={groupId} className="glass-card animate-fade-in" style={{ 
                     padding: '1.5rem', 
@@ -198,6 +204,19 @@ export const TransactionList = () => {
                         {t.status.toUpperCase()}
                       </span>
                     </div>
+
+                    {customer && (
+                      <div style={{ display: 'flex', gap: '0.75rem', fontSize: '0.75rem', fontWeight: 600 }}>
+                        <div style={{ padding: '0.3rem 0.6rem', borderRadius: '6px', background: 'rgba(37, 211, 102, 0.1)', color: '#25D366', border: '1px solid rgba(37, 211, 102, 0.2)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                          <Wallet size={12} /> Saldo: Rp {(customer.wallet_balance || 0).toLocaleString()}
+                        </div>
+                        {totalDebt > 0 && (
+                          <div style={{ padding: '0.3rem 0.6rem', borderRadius: '6px', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                            <Clock size={12} /> Total Hutang: Rp {totalDebt.toLocaleString()}
+                          </div>
+                        )}
+                      </div>
+                    )}
 
                     <div style={{ padding: '0.75rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                       {group.map((item, idx) => (

@@ -88,6 +88,9 @@ export const api = {
     if (!res.ok) throw new Error('Gagal hapus data');
     return res.json();
   },
+  async updateCustomerBalance(id: string, newBalance: number) {
+    return this.updateCustomer(id, { wallet_balance: newBalance });
+  },
 
   // Services
   async getServices() {

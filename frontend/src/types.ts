@@ -28,6 +28,7 @@ export interface Customer {
   member_type_id: string;
   member_type?: MemberType;
   tags?: string[];
+  wallet_balance?: number;
 }
 
 export interface Employee {
@@ -58,7 +59,7 @@ export interface Expense {
   created_at: string;
 }
 
-export type PaymentMethod = 'Cash' | 'Transfer Bank' | 'QRIS';
+export type PaymentMethod = 'Cash' | 'Transfer Bank' | 'QRIS' | 'Wallet';
 
 export interface Transaction {
   id: string;
