@@ -63,7 +63,7 @@ export const TransactionList = () => {
   };
 
   const handleWhatsAppShare = (group: Transaction[]) => {
-    if (!settings?.whatsapp_number) {
+    if (!settings?.phone) {
       alert('Nomor WhatsApp toko belum diatur di pengaturan.');
       return;
     }
@@ -87,7 +87,7 @@ export const TransactionList = () => {
     message += `Status Pembayaran: *${allPaid ? 'LUNAS' : 'BELUM BAYAR'}*\n`;
     message += `\nTerima kasih telah menggunakan layanan kami!`;
 
-    const whatsappUrl = getWhatsAppUrl(settings.whatsapp_number, message);
+    const whatsappUrl = getWhatsAppUrl(settings.phone, message);
     window.open(whatsappUrl, '_blank');
   };
 
