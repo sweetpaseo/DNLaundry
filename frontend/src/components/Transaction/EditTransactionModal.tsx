@@ -1,4 +1,4 @@
-import { useState, useEffect, FormEvent } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import { X, Save, Wallet, CheckCircle2, AlertCircle } from 'lucide-react';
 import type { Transaction, TransactionStatus, PaymentMethod, Customer } from '../../types';
 import { api } from '../../services/api';
@@ -47,7 +47,7 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction }: E
   const totalIn = amountReceived + usedWalletAmount;
   const balance = totalIn - transaction.final_price;
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
     try {
