@@ -81,9 +81,21 @@ export const TransactionList = () => {
     const customerDisplayId = customer ? getDisplayId(customer) : (firstTransaction.customer?.customer_id || `#DN-${(firstTransaction.customer_id || '').slice(0, 5).toUpperCase()}`);
     message += `Nama Pelanggan: *${firstTransaction.customer_name}* (${formatDisplayId(customerDisplayId)})\n`;
     message += `Status: *${firstTransaction.status}*\n`;
-    message += `Tanggal Masuk: ${new Date(firstTransaction.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}\n`;
+    const formatDateOnly = (dateStr: string) => {
+      try {
+        return new Date(dateStr).toLocaleDateString('id-ID', { 
+          day: 'numeric', 
+          month: 'short', 
+          year: 'numeric' 
+        });
+      } catch (e) {
+        return dateStr;
+      }
+    };
+
+    message += `Tanggal Masuk: ${formatDateOnly(firstTransaction.created_at)}\n`;
     if (firstTransaction.due_date) {
-      message += `Estimasi Selesai: ${new Date(firstTransaction.due_date).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}\n`;
+      message += `Estimasi Selesai: ${formatDateOnly(firstTransaction.due_date)}\n`;
     }
     
     message += `\n*Daftar Layanan:*\n`;
