@@ -292,6 +292,15 @@ expenses.delete('/:id', async (c) => {
   return c.json({ success: true })
 })
 
+// Helper for Password Hashing (SHA-256)
+const hashPassword = async (password: string): Promise<string> => {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+};
+
 // Auth API
 const auth = new Hono<{ Bindings: Bindings }>()
 
@@ -305,9 +314,10 @@ auth.post('/login', async (c) => {
     .select('*', { count: 'exact', head: true })
 
   if (!countErr && count === 0) {
+    const defaultPassword = await hashPassword('admin123')
     await supabase.from('laundry_users').insert({ 
       username: 'admin', 
-      password: 'admin123', 
+      password: defaultPassword, 
       name: 'Original Owner', 
       role: 'owner' 
     })
@@ -319,7 +329,8 @@ auth.post('/login', async (c) => {
     .ilike('username', username)
     .single()
 
-  if (error || !data || data.password !== password) {
+  const hashedInput = await hashPassword(password)
+  if (error || !data || data.password !== hashedInput) {
     return c.json({ error: 'Username atau password salah' }, 401)
   }
 
@@ -330,9 +341,10 @@ auth.post('/login', async (c) => {
 auth.put('/change-password', async (c) => {
   const { userId, newPassword } = await c.req.json()
   const supabase = getSupabase(c.env)
+  const hashed = await hashPassword(newPassword)
   const { error } = await supabase
     .from('laundry_users')
-    .update({ password: newPassword })
+    .update({ password: hashed })
     .eq('id', userId)
   
   if (error) return c.json({ error: error.message }, 500)
@@ -352,6 +364,11 @@ users.get('/', async (c) => {
 users.post('/', async (c) => {
   const body = await c.req.json()
   const supabase = getSupabase(c.env)
+  
+  if (body.password) {
+    body.password = await hashPassword(body.password)
+  }
+
   const { data, error } = await supabase.from('laundry_users').insert(body).select()
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data[0], 201)
@@ -363,7 +380,11 @@ users.put('/:id', async (c) => {
   const supabase = getSupabase(c.env)
   
   const updateData = { ...body }
-  if (!updateData.password) delete updateData.password
+  if (updateData.password) {
+    updateData.password = await hashPassword(updateData.password)
+  } else {
+    delete updateData.password
+  }
 
   const { data, error } = await supabase.from('laundry_users').update(updateData).eq('id', id).select()
   if (error) return c.json({ error: error.message }, 500)
