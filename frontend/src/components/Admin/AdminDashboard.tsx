@@ -31,33 +31,33 @@ const calculateCommission = (empId: string, trans: Transaction[], srvs: Service[
 };
 
 export const AdminDashboard = () => {
-  const [memberTypes, setMemberTypes] = React.useState<MemberType[]>([]);
-  const [services, setServices] = React.useState<Service[]>([]);
-  const [employees, setEmployees] = React.useState<Employee[]>([]);
-  const [incentives, setIncentives] = React.useState<Incentive[]>([]);
-  const [transactions, setTransactions] = React.useState<Transaction[]>([]);
-  const [expenses, setExpenses] = React.useState<Expense[]>([]);
+  const [memberTypes, setMemberTypes] = useState<MemberType[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [incentives, setIncentives] = useState<Incentive[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
 
-  const [activeTab, setActiveTab] = React.useState<'rekap' | 'management' | 'payroll' | 'expenses' | 'users' | 'identity' | 'wallet'>('rekap');
+  const [activeTab, setActiveTab] = useState<'rekap' | 'management' | 'payroll' | 'expenses' | 'users' | 'identity' | 'wallet'>('rekap');
 
   // Modal States
-  const [isServiceModalOpen, setIsServiceModalOpen] = React.useState(false);
-  const [editingService, setEditingService] = React.useState<Service | null>(null);
-  const [isMemberTypeModalOpen, setIsMemberTypeModalOpen] = React.useState(false);
-  const [editingMemberType, setEditingMemberType] = React.useState<MemberType | null>(null);
-  const [isEmployeeModalOpen, setIsEmployeeModalOpen] = React.useState(false);
-  const [editingEmployee, setEditingEmployee] = React.useState<Employee | null>(null);
-  const [isIncentiveModalOpen, setIsIncentiveModalOpen] = React.useState(false);
-  const [selectedEmployeeForIncentive, setSelectedEmployeeForIncentive] = React.useState<string | null>(null);
-  const [isExpenseModalOpen, setIsExpenseModalOpen] = React.useState(false);
-  const [editingExpense, setEditingExpense] = React.useState<Expense | null>(null);
-  const [isUserModalOpen, setIsUserModalOpen] = React.useState(false);
-  const [editingUser, setEditingUser] = React.useState<any>(null);
-  const [users, setUsers] = React.useState<any[]>([]);
+  const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
+  const [editingService, setEditingService] = useState<Service | null>(null);
+  const [isMemberTypeModalOpen, setIsMemberTypeModalOpen] = useState(false);
+  const [editingMemberType, setEditingMemberType] = useState<MemberType | null>(null);
+  const [isEmployeeModalOpen, setIsEmployeeModalOpen] = useState(false);
+  const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
+  const [isIncentiveModalOpen, setIsIncentiveModalOpen] = useState(false);
+  const [selectedEmployeeForIncentive, setSelectedEmployeeForIncentive] = useState<string | null>(null);
+  const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
+  const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<any>(null);
+  const [users, setUsers] = useState<any[]>([]);
 
   // Filter States
-  const [filterMonth, setFilterMonth] = React.useState<number | 'all'>(new Date().getMonth());
-  const [filterYear, setFilterYear] = React.useState<number | 'all'>(new Date().getFullYear());
+  const [filterMonth, setFilterMonth] = useState<number | 'all'>(new Date().getMonth());
+  const [filterYear, setFilterYear] = useState<number | 'all'>(new Date().getFullYear());
 
   const months = [
     'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
@@ -89,7 +89,7 @@ export const AdminDashboard = () => {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchData();
   }, []);
 
