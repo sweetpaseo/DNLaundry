@@ -1,39 +1,54 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Save, Receipt } from 'lucide-react';
-import type { Expense } from '../../types';
+import type { Expense, ExpenseCategory } from '../../types';
+import { api } from '../../services/api';
 
 interface ExpenseModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (expense: Partial<Expense>) => void;
   initialData?: Expense | null;
+  forcedCashType?: 'petty' | 'main';
 }
 
-const CATEGORIES = ['Listrik & Air', 'Sabun & Kimia', 'Plastik & Packing', 'Transportasi', 'Lain-lain'];
-
-export const ExpenseModal = ({ isOpen, onClose, onSave, initialData }: ExpenseModalProps) => {
+export const ExpenseModal = ({ isOpen, onClose, onSave, initialData, forcedCashType }: ExpenseModalProps) => {
+  const [categories, setCategories] = useState<ExpenseCategory[]>([]);
   const [formData, setFormData] = useState<Partial<Expense>>({
     amount: 0,
-    category: CATEGORIES[0],
+    category_id: '',
     description: '',
-    date: new Date().toISOString().split('T')[0]
+    date: new Date().toISOString().split('T')[0],
+    cash_type: 'petty'
   });
 
   useEffect(() => {
     if (isOpen) {
-      if (initialData) {
-        setFormData({ ...initialData });
-      } else {
-        setFormData({
-          amount: 0,
-          category: CATEGORIES[0],
-          description: '',
-          date: new Date().toISOString().split('T')[0]
-        });
-      }
+      const loadCategories = async () => {
+        const fetched = await api.getExpenseCategories();
+        
+        // Filter based on forcedCashType if provided
+        const filtered = forcedCashType 
+          ? fetched.filter((c: ExpenseCategory) => c.cash_type === forcedCashType)
+          : fetched;
+          
+        setCategories(filtered);
+        
+        if (initialData) {
+          setFormData({ ...initialData });
+        } else {
+          setFormData({
+            amount: 0,
+            category_id: filtered[0]?.id || '',
+            description: '',
+            date: new Date().toISOString().split('T')[0],
+            cash_type: forcedCashType || 'petty'
+          });
+        }
+      };
+      loadCategories();
     }
-  }, [isOpen, initialData]);
+  }, [isOpen, initialData, forcedCashType]);
 
   if (!isOpen) return null;
 
@@ -42,12 +57,19 @@ export const ExpenseModal = ({ isOpen, onClose, onSave, initialData }: ExpenseMo
       <div className="glass-card modal-content" style={{ padding: '2rem', border: '1px solid var(--glass-border)', maxWidth: '400px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
           <h3 style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <Receipt size={20} color="var(--primary)" /> {initialData ? 'Edit' : 'Catat'} Pengeluaran (Kas Kecil)
+            <Receipt size={20} color="var(--primary)" /> {initialData ? 'Edit' : 'Catat'} {forcedCashType === 'main' ? 'Biaya Operasional' : 'Pengeluaran (Kas Kecil)'}
           </h3>
           <button onClick={onClose} style={{ color: 'var(--text-muted)' }}><X size={20} /></button>
         </div>
 
-        <form onSubmit={(e) => { e.preventDefault(); onSave(formData); }} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <form 
+          onSubmit={(e) => { 
+            e.preventDefault(); 
+            const selectedCat = categories.find(c => c.id === formData.category_id);
+            onSave({ ...formData, category: selectedCat?.name || '' }); 
+          }} 
+          style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}
+        >
           <div className="form-group">
             <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.875rem' }}>Jumlah Pengeluaran (Rp)</label>
             <input 
@@ -63,15 +85,32 @@ export const ExpenseModal = ({ isOpen, onClose, onSave, initialData }: ExpenseMo
           <div className="form-group">
             <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.875rem' }}>Kategori</label>
             <select 
-              value={formData.category}
-              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              value={formData.category_id}
+              onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
               style={{ width: '100%' }}
+              required
             >
-              {CATEGORIES.map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
+              <option value="" disabled>Pilih Kategori</option>
+              {categories.map(cat => (
+                <option key={cat.id} value={cat.id}>{cat.name}</option>
               ))}
             </select>
           </div>
+
+          {!forcedCashType && (
+            <div className="form-group">
+              <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.875rem' }}>Sumber Kas</label>
+              <select 
+                value={formData.cash_type}
+                onChange={(e) => setFormData({ ...formData, cash_type: e.target.value as 'petty' | 'main' })}
+                style={{ width: '100%' }}
+                required
+              >
+                <option value="petty">Kas Kecil (Staff)</option>
+                <option value="main">Kas Utama (Owner)</option>
+              </select>
+            </div>
+          )}
 
           <div className="form-group">
             <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.875rem' }}>Keterangan</label>

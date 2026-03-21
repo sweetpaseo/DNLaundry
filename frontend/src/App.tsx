@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import { Users, Settings, PlusCircle, List, LogOut, Calculator, Receipt } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { api } from './services/api';
-import { ExpenseModal } from './components/Expense/ExpenseModal';
 import { OrderInput } from './components/Transaction/OrderInput';
 import { TransactionList } from './components/Transaction/TransactionList';
 import { CustomerCRM } from './components/CRM/CustomerCRM';
 import { AdminDashboard } from './components/Admin/AdminDashboard';
+import { ExpenseManager } from './components/Expense/ExpenseManager';
 import { Login } from './components/Auth/Login';
 
 function App() {
@@ -14,9 +14,8 @@ function App() {
     const saved = localStorage.getItem('laundry_user');
     return saved ? JSON.parse(saved) : null;
   });
-  const [activeMenu, setActiveMenu] = useState<'transaksi' | 'pelanggan' | 'admin'>('transaksi');
+  const [activeMenu, setActiveMenu] = useState<'transaksi' | 'biaya' | 'pelanggan' | 'admin'>('transaksi');
   const [activeTab, setActiveTab] = useState<'input' | 'list'>('input');
-  const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
   const [settings, setSettings] = useState<any>({
     name: 'DN Laundry',
     address: 'Jl. Dewi Sartika A8/4, Jatiasih, Kota Bekasi. (Gmaps: DN Office)',
@@ -67,22 +66,13 @@ function App() {
     }
   };
 
-  const handleSaveExpense = async (expense: any) => {
-    try {
-      await api.createExpense(expense);
-      alert('Pengeluaran berhasil dicatat!');
-      setIsExpenseModalOpen(false);
-    } catch (error) {
-      alert('Gagal mencatat pengeluaran');
-    }
-  };
-
   if (!user) {
     return <Login onLoginSuccess={handleLoginSuccess} settings={settings} />;
   }
 
   const menuItems = [
     { id: 'transaksi', label: 'Transaksi', icon: <Calculator size={18} /> },
+    { id: 'biaya', label: 'Biaya', icon: <Receipt size={18} /> },
     { id: 'pelanggan', label: 'Pelanggan', icon: <Users size={18} /> },
     ...(user.role === 'owner' ? [{ id: 'admin', label: 'Admin', icon: <Settings size={18} /> }] : []),
   ];
@@ -159,13 +149,6 @@ function App() {
               >
                 <List size={18} /> Daftar Transaksi
               </button>
-              <button 
-                className="tab-btn"
-                style={{ background: 'rgba(244, 63, 94, 0.1)', border: '1px solid rgba(244, 63, 94, 0.2)', color: '#f43f5e', marginLeft: 'auto' }}
-                onClick={() => setIsExpenseModalOpen(true)}
-              >
-                <Receipt size={18} /> Catat Pengeluaran
-              </button>
             </div>
             
             <AnimatePresence mode="wait">
@@ -184,6 +167,10 @@ function App() {
           </div>
         )}
 
+        {activeMenu === 'biaya' && (
+          <ExpenseManager userRole={user.role} />
+        )}
+
         {activeMenu === 'pelanggan' && (
           <div className="glass-card animate-fade-in">
             <CustomerCRM currentUser={user} />
@@ -196,12 +183,6 @@ function App() {
           </div>
         )}
       </main>
-
-      <ExpenseModal 
-        isOpen={isExpenseModalOpen}
-        onClose={() => setIsExpenseModalOpen(false)}
-        onSave={handleSaveExpense}
-      />
     </div>
   );
 }

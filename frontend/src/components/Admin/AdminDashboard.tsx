@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react';
 import { 
   DollarSign, Package, TrendingUp, Settings, Users, Plus, Trash2, Power, 
-  Briefcase, Calculator, History, Phone, Wallet, Receipt, Edit, Store
+  Briefcase, Calculator, History, Phone, Wallet, Receipt, Edit, Store, Tag
 } from 'lucide-react';
-import type { Service, MemberType, Employee, Incentive, Transaction, Expense } from '../../types';
+import type { Service, MemberType, Employee, Incentive, Transaction, Expense, ExpenseCategory } from '../../types';
 import { ServiceModal } from './ServiceModal';
 import { MemberTypeModal } from './MemberTypeModal';
 import { EmployeeModal } from './EmployeeModal';
 import { IncentiveModal } from './IncentiveModal';
 import { UserModal } from './UserModal';
 import { ExpenseModal } from '../Expense/ExpenseModal';
+import { ExpenseCategoryModal } from '../Expense/ExpenseCategoryModal';
 import { IdentitySettings } from './IdentitySettings';
 import { WalletManagement } from './WalletManagement';
 import { api } from '../../services/api';
@@ -51,6 +52,11 @@ export const AdminDashboard = () => {
   const [selectedEmployeeForIncentive, setSelectedEmployeeForIncentive] = useState<string | null>(null);
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
+  const [expenseCategories, setExpenseCategories] = useState<ExpenseCategory[]>([]);
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<ExpenseCategory | null>(null);
+  const [expenseSubTab, setExpenseSubTab] = useState<'history' | 'categories'>('history');
+  const [expenseCashFilter, setExpenseCashFilter] = useState<'all' | 'petty' | 'main'>('all');
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<any>(null);
   const [users, setUsers] = useState<any[]>([]);
@@ -76,11 +82,12 @@ export const AdminDashboard = () => {
         api.getEmployees(),
         api.getIncentives(),
         api.getExpenses(),
+        api.getExpenseCategories(),
         api.getUsers(),
         api.getCustomers()
       ]);
 
-      const [t, s, l, e, i, ex, u, c] = results;
+      const [t, s, l, e, i, ex, cat, u, c] = results;
 
       if (t.status === 'fulfilled') setTransactions(t.value || []);
       if (s.status === 'fulfilled') setServices(s.value || []);
@@ -88,6 +95,7 @@ export const AdminDashboard = () => {
       if (e.status === 'fulfilled') setEmployees(e.value || []);
       if (i.status === 'fulfilled') setIncentives(i.value || []);
       if (ex.status === 'fulfilled') setExpenses(ex.value || []);
+      if (cat.status === 'fulfilled') setExpenseCategories(cat.value || []);
       if (u.status === 'fulfilled') setUsers(u.value || []);
       if (c.status === 'fulfilled') setCustomers(c.value || []);
 
@@ -260,6 +268,34 @@ export const AdminDashboard = () => {
         alert('Perubahan berhasil disimpan!');
       } catch (error) {
         alert('Gagal menghapus pengeluaran');
+      }
+    }
+  };
+
+  const handleSaveCategory = async (data: Partial<ExpenseCategory>) => {
+    try {
+      if (editingCategory) {
+        await api.updateExpenseCategory(editingCategory.id, data);
+      } else {
+        await api.createExpenseCategory(data);
+      }
+      fetchData();
+      setIsCategoryModalOpen(false);
+      setEditingCategory(null);
+      alert('Perubahan berhasil disimpan!');
+    } catch (error) {
+      alert('Gagal menyimpan kategori');
+    }
+  };
+
+  const deleteCategory = async (id: string) => {
+    if (window.confirm('Hapus kategori ini? Semua pengeluaran terkait akan kehilangan kategori.')) {
+      try {
+        await api.deleteExpenseCategory(id);
+        fetchData();
+        alert('Perubahan berhasil disimpan!');
+      } catch (error) {
+        alert('Gagal menghapus kategori');
       }
     }
   };
@@ -727,62 +763,155 @@ export const AdminDashboard = () => {
         /* Expenses Tab Content */
         <div className="glass-card" style={{ padding: '2rem' }}>
           <div style={{ marginBottom: '2rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', fontSize: '1.1rem' }}>
-              <Receipt size={20} color="var(--primary)" /> Histori Pengeluaran Kas Kecil
-            </h4>
-            <button 
-              onClick={() => { setEditingExpense(null); setIsExpenseModalOpen(true); }}
-              className="btn-primary" 
-              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', fontSize: '0.85rem' }}
-            >
-              <Plus size={18} /> Tambah Pengeluaran
-            </button>
-          </div>
-
-          <div style={{ display: 'grid', gap: '1rem' }}>
-            {expenses.length === 0 ? (
-              <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>Belum ada catatan pengeluaran.</div>
+            <div style={{ display: 'flex', gap: '1.5rem' }}>
+              <button 
+                onClick={() => setExpenseSubTab('history')}
+                style={{ background: 'transparent', border: 'none', borderBottom: expenseSubTab === 'history' ? '2px solid var(--primary)' : '2px solid transparent', color: expenseSubTab === 'history' ? 'white' : 'var(--text-muted)', cursor: 'pointer', padding: '0.5rem 0', fontWeight: 600 }}
+              >
+                Histori Pengeluaran
+              </button>
+              <button 
+                onClick={() => setExpenseSubTab('categories')}
+                style={{ background: 'transparent', border: 'none', borderBottom: expenseSubTab === 'categories' ? '2px solid var(--primary)' : '2px solid transparent', color: expenseSubTab === 'categories' ? 'white' : 'var(--text-muted)', cursor: 'pointer', padding: '0.5rem 0', fontWeight: 600 }}
+              >
+                Kelola Kategori
+              </button>
+            </div>
+            {expenseSubTab === 'history' ? (
+              <div style={{ display: 'flex', gap: '0.8125rem', alignItems: 'center' }}>
+                <select 
+                  value={expenseCashFilter} 
+                  onChange={(e) => setExpenseCashFilter(e.target.value as any)}
+                  style={{ padding: '0.4rem 0.8rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', fontSize: '0.8rem' }}
+                >
+                  <option value="all">Semua Kas</option>
+                  <option value="petty">Kas Kecil (Staff)</option>
+                  <option value="main">Kas Utama (Owner)</option>
+                </select>
+                <button 
+                  onClick={() => { setEditingExpense(null); setIsExpenseModalOpen(true); }}
+                  className="btn-primary" 
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', fontSize: '0.85rem' }}
+                >
+                  <Plus size={18} /> Tambah Pengeluaran
+                </button>
+              </div>
             ) : (
-              expenses.map(ex => (
-                <div key={ex.id} className="glass-card" style={{ padding: '1.25rem', background: 'rgba(255,255,255,0.02)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-                  <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', minWidth: 'min(100%, 250px)', flex: 1 }}>
-                    <div style={{ padding: '0.75rem', borderRadius: '12px', background: 'rgba(244, 63, 94, 0.1)', color: '#f43f5e', flexShrink: 0 }}>
-                      <Wallet size={20} />
-                    </div>
-                    <div>
-                      <div style={{ fontWeight: 600, fontSize: '1rem' }}>{ex.description}</div>
-                      <div style={{ display: 'flex', gap: '1rem', marginTop: '0.25rem', flexWrap: 'wrap' }}>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.05)', padding: '0.1rem 0.5rem', borderRadius: '4px' }}>{ex.category}</span>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{new Date(ex.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', justifyContent: 'flex-end', minWidth: 'min(100%, 150px)', flex: '0 0 auto' }}>
-                    <div style={{ textAlign: 'right', marginRight: '0.5rem' }}>
-                      <div style={{ fontWeight: 700, color: '#f43f5e', fontSize: '1.1rem' }}>- Rp {ex.amount.toLocaleString()}</div>
-                    </div>
-                    <button 
-                      onClick={() => { setEditingExpense(ex); setIsExpenseModalOpen(true); }}
-                      style={{ padding: '0.5rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid var(--glass-border)', cursor: 'pointer', transition: 'all 0.2s' }}
-                      onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
-                      onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
-                    >
-                      <Edit size={16} />
-                    </button>
-                    <button 
-                      onClick={() => deleteExpense(ex.id)}
-                      style={{ padding: '0.5rem', borderRadius: '8px', background: 'rgba(244, 63, 94, 0.1)', color: '#f43f5e', border: '1px solid rgba(244, 63, 94, 0.2)', cursor: 'pointer', transition: 'all 0.2s' }}
-                      onMouseOver={(e) => { e.currentTarget.style.background = '#f43f5e'; e.currentTarget.style.color = 'white'; }}
-                      onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(244, 63, 94, 0.1)'; e.currentTarget.style.color = '#f43f5e'; }}
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                </div>
-              ))
+              <button 
+                onClick={() => { setEditingCategory(null); setIsCategoryModalOpen(true); }}
+                className="btn-primary" 
+                style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', fontSize: '0.85rem' }}
+              >
+                <Plus size={18} /> Tambah Kategori
+              </button>
             )}
           </div>
-        </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {expenseSubTab === 'history' ? (
+              <div style={{ display: 'grid', gap: '1rem' }}>
+                {expenses.filter(ex => expenseCashFilter === 'all' || ex.cash_type === expenseCashFilter).length === 0 ? (
+                  <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>Belum ada catatan pengeluaran.</div>
+                ) : (
+                  expenses
+                    .filter(ex => expenseCashFilter === 'all' || ex.cash_type === expenseCashFilter)
+                    .map(ex => (
+                      <div key={ex.id} className="glass-card" style={{ padding: '1.25rem', background: 'rgba(255,255,255,0.02)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                        <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', minWidth: 'min(100%, 250px)', flex: 1 }}>
+                          <div style={{ padding: '0.75rem', borderRadius: '12px', background: ex.cash_type === 'main' ? 'rgba(255, 0, 132, 0.1)' : 'rgba(244, 63, 94, 0.1)', color: ex.cash_type === 'main' ? 'var(--primary)' : '#f43f5e', flexShrink: 0 }}>
+                            <Wallet size={20} />
+                          </div>
+                          <div>
+                            <div style={{ fontWeight: 600, fontSize: '1rem' }}>{ex.description}</div>
+                            <div style={{ display: 'flex', gap: '1rem', marginTop: '0.25rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.05)', padding: '0.1rem 0.5rem', borderRadius: '4px' }}>
+                                {(ex as any).expense_category?.name || ex.category || 'Tanpa Kategori'}
+                              </span>
+                              <span style={{ fontSize: '0.65rem', padding: '2px 6px', borderRadius: '4px', background: ex.cash_type === 'main' ? 'var(--primary)' : 'rgba(255,255,255,0.1)', color: 'white', fontWeight: 600 }}>
+                                {ex.cash_type === 'main' ? 'KAS UTAMA' : 'KAS KECIL'}
+                              </span>
+                              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{new Date(ex.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', justifyContent: 'flex-end', minWidth: 'min(100%, 150px)', flex: '0 0 auto' }}>
+                          <div style={{ textAlign: 'right', marginRight: '0.5rem' }}>
+                            <div style={{ fontWeight: 700, color: '#f43f5e', fontSize: '1.1rem' }}>- Rp {ex.amount.toLocaleString()}</div>
+                          </div>
+                          <button 
+                            onClick={() => { setEditingExpense(ex); setIsExpenseModalOpen(true); }}
+                            style={{ padding: '0.5rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid var(--glass-border)', cursor: 'pointer', transition: 'all 0.2s' }}
+                          >
+                            <Edit size={16} />
+                          </button>
+                          <button 
+                            onClick={() => deleteExpense(ex.id)}
+                            style={{ padding: '0.5rem', borderRadius: '8px', background: 'rgba(244, 63, 94, 0.1)', color: '#f43f5e', border: '1px solid rgba(244, 63, 94, 0.2)', cursor: 'pointer', transition: 'all 0.2s' }}
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                )}
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                   <button 
+                     onClick={() => setExpenseCashFilter('all')}
+                     style={{ padding: '0.3rem 0.8rem', borderRadius: '20px', fontSize: '0.75rem', background: expenseCashFilter === 'all' ? 'var(--primary-gradient)' : 'rgba(255,255,255,0.05)', color: 'white', border: 'none', cursor: 'pointer' }}
+                   >Semua</button>
+                   <button 
+                     onClick={() => setExpenseCashFilter('petty')}
+                     style={{ padding: '0.3rem 0.8rem', borderRadius: '20px', fontSize: '0.75rem', background: expenseCashFilter === 'petty' ? 'var(--primary-gradient)' : 'rgba(255,255,255,0.05)', color: 'white', border: 'none', cursor: 'pointer' }}
+                   >Kas Kecil</button>
+                   <button 
+                     onClick={() => setExpenseCashFilter('main')}
+                     style={{ padding: '0.3rem 0.8rem', borderRadius: '20px', fontSize: '0.75rem', background: expenseCashFilter === 'main' ? 'var(--primary-gradient)' : 'rgba(255,255,255,0.05)', color: 'white', border: 'none', cursor: 'pointer' }}
+                   >Kas Utama</button>
+                </div>
+                {expenseCategories.filter(cat => expenseCashFilter === 'all' || cat.cash_type === expenseCashFilter).length === 0 ? (
+                  <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>Belum ada kategori pengeluaran.</div>
+                ) : (
+                  expenseCategories
+                    .filter(cat => expenseCashFilter === 'all' || cat.cash_type === expenseCashFilter)
+                    .map(cat => (
+                      <div key={cat.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                          <Tag size={18} color="var(--primary)" />
+                          <div>
+                            <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{cat.name}</div>
+                            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                              {cat.cash_type === 'main' ? 'Kas Utama (Owner)' : 'Kas Kecil (Staff)'}
+                            </div>
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.4rem' }}>
+                          <button 
+                            style={{ 
+                              padding: '0.4rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)', border: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'
+                            }} 
+                            onClick={() => { setEditingCategory(cat); setIsCategoryModalOpen(true); }}
+                          >
+                            <Settings size={14} />
+                          </button>
+                          <button 
+                            style={{ 
+                              padding: '0.4rem', borderRadius: '8px', background: 'rgba(244, 63, 94, 0.1)', color: '#f43f5e', border: '1px solid rgba(244, 63, 94, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'
+                            }}
+                            onClick={() => deleteCategory(cat.id)}
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                )}
+              </div>
+            )}
+          </div>
+      </div>
       ) : activeTab === 'identity' ? (
         <IdentitySettings />
       ) : activeTab === 'wallet' ? (
@@ -877,6 +1006,13 @@ export const AdminDashboard = () => {
         onClose={() => { setIsExpenseModalOpen(false); setEditingExpense(null); }}
         onSave={handleSaveExpense}
         initialData={editingExpense}
+      />
+
+      <ExpenseCategoryModal
+        isOpen={isCategoryModalOpen}
+        onClose={() => { setIsCategoryModalOpen(false); setEditingCategory(null); }}
+        onSave={handleSaveCategory}
+        initialData={editingCategory}
       />
 
       <UserModal

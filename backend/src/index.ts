@@ -252,12 +252,64 @@ incentives.delete('/:id', async (c) => {
   return c.json({ success: true })
 })
 
+// Expense Categories API
+const expenseCategories = new Hono<{ Bindings: Bindings }>()
+
+expenseCategories.get('/', async (c) => {
+  const supabase = getSupabase(c.env)
+  const query = supabase.from('expense_categories').select('*').order('name', { ascending: true })
+  
+  const cashType = c.req.query('cash_type')
+  if (cashType) {
+    query.eq('cash_type', cashType)
+  }
+
+  const { data, error } = await query
+  if (error) return c.json({ error: error.message }, 500)
+  return c.json(data || [])
+})
+
+expenseCategories.post('/', async (c) => {
+  const body = await c.req.json()
+  const supabase = getSupabase(c.env)
+  const { data, error } = await supabase.from('expense_categories').insert(body).select()
+  if (error) return c.json({ error: error.message }, 500)
+  return c.json(data[0], 201)
+})
+
+expenseCategories.put('/:id', async (c) => {
+  const id = c.req.param('id')
+  const body = await c.req.json()
+  const supabase = getSupabase(c.env)
+  const { data, error } = await supabase.from('expense_categories').update(body).eq('id', id).select()
+  if (error) return c.json({ error: error.message }, 500)
+  return c.json(data[0])
+})
+
+expenseCategories.delete('/:id', async (c) => {
+  const id = c.req.param('id')
+  const supabase = getSupabase(c.env)
+  const { error } = await supabase.from('expense_categories').delete().eq('id', id)
+  if (error) return c.json({ error: error.message }, 500)
+  return c.json({ success: true })
+})
+
 // Expenses API (Petty Cash)
 const expenses = new Hono<{ Bindings: Bindings }>()
 
 expenses.get('/', async (c) => {
   const supabase = getSupabase(c.env)
-  const { data, error } = await supabase.from('laundry_expenses').select('*').order('date', { ascending: false })
+  const query = supabase
+    .from('laundry_expenses')
+    .select('*, expense_category:expense_categories(*)')
+    .order('date', { ascending: false })
+    
+  const cashType = c.req.query('cash_type')
+  if (cashType) {
+    query.eq('cash_type', cashType)
+  }
+
+  const { data, error } = await query
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data || [])
 })
@@ -265,18 +317,39 @@ expenses.get('/', async (c) => {
 expenses.post('/', async (c) => {
   const body = await c.req.json()
   const supabase = getSupabase(c.env)
-  const { data, error } = await supabase.from('laundry_expenses').insert(body).select()
-  if (error) return c.json({ error: error.message }, 500)
-  return c.json(data[0], 201)
+  
+  console.log('Inserting Expense Body:', body);
+  
+  const { data, error } = await supabase
+    .from('laundry_expenses')
+    .insert(body)
+    .select('*, expense_category:expense_categories(*)')
+    
+  if (error) {
+    console.error('POST /expenses Error:', error);
+    return c.json({ error: error.message, detail: error.details }, 500);
+  }
+  return c.json(data?.[0] || {}, 201)
 })
 
 expenses.put('/:id', async (c) => {
   const id = c.req.param('id')
   const body = await c.req.json()
   const supabase = getSupabase(c.env)
-  const { data, error } = await supabase.from('laundry_expenses').update(body).eq('id', id).select()
-  if (error) return c.json({ error: error.message }, 500)
-  return c.json(data[0])
+
+  console.log(`Updating Expense ${id} Body:`, body);
+
+  const { data, error } = await supabase
+    .from('laundry_expenses')
+    .update(body)
+    .eq('id', id)
+    .select('*, expense_category:expense_categories(*)')
+    
+  if (error) {
+    console.error(`PUT /expenses/${id} Error:`, error);
+    return c.json({ error: error.message, detail: error.details }, 500);
+  }
+  return c.json(data?.[0] || {})
 })
 
 expenses.delete('/:id', async (c) => {
@@ -433,6 +506,7 @@ app.route('/api/membership', memberTypes)
 app.route('/api/services', services)
 app.route('/api/employees', employees)
 app.route('/api/incentives', incentives)
+app.route('/api/expense-categories', expenseCategories)
 app.route('/api/expenses', expenses)
 app.route('/api/auth', auth)
 app.route('/api/users', users)

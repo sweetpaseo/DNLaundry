@@ -52,11 +52,21 @@ export interface Incentive {
   created_at: string;
 }
 
+export interface ExpenseCategory {
+  id: string;
+  name: string;
+  cash_type: 'petty' | 'main';
+  created_at?: string;
+}
+
 export interface Expense {
   id: string;
   amount: number;
   description: string;
-  category: string;
+  category: string; // Keep for backward compatibility/legacy name
+  category_id?: string;
+  expense_category?: ExpenseCategory; // For joined data
+  cash_type: 'petty' | 'main';
   date: string;
   created_at: string;
 }

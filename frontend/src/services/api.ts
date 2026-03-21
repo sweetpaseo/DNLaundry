@@ -243,10 +243,53 @@ export const api = {
     return res.json();
   },
 
-  // Expenses
-  async getExpenses() {
+  // Expense Categories
+  async getExpenseCategories(cashType?: 'petty' | 'main') {
     try {
-      const res = await fetch(`${API_BASE_URL}/expenses`, { headers: getHeaders() });
+      const url = new URL(`${API_BASE_URL}/expense-categories`);
+      if (cashType) url.searchParams.append('cash_type', cashType);
+      
+      const res = await fetch(url.toString(), { headers: getHeaders() });
+      if (!res.ok) throw new Error();
+      return await res.json();
+    } catch (e) {
+      return [];
+    }
+  },
+  async createExpenseCategory(data: any) {
+    const res = await fetch(`${API_BASE_URL}/expense-categories`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error('Gagal simpan kategori');
+    return res.json();
+  },
+  async updateExpenseCategory(id: string, data: any) {
+    const res = await fetch(`${API_BASE_URL}/expense-categories/${id}`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error('Gagal simpan kategori');
+    return res.json();
+  },
+  async deleteExpenseCategory(id: string) {
+    const res = await fetch(`${API_BASE_URL}/expense-categories/${id}`, { 
+      method: 'DELETE',
+      headers: getHeaders()
+    });
+    if (!res.ok) throw new Error('Gagal hapus kategori');
+    return res.json();
+  },
+
+  // Expenses
+  async getExpenses(cashType?: 'petty' | 'main') {
+    try {
+      const url = new URL(`${API_BASE_URL}/expenses`);
+      if (cashType) url.searchParams.append('cash_type', cashType);
+
+      const res = await fetch(url.toString(), { headers: getHeaders() });
       if (!res.ok) throw new Error();
       return await res.json();
     } catch (e) {
@@ -259,7 +302,10 @@ export const api = {
       headers: getHeaders(),
       body: JSON.stringify(data),
     });
-    if (!res.ok) throw new Error('Gagal simpan data');
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Gagal simpan data');
+    }
     return res.json();
   },
   async updateExpense(id: string, data: any) {
@@ -268,7 +314,10 @@ export const api = {
       headers: getHeaders(),
       body: JSON.stringify(data),
     });
-    if (!res.ok) throw new Error('Gagal simpan data');
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Gagal simpan data');
+    }
     return res.json();
   },
   async deleteExpense(id: string) {
