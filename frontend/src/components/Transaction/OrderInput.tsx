@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, Plus, UserPlus } from 'lucide-react';
+import { Search, Plus, UserPlus, Calendar } from 'lucide-react';
 import type { Service, Employee, Customer, MemberType } from '../../types';
 import { AddCustomerModal } from '../CRM/AddCustomerModal';
 import { api } from '../../services/api';
@@ -40,6 +40,10 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
   const [discountValue, setDiscountValue] = useState<number | string>(0);
   const [filteredCustomers, setFilteredCustomers] = useState<Customer[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [orderDate, setOrderDate] = useState(() => {
+    const now = new Date();
+    return new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+  });
 
   const fetchData = async () => {
     try {
@@ -217,7 +221,7 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
           due_date: item.due_date,
           group_id: groupId,
           notes: notes,
-          created_at: new Date().toISOString()
+          created_at: new Date(orderDate).toISOString()
         };
         return api.createTransaction(orderData);
       });
@@ -246,8 +250,23 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
             <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Data Pelanggan</h3>
           </div>
           
-          <div className="form-group" style={{ position: 'relative' }}>
-            <div style={{ position: 'relative' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 2fr)', gap: '1.25rem', marginBottom: '1rem' }}>
+            <div className="form-group">
+              <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>Tgl Masuk Order</label>
+              <div style={{ position: 'relative' }}>
+                <input 
+                  type="datetime-local" 
+                  value={orderDate}
+                  onChange={(e) => setOrderDate(e.target.value)}
+                  style={{ width: '100%', paddingLeft: '2.5rem', height: '3.5rem', fontSize: '0.9rem' }} 
+                />
+                <Calendar size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+              </div>
+            </div>
+
+            <div className="form-group" style={{ position: 'relative' }}>
+              <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>Cari Nama / WhatsApp</label>
+              <div style={{ position: 'relative' }}>
               <input 
                 type="text" 
                 placeholder="Cari nama atau telepon..." 
@@ -297,18 +316,19 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
                     <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{c.phone} {c.member_type ? `- ${c.member_type.name}` : ''}</div>
                   </div>
                 ))}
-              </div>
-            )}
-            
-            <button 
-              type="button" 
-              onClick={() => setIsModalOpen(true)}
-              style={{ marginTop: '0.75rem', background: 'transparent', color: 'var(--primary)', fontSize: '0.875rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 0' }}
-            >
-              <UserPlus size={18} /> + Pelanggan Baru
-            </button>
+            </div>
+          )}
           </div>
         </div>
+
+        <button 
+          type="button" 
+          onClick={() => setIsModalOpen(true)}
+          style={{ marginTop: '0.75rem', background: 'transparent', color: 'var(--primary)', fontSize: '0.875rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 0' }}
+        >
+          <UserPlus size={18} /> + Pelanggan Baru
+        </button>
+      </div>
 
         {/* Step 2: Service & Amount & Employee */}
         <div className="glass-card" style={{ padding: '1.5rem', borderLeft: '4px solid var(--primary)', position: 'relative', zIndex: 2 }}>
