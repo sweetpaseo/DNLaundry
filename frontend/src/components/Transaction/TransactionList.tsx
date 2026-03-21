@@ -87,7 +87,15 @@ export const TransactionList = () => {
     message += `Status Pembayaran: *${allPaid ? 'LUNAS' : 'BELUM BAYAR'}*\n`;
     message += `\nTerima kasih telah menggunakan layanan kami!`;
 
-    const whatsappUrl = getWhatsAppUrl(settings.phone, message);
+    const customer = customers.find(c => c.id === firstTransaction.customer_id);
+    const recipientPhone = customer?.phone || firstTransaction.customer?.phone;
+
+    if (!recipientPhone) {
+      alert('Nomor WhatsApp pelanggan tidak ditemukan.');
+      return;
+    }
+
+    const whatsappUrl = getWhatsAppUrl(recipientPhone, message);
     window.open(whatsappUrl, '_blank');
   };
 
