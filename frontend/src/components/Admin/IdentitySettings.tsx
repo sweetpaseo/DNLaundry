@@ -1,4 +1,5 @@
-import React from 'react';
+```javascript
+import { useState, useEffect, useRef } from 'react';
 import { Store, MapPin, Save, Instagram, MessageSquare, Wallet, Users, DollarSign, Plus } from 'lucide-react';
 import { api } from '../../services/api';
 import { WhatsAppIcon } from '../Icons';

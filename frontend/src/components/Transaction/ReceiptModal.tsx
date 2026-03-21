@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Printer, X, MapPin, Instagram } from 'lucide-react';
 import type { Transaction } from '../../types';
 import { WhatsAppIcon } from '../Icons';
