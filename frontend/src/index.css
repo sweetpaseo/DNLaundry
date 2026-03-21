@@ -112,6 +112,7 @@ input:focus, select:focus {
 .status-new { background: rgba(255, 0, 132, 0.2); color: #FF0084; }
 .status-process { background: rgba(211, 211, 211, 0.2); color: #D3D3D3; }
 .status-ready { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+.status-delivery { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
 
 .btn-primary {
   background: var(--primary);

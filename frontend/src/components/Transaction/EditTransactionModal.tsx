@@ -118,6 +118,7 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
               <option value="Baru" style={{ background: '#1a1a1a' }}>🆕 Baru</option>
               <option value="Proses" style={{ background: '#1a1a1a' }}>🔄 Proses</option>
               <option value="Siap Ambil" style={{ background: '#1a1a1a' }}>✅ Siap Ambil</option>
+              <option value="Siap Kirim" style={{ background: '#1a1a1a' }}>🚚 Siap Kirim</option>
             </select>
           </div>
 

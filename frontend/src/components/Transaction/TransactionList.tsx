@@ -106,6 +106,7 @@ export const TransactionList = () => {
       case 'Baru': return { bg: 'rgba(255, 0, 132, 0.1)', color: '#FF0084' };
       case 'Proses': return { bg: 'rgba(211, 211, 211, 0.1)', color: '#D3D3D3' };
       case 'Siap Ambil': return { bg: 'rgba(16, 185, 129, 0.1)', color: '#34d399' };
+      case 'Siap Kirim': return { bg: 'rgba(59, 130, 246, 0.1)', color: '#60a5fa' };
     }
   };
 
@@ -124,7 +125,7 @@ export const TransactionList = () => {
             <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
           </div>
           <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', padding: '0.25rem' }}>
-            {['Semua', 'Baru', 'Proses', 'Siap Ambil'].map(s => (
+            {['Semua', 'Baru', 'Proses', 'Siap Ambil', 'Siap Kirim'].map(s => (
               <button 
                 key={s} 
                 className={`tab-btn ${filter === s ? 'active' : ''}`}
@@ -165,8 +166,8 @@ export const TransactionList = () => {
                 const groupId = t.group_id || t.id;
                 const totalGroupPrice = group.reduce((sum, item) => sum + item.final_price, 0);
                 const allPaid = group.every(item => item.is_paid);
-                const statusStyle = getStatusStyle(t.status); // Use first item's status
-                const isOverdue = t.status !== 'Siap Ambil' && t.due_date && new Date() > new Date(t.due_date);
+                const statusStyle = getStatusStyle(t.status) || { bg: 'rgba(255,255,255,0.1)', color: 'white' };
+                const isOverdue = !['Siap Ambil', 'Siap Kirim'].includes(t.status) && t.due_date && new Date() > new Date(t.due_date);
                 
                 const customer = customers.find(c => c.id === t.customer_id);
                 const unpaidTransactions = transactions.filter(tr => tr.customer_id === t.customer_id && !tr.is_paid);
@@ -200,7 +201,7 @@ export const TransactionList = () => {
                         alignItems: 'center',
                         gap: '0.4rem'
                       }}>
-                        {t.status === 'Siap Ambil' ? <CheckCircle size={14} /> : <Clock size={14} />}
+                        {['Siap Ambil', 'Siap Kirim'].includes(t.status) ? <CheckCircle size={14} /> : <Clock size={14} />}
                         {t.status.toUpperCase()}
                       </span>
                     </div>

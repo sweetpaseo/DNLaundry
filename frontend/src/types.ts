@@ -13,7 +13,7 @@ export interface Service {
   processing_days?: number;
 }
 
-export type TransactionStatus = 'Baru' | 'Proses' | 'Siap Ambil';
+export type TransactionStatus = 'Baru' | 'Proses' | 'Siap Ambil' | 'Siap Kirim';
 
 export interface MemberType {
   id: string;
@@ -29,6 +29,7 @@ export interface Customer {
   member_type?: MemberType;
   tags?: string[];
   wallet_balance?: number;
+  default_delivery_type?: 'Pickup' | 'Delivery';
 }
 
 export interface Employee {

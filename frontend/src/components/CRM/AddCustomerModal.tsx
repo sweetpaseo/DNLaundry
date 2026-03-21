@@ -17,7 +17,8 @@ export const AddCustomerModal = ({ isOpen, onClose, onSave, initialData, memberT
     name: '',
     phone: '',
     address: '',
-    member_type_id: ''
+    member_type_id: '',
+    default_delivery_type: 'Pickup' as 'Pickup' | 'Delivery'
   });
 
   useEffect(() => {
@@ -26,11 +27,18 @@ export const AddCustomerModal = ({ isOpen, onClose, onSave, initialData, memberT
         name: initialData.name,
         phone: initialData.phone,
         address: initialData.address,
-        member_type_id: initialData.member_type_id || ''
+        member_type_id: initialData.member_type_id || '',
+        default_delivery_type: (initialData as any).default_delivery_type || 'Pickup'
       });
     } else {
       const defaultType = memberTypes.find(m => m.name.toLowerCase().includes('normal')) || memberTypes[0];
-      setFormData({ name: '', phone: '', address: '', member_type_id: defaultType?.id || '' });
+      setFormData({ 
+        name: '', 
+        phone: '', 
+        address: '', 
+        member_type_id: defaultType?.id || '',
+        default_delivery_type: 'Pickup'
+      });
     }
   }, [initialData, isOpen, memberTypes]);
 
@@ -119,6 +127,40 @@ export const AddCustomerModal = ({ isOpen, onClose, onSave, initialData, memberT
                     ))}
                   </select>
                   <Star size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>Preferensi Pengiriman</label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <button
+                    type="button"
+                    onClick={() => setFormData({...formData, default_delivery_type: 'Pickup'})}
+                    style={{
+                      padding: '0.75rem',
+                      borderRadius: 'var(--radius)',
+                      background: formData.default_delivery_type === 'Pickup' ? 'rgba(255, 0, 132, 0.1)' : 'transparent',
+                      border: `1px solid ${formData.default_delivery_type === 'Pickup' ? 'var(--primary)' : 'var(--glass-border)'}`,
+                      color: formData.default_delivery_type === 'Pickup' ? 'var(--primary)' : 'var(--text-muted)',
+                      fontWeight: formData.default_delivery_type === 'Pickup' ? 700 : 400
+                    }}
+                  >
+                    🏠 Ambil Sendiri
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFormData({...formData, default_delivery_type: 'Delivery'})}
+                    style={{
+                      padding: '0.75rem',
+                      borderRadius: 'var(--radius)',
+                      background: formData.default_delivery_type === 'Delivery' ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
+                      border: `1px solid ${formData.default_delivery_type === 'Delivery' ? '#3b82f6' : 'var(--glass-border)'}`,
+                      color: formData.default_delivery_type === 'Delivery' ? '#3b82f6' : 'var(--text-muted)',
+                      fontWeight: formData.default_delivery_type === 'Delivery' ? 700 : 400
+                    }}
+                  >
+                    🚚 Minta Antar
+                  </button>
                 </div>
               </div>
 

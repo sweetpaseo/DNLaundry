@@ -106,6 +106,15 @@ export const CustomerCRM = () => {
                     }}>
                       <Star size={10} /> {customer.member_type?.name || 'Reguler'}
                     </span>
+                    <span style={{ 
+                      fontSize: '0.65rem', padding: '2px 8px', borderRadius: '4px', 
+                      background: customer.default_delivery_type === 'Delivery' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(16, 185, 129, 0.15)',
+                      color: customer.default_delivery_type === 'Delivery' ? '#60a5fa' : '#34d399',
+                      border: `1px solid ${customer.default_delivery_type === 'Delivery' ? 'rgba(59, 130, 246, 0.3)' : 'rgba(16, 185, 129, 0.3)'}`,
+                      display: 'flex', alignItems: 'center', gap: '4px'
+                    }}>
+                      {customer.default_delivery_type === 'Delivery' ? '🚚 Delivery' : '🏠 Pickup'}
+                    </span>
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: '0.4rem' }}>
