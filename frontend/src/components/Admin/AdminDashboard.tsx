@@ -525,7 +525,12 @@ export const AdminDashboard = () => {
                         {items.map(([name, data]) => (
                           <div key={name} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                             <span>{name}</span>
-                            <span>Rp {data.amount.toLocaleString()} <span style={{ opacity: 0.6, fontSize: '0.65rem' }}>({totalInc > 0 ? ((data.amount / totalInc) * 100).toFixed(1) : '0'}%)</span></span>
+                            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
+                              <span>Rp {data.amount.toLocaleString()}</span>
+                              <span style={{ width: '45px', textAlign: 'right', opacity: 0.6, fontSize: '0.65rem' }}>
+                                ({totalInc > 0 ? ((data.amount / totalInc) * 100).toFixed(1) : '0'}%)
+                              </span>
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -537,7 +542,10 @@ export const AdminDashboard = () => {
                       <div style={{ display: 'flex', flexDirection: 'column' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
                           <span style={{ fontWeight: 600 }}>Penjualan Jasa (Service)</span>
-                          <span style={{ fontWeight: 700 }}>Rp {serviceIncome.toLocaleString()}</span>
+                          <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
+                            <span style={{ fontWeight: 700 }}>Rp {serviceIncome.toLocaleString()}</span>
+                            <span style={{ width: '45px' }}></span>
+                          </div>
                         </div>
                         {renderItems('service')}
                       </div>
@@ -545,14 +553,20 @@ export const AdminDashboard = () => {
                       <div style={{ display: 'flex', flexDirection: 'column' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
                           <span style={{ fontWeight: 600 }}>Penjualan Barang (Product)</span>
-                          <span style={{ fontWeight: 700 }}>Rp {productIncome.toLocaleString()}</span>
+                          <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
+                            <span style={{ fontWeight: 700 }}>Rp {productIncome.toLocaleString()}</span>
+                            <span style={{ width: '45px' }}></span>
+                          </div>
                         </div>
                         {renderItems('product')}
                       </div>
 
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px dashed var(--glass-border)', fontWeight: 800 }}>
                         <span>TOTAL PENDAPATAN</span>
-                        <span style={{ color: 'var(--primary)' }}>Rp {totalInc.toLocaleString()}</span>
+                        <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
+                          <span style={{ color: 'var(--primary)' }}>Rp {totalInc.toLocaleString()}</span>
+                          <span style={{ width: '45px' }}></span>
+                        </div>
                       </div>
                     </div>
                   );
@@ -601,13 +615,21 @@ export const AdminDashboard = () => {
                       <div style={{ display: 'flex', flexDirection: 'column' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
                           <span style={{ fontWeight: 600 }}>{label}</span>
-                          <span style={{ fontWeight: 700 }}>Rp {sourceTotal.toLocaleString()}</span>
+                          <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
+                            <span style={{ fontWeight: 700 }}>Rp {sourceTotal.toLocaleString()}</span>
+                            <span style={{ width: '45px' }}></span>
+                          </div>
                         </div>
                         <div style={{ paddingLeft: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.4rem', marginTop: '0.4rem', borderLeft: '1px solid var(--glass-border)', marginLeft: '0.4rem' }}>
                           {categories.map(([cat, amt]) => (
                             <div key={cat} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                               <span>{cat}</span>
-                              <span>Rp {amt.toLocaleString()} <span style={{ opacity: 0.6, fontSize: '0.65rem' }}>({totalInc > 0 ? ((amt / totalInc) * 100).toFixed(1) : '0'}%)</span></span>
+                              <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
+                                <span>Rp {amt.toLocaleString()}</span>
+                                <span style={{ width: '45px', textAlign: 'right', opacity: 0.6, fontSize: '0.65rem' }}>
+                                  ({totalInc > 0 ? ((amt / totalInc) * 100).toFixed(1) : '0'}%)
+                                </span>
+                              </div>
                             </div>
                           ))}
                         </div>
@@ -628,9 +650,12 @@ export const AdminDashboard = () => {
                       
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px dashed var(--glass-border)', fontWeight: 800 }}>
                         <span>TOTAL BIAYA</span>
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                          <span style={{ color: '#f43f5e' }}>Rp {totalEx.toLocaleString()}</span>
-                          <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 500 }}>{totalInc > 0 ? ((totalEx / totalInc) * 100).toFixed(1) : '0'}% dari omset</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                            <span style={{ color: '#f43f5e' }}>Rp {totalEx.toLocaleString()}</span>
+                            <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 500 }}>{totalInc > 0 ? ((totalEx / totalInc) * 100).toFixed(1) : '0'}% dari omset</span>
+                          </div>
+                          <span style={{ width: '45px' }}></span>
                         </div>
                       </div>
                     </div>
