@@ -149,6 +149,11 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
                     } else if (!checked) {
                       setAmountReceived(0);
                     }
+                    
+                    // Auto-Selesai Logic: if already ready and marked as paid
+                    if (checked && (status === 'Siap Ambil' || status === 'Siap Kirim')) {
+                      setStatus('Selesai');
+                    }
                   }} 
                   style={{ opacity: 0, width: 0, height: 0 }} 
                 />
