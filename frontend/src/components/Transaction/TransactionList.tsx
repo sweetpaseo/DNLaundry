@@ -353,71 +353,73 @@ export const TransactionList = () => {
                       </div>
                     </div>
 
-                    <div style={{ display: 'flex', gap: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid var(--glass-border)' }}>
-                      <button 
-                        title="Cetak Nota" 
-                        onClick={() => { setSelectedTransaction(group as any); setIsReceiptOpen(true); }}
-                        style={{ flex: 1, height: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', color: 'white', fontSize: '0.85rem', cursor: 'pointer' }}
-                      >
-                        <Printer size={16} /> Nota
-                      </button>
-                      
-                      <button 
-                        onClick={() => handleWhatsAppShare(group)}
-                        className="btn-secondary"
-                        style={{ width: '2.5rem', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(37, 211, 102, 0.1)', border: '1px solid rgba(37, 211, 102, 0.2)', borderRadius: '8px' }}
-                        title="Kirim ke WhatsApp"
-                      >
-                        <WhatsAppIcon size={18} color="#25D366" />
-                      </button>
+                      <div style={{ display: 'flex', gap: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid var(--glass-border)' }}>
+                        <button 
+                          title="Cetak Nota" 
+                          onClick={() => { setSelectedTransaction(group as any); setIsReceiptOpen(true); }}
+                          style={{ flex: 1, height: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', color: 'white', fontSize: '0.85rem', cursor: 'pointer' }}
+                        >
+                          <Printer size={16} /> Nota
+                        </button>
+                        
+                        <button 
+                          onClick={() => handleWhatsAppShare(group)}
+                          className="btn-secondary"
+                          style={{ width: '2.5rem', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(37, 211, 102, 0.1)', border: '1px solid rgba(37, 211, 102, 0.2)', borderRadius: '8px' }}
+                          title="Kirim ke WhatsApp"
+                        >
+                          <WhatsAppIcon size={18} color="#25D366" />
+                        </button>
 
-                      <button 
-                        onClick={() => { setEditingTransaction(group[0]); setIsEditOpen(true); }}
-                        className="btn-secondary"
-                        style={{ width: '2.5rem', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255, 193, 7, 0.1)', border: '1px solid rgba(255, 193, 7, 0.2)', color: '#FFC107', borderRadius: '8px' }}
-                        title="Edit Transaksi"
-                      >
-                        <Edit3 size={16} />
-                      </button>
+                        <button 
+                          onClick={() => { setEditingTransaction(group[0]); setIsEditOpen(true); }}
+                          className="btn-secondary"
+                          style={{ width: '2.5rem', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255, 193, 7, 0.1)', border: '1px solid rgba(255, 193, 7, 0.2)', color: '#FFC107', borderRadius: '8px' }}
+                          title="Edit Transaksi"
+                        >
+                          <Edit3 size={16} />
+                        </button>
 
-                      <button 
-                        onClick={() => handleDelete(groupId)}
-                        style={{ 
-                          width: '2.5rem', height: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(244, 63, 94, 0.1)', borderRadius: '8px', color: '#f43f5e', border: '1px solid rgba(244, 63, 94, 0.2)', cursor: 'pointer', transition: 'all 0.2s'
-                        }}
-                        title="Hapus Transaksi"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                  </div>
-                );
-              })}
-          {filteredGroups.length === 0 && !loading && (
-            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '4rem', color: 'var(--text-muted)' }}>
-              <p>Tidak ada transaksi ditemukan.</p>
-            </div>
-          )}
-        </div>
-      )}
-
-      {editingTransaction && (
-        <EditTransactionModal 
-          isOpen={isEditOpen}
-          onClose={() => { setIsEditOpen(false); setEditingTransaction(null); }}
-          onSave={handleUpdate}
-          transaction={editingTransaction}
-          groupTotal={editingTransaction.group_id ? transactions.filter(t => t.group_id === editingTransaction.group_id).reduce((sum, t) => sum + t.final_price, 0) : undefined}
-        />
-      )}
-      
-      {selectedTransaction && (
-        <ReceiptModal 
-          isOpen={isReceiptOpen}
-          onClose={() => { setIsReceiptOpen(false); setSelectedTransaction(null); }}
-          transaction={selectedTransaction}
-          settings={settings}
-        />
-      )}
-    </div>
-  );
-};
+                        <button 
+                          onClick={() => handleDelete(groupId)}
+                          style={{ 
+                            width: '2.5rem', height: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(244, 63, 94, 0.1)', borderRadius: '8px', color: '#f43f5e', border: '1px solid rgba(244, 63, 94, 0.2)', cursor: 'pointer', transition: 'all 0.2s'
+                          }}
+                          title="Hapus Transaksi"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+            
+            {filteredGroups.length === 0 && !loading && (
+              <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '4rem', color: 'var(--text-muted)' }}>
+                <p>Tidak ada transaksi ditemukan.</p>
+              </div>
+            )}
+          </div>
+        )}
+        
+        {editingTransaction && (
+          <EditTransactionModal 
+            isOpen={isEditOpen}
+            onClose={() => { setIsEditOpen(false); setEditingTransaction(null); }}
+            onSave={handleUpdate}
+            transaction={editingTransaction}
+            groupTotal={editingTransaction.group_id ? transactions.filter(t => t.group_id === editingTransaction.group_id).reduce((sum, t) => sum + t.final_price, 0) : undefined}
+          />
+        )}
+        
+        {selectedTransaction && (
+          <ReceiptModal 
+            isOpen={isReceiptOpen}
+            onClose={() => { setIsReceiptOpen(false); setSelectedTransaction(null); }}
+            transaction={selectedTransaction}
+            settings={settings}
+          />
+        )}
+      </div>
+    );
+  };
