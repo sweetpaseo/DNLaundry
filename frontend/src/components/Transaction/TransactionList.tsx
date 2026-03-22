@@ -144,10 +144,6 @@ export const TransactionList = () => {
     api.getCustomers().then(setCustomers).catch(() => {});
   }, []);
 
-  const filteredData = transactions
-    .filter(t => filter === 'Semua' ? true : t.status === filter)
-    .filter(t => t.customer_name.toLowerCase().includes(searchTerm.toLowerCase()));
-
   const getStatusStyle = (status: TransactionStatus) => {
     switch (status) {
       case 'Baru': return { bg: 'rgba(255, 0, 132, 0.1)', color: '#FF0084' };
@@ -156,6 +152,31 @@ export const TransactionList = () => {
       case 'Siap Kirim': return { bg: 'rgba(59, 130, 246, 0.1)', color: '#60a5fa' };
     }
   };
+
+  // 1. Group ALL transactions first
+  const groupedOrders = transactions.reduce((acc, t) => {
+    const gid = t.group_id || t.id;
+    if (!acc[gid]) acc[gid] = [];
+    acc[gid].push(t);
+    return acc;
+  }, {} as Record<string, Transaction[]>);
+
+  // 2. Filter the GROUPS
+  const filteredGroups = Object.values(groupedOrders).filter(group => {
+    const t = group[0];
+    
+    // Status Filter (matches if any item in group matches, or just primary)
+    const matchesStatus = filter === 'Semua' || t.status === filter;
+    
+    // Payment Status Filter (Nota level)
+    const allPaid = group.every(item => item.is_paid);
+    const matchesPayment = paymentFilter === 'Semua' || (paymentFilter === 'Lunas' ? allPaid : !allPaid);
+
+    // Search Filter (customer name)
+    const matchesSearch = !searchTerm || t.customer_name.toLowerCase().includes(searchTerm.toLowerCase());
+
+    return matchesStatus && matchesPayment && matchesSearch;
+  });
 
   return (
     <div className="transaction-list">
@@ -221,25 +242,9 @@ export const TransactionList = () => {
         </div>
       ) : (
         <div className="responsive-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 350px), 1fr))' }}>
-          {/* Grouping Logic */}
-          {(() => {
-            const grouped = filteredData.reduce((acc, t) => {
-              const gid = t.group_id || t.id;
-              if (!acc[gid]) acc[gid] = [];
-              acc[gid].push(t);
-              return acc;
-            }, {} as Record<string, Transaction[]>);
-
-            return Object.values(grouped)
-              .filter(group => {
-                if (paymentFilter === 'Semua') return true;
-                const allPaid = group.every(item => item.is_paid);
-                if (paymentFilter === 'Lunas') return allPaid;
-                if (paymentFilter === 'Belum Lunas') return !allPaid;
-                return true;
-              })
-              .sort((a, b) => new Date(b[0].created_at).getTime() - new Date(a[0].created_at).getTime())
-              .map(group => {
+          {filteredGroups
+            .sort((a, b) => new Date(b[0].created_at).getTime() - new Date(a[0].created_at).getTime())
+            .map(group => {
                 const t = group[0]; // Primary record
                 const groupId = t.group_id || t.id;
                 const totalGroupPrice = group.reduce((sum, item) => sum + item.final_price, 0);
