@@ -126,8 +126,8 @@ function App() {
             className={`tab-btn ${activeMenu === item.id ? 'active' : ''}`}
             onClick={() => setActiveMenu(item.id as any)}
           >
-            {item.icon}
-            {item.label}
+            <div className="tab-icon">{item.icon}</div>
+            <span className="tab-label">{item.label}</span>
           </button>
         ))}
       </nav>
