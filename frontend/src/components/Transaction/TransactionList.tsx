@@ -150,6 +150,7 @@ export const TransactionList = () => {
       case 'Proses': return { bg: 'rgba(211, 211, 211, 0.1)', color: '#D3D3D3' };
       case 'Siap Ambil': return { bg: 'rgba(16, 185, 129, 0.1)', color: '#34d399' };
       case 'Siap Kirim': return { bg: 'rgba(59, 130, 246, 0.1)', color: '#60a5fa' };
+      case 'Selesai': return { bg: 'rgba(255, 255, 255, 0.05)', color: 'var(--text-muted)' };
     }
   };
 
@@ -194,7 +195,7 @@ export const TransactionList = () => {
           </div>
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
             <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', padding: '0.25rem' }}>
-              {['Semua', 'Baru', 'Proses', 'Siap Ambil', 'Siap Kirim'].map(s => (
+              {['Semua', 'Baru', 'Proses', 'Siap Ambil', 'Siap Kirim', 'Selesai'].map(s => (
                 <button 
                   key={s} 
                   className={`tab-btn ${filter === s ? 'active' : ''}`}

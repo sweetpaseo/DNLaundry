@@ -14,7 +14,7 @@ export interface Service {
   category?: 'service' | 'product';
 }
 
-export type TransactionStatus = 'Baru' | 'Proses' | 'Siap Ambil' | 'Siap Kirim';
+export type TransactionStatus = 'Baru' | 'Proses' | 'Siap Ambil' | 'Siap Kirim' | 'Selesai';
 
 export interface MemberType {
   id: string;
