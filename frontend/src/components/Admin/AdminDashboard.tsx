@@ -510,6 +510,8 @@ export const AdminDashboard = () => {
                       return s?.category === 'product';
                     })
                     .reduce((acc, t) => acc + t.final_price, 0);
+                  
+                  const totalInc = serviceIncome + productIncome;
 
                   const renderItems = (cat: string) => {
                     const items = Object.entries(itemMap)
@@ -523,7 +525,7 @@ export const AdminDashboard = () => {
                         {items.map(([name, data]) => (
                           <div key={name} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                             <span>{name}</span>
-                            <span>Rp {data.amount.toLocaleString()}</span>
+                            <span>Rp {data.amount.toLocaleString()} <span style={{ opacity: 0.6, fontSize: '0.65rem' }}>({totalInc > 0 ? ((data.amount / totalInc) * 100).toFixed(1) : '0'}%)</span></span>
                           </div>
                         ))}
                       </div>
@@ -550,7 +552,7 @@ export const AdminDashboard = () => {
 
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px dashed var(--glass-border)', fontWeight: 800 }}>
                         <span>TOTAL PENDAPATAN</span>
-                        <span style={{ color: 'var(--primary)' }}>Rp {(serviceIncome + productIncome).toLocaleString()}</span>
+                        <span style={{ color: 'var(--primary)' }}>Rp {totalInc.toLocaleString()}</span>
                       </div>
                     </div>
                   );
@@ -567,6 +569,14 @@ export const AdminDashboard = () => {
                     const y = filterYear === 'all' || d.getFullYear() === filterYear;
                     return m && y;
                   });
+
+                  const filteredInc = transactions.filter(t => {
+                    const d = new Date(t.created_at);
+                    const m = filterMonth === 'all' || d.getMonth() === filterMonth;
+                    const y = filterYear === 'all' || d.getFullYear() === filterYear;
+                    return m && y && t.is_paid;
+                  });
+                  const totalInc = filteredInc.reduce((acc, t) => acc + t.final_price, 0);
 
                   // Group by cash_type then category
                   const cashGroup: Record<string, Record<string, number>> = {
@@ -597,7 +607,7 @@ export const AdminDashboard = () => {
                           {categories.map(([cat, amt]) => (
                             <div key={cat} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                               <span>{cat}</span>
-                              <span>Rp {amt.toLocaleString()}</span>
+                              <span>Rp {amt.toLocaleString()} <span style={{ opacity: 0.6, fontSize: '0.65rem' }}>({totalInc > 0 ? ((amt / totalInc) * 100).toFixed(1) : '0'}%)</span></span>
                             </div>
                           ))}
                         </div>
@@ -618,7 +628,10 @@ export const AdminDashboard = () => {
                       
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px dashed var(--glass-border)', fontWeight: 800 }}>
                         <span>TOTAL BIAYA</span>
-                        <span style={{ color: '#f43f5e' }}>Rp {totalEx.toLocaleString()}</span>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                          <span style={{ color: '#f43f5e' }}>Rp {totalEx.toLocaleString()}</span>
+                          <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 500 }}>{totalInc > 0 ? ((totalEx / totalInc) * 100).toFixed(1) : '0'}% dari omset</span>
+                        </div>
                       </div>
                     </div>
                   );
