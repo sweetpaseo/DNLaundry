@@ -146,12 +146,6 @@ export const TransactionList = () => {
 
   const filteredData = transactions
     .filter(t => filter === 'Semua' ? true : t.status === filter)
-    .filter(t => {
-      if (paymentFilter === 'Semua') return true;
-      if (paymentFilter === 'Lunas') return t.is_paid;
-      if (paymentFilter === 'Belum Lunas') return !t.is_paid;
-      return true;
-    })
     .filter(t => t.customer_name.toLowerCase().includes(searchTerm.toLowerCase()));
 
   const getStatusStyle = (status: TransactionStatus) => {
@@ -237,6 +231,13 @@ export const TransactionList = () => {
             }, {} as Record<string, Transaction[]>);
 
             return Object.values(grouped)
+              .filter(group => {
+                if (paymentFilter === 'Semua') return true;
+                const allPaid = group.every(item => item.is_paid);
+                if (paymentFilter === 'Lunas') return allPaid;
+                if (paymentFilter === 'Belum Lunas') return !allPaid;
+                return true;
+              })
               .sort((a, b) => new Date(b[0].created_at).getTime() - new Date(a[0].created_at).getTime())
               .map(group => {
                 const t = group[0]; // Primary record
