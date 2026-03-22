@@ -475,7 +475,7 @@ export const AdminDashboard = () => {
               <Calculator size={18} color="var(--primary)" /> Laporan Laba Rugi Detil
             </h4>
             
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: '2rem' }}>
               {/* Income Column */}
               <div>
                 <h5 style={{ color: 'var(--primary)', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem', marginBottom: '1rem', fontSize: '0.9rem' }}>PENDAPATAN</h5>
