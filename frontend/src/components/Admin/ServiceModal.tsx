@@ -84,8 +84,8 @@ export const ServiceModal = ({ isOpen, onClose, onSave, initialData }: ServiceMo
                 onChange={(e) => setFormData({ ...formData, category: e.target.value as 'service' | 'product' })}
                 style={{ width: '100%', borderColor: 'var(--primary)', color: 'var(--primary)', fontWeight: 600 }}
               >
-                <option value="service" style={{ color: 'black' }}>Service (Jasa)</option>
-                <option value="product" style={{ color: 'black' }}>Product (Barang)</option>
+                <option value="service" style={{ color: 'white', background: '#1e293b' }}>Service (Jasa)</option>
+                <option value="product" style={{ color: 'white', background: '#1e293b' }}>Product (Barang)</option>
               </select>
             </div>
           </div>
