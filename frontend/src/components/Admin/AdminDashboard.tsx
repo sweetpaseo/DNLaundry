@@ -568,27 +568,57 @@ export const AdminDashboard = () => {
                     return m && y;
                   });
 
-                  // Group by category
-                  const expenseMap: Record<string, number> = {};
+                  // Group by cash_type then category
+                  const cashGroup: Record<string, Record<string, number>> = {
+                    petty: {},
+                    main: {}
+                  };
+
                   filteredEx.forEach(ex => {
+                    const type = ex.cash_type || 'main';
                     const catName = ex.expense_category?.name || 'Lainnya';
-                    expenseMap[catName] = (expenseMap[catName] || 0) + ex.amount;
+                    if (!cashGroup[type]) cashGroup[type] = {};
+                    cashGroup[type][catName] = (cashGroup[type][catName] || 0) + ex.amount;
                   });
 
-                  return (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                      {Object.entries(expenseMap).map(([cat, amt]) => (
-                        <div key={cat} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
-                          <span style={{ color: 'var(--text-muted)' }}>{cat}</span>
-                          <span style={{ fontWeight: 600 }}>Rp {amt.toLocaleString()}</span>
+                  const renderCashSource = (type: 'petty' | 'main', label: string) => {
+                    const categories = Object.entries(cashGroup[type]);
+                    const sourceTotal = categories.reduce((sum, [, amt]) => sum + amt, 0);
+                    
+                    if (sourceTotal === 0) return null;
+
+                    return (
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+                          <span style={{ fontWeight: 600 }}>{label}</span>
+                          <span style={{ fontWeight: 700 }}>Rp {sourceTotal.toLocaleString()}</span>
                         </div>
-                      ))}
-                      {Object.keys(expenseMap).length === 0 && (
+                        <div style={{ paddingLeft: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.4rem', marginTop: '0.4rem', borderLeft: '1px solid var(--glass-border)', marginLeft: '0.4rem' }}>
+                          {categories.map(([cat, amt]) => (
+                            <div key={cat} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                              <span>{cat}</span>
+                              <span>Rp {amt.toLocaleString()}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  };
+
+                  const totalEx = filteredEx.reduce((acc, ex) => acc + ex.amount, 0);
+
+                  return (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                      {renderCashSource('petty', 'Kas Kecil (Petty Cash)')}
+                      {renderCashSource('main', 'Kas Utama (Main Cash)')}
+                      
+                      {filteredEx.length === 0 && (
                         <div style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.8rem', padding: '1rem' }}>Tidak ada data pengeluaran</div>
                       )}
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px dashed var(--glass-border)', fontWeight: 700 }}>
+                      
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px dashed var(--glass-border)', fontWeight: 800 }}>
                         <span>TOTAL BIAYA</span>
-                        <span style={{ color: '#f43f5e' }}>Rp {Object.values(expenseMap).reduce((a, b) => a + b, 0).toLocaleString()}</span>
+                        <span style={{ color: '#f43f5e' }}>Rp {totalEx.toLocaleString()}</span>
                       </div>
                     </div>
                   );
