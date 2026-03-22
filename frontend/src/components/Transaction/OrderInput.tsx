@@ -239,7 +239,7 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
             <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Data Pelanggan</h3>
           </div>
           
-          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 2fr)', gap: '1.25rem', marginBottom: '1rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))', gap: '1.25rem', marginBottom: '1rem' }}>
             <div className="form-group">
               <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>Tgl Masuk Order</label>
               <div style={{ position: 'relative' }}>
@@ -326,7 +326,7 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
             <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Pilih Layanan & Petugas</h3>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '1.25rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 180px), 1fr))', gap: '1.25rem' }}>
             <div className="form-group">
               <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>Jenis Layanan</label>
               <select 
@@ -356,7 +356,7 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
 
           <div className="form-group" style={{ marginTop: '1.25rem' }}>
             <label style={{ display: 'block', marginBottom: '0.8rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>Tier Harga Layanan</label>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 75px), 1fr))', gap: '0.5rem' }}>
               {(['normal', 'member', 'express', 'reseller'] as const).map(tier => {
                 return (
                   <button
@@ -461,7 +461,7 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
                 <select 
                   value={discountType}
                   onChange={(e) => setDiscountType(e.target.value as 'fixed' | 'percentage')}
-                  style={{ width: '80px', height: '3rem' }}
+                  style={{ width: 'min(80px, 30%)', height: '3rem' }}
                 >
                   <option value="fixed">Rp</option>
                   <option value="percentage">%</option>
@@ -473,7 +473,7 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
                   onFocus={() => { if (discountValue === 0 || discountValue === '0') setDiscountValue(''); }}
                   onBlur={() => { if (discountValue === '') setDiscountValue(0); }}
                   placeholder="0"
-                  style={{ flex: 1, height: '3rem', fontSize: '1.1rem', fontWeight: 600 }}
+                  style={{ flex: 1, height: '3rem', fontSize: '1.1rem', fontWeight: 600, minWidth: '0' }}
                 />
               </div>
             </div>
