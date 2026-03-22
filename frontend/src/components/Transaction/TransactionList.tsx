@@ -247,7 +247,13 @@ export const TransactionList = () => {
                 const isOverdue = !['Siap Ambil', 'Siap Kirim'].includes(t.status) && t.due_date && new Date() > new Date(t.due_date);
                 
                 const customer = customers.find(c => c.id === t.customer_id) || customers.find(c => c.name === t.customer_name);
-                const unpaidTransactions = transactions.filter(tr => (tr.customer_id === t.customer_id || tr.customer_name === t.customer_name) && !tr.is_paid);
+                const unpaidTransactions = transactions.filter(tr => 
+                  !tr.is_paid && (
+                    (t.customer_id && tr.customer_id) 
+                      ? tr.customer_id === t.customer_id 
+                      : tr.customer_name === t.customer_name
+                  )
+                );
                 const totalDebt = unpaidTransactions.reduce((sum, tr) => sum + tr.final_price, 0);
                 
                 return (
