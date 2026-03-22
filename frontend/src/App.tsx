@@ -38,6 +38,7 @@ function App() {
       try {
         const data = await api.getSettings();
         setSettings(data);
+        if (data.name) document.title = data.name;
       } catch (e) {
         console.error('Failed to load settings');
       }

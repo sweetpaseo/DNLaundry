@@ -448,7 +448,7 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
         </div>
 
         {/* Step 3: Notes & Discount */}
-        <div className="glass-card" style={{ padding: '1.5rem', borderLeft: '4px solid var(--primary)', position: 'relative', zIndex: 1 }}>
+        <div className="glass-card" style={{ padding: 'min(1.5rem, 4vw)', borderLeft: '4px solid var(--primary)', position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
             <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255, 0, 132, 0.1)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>3</div>
             <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Catatan & Diskon</h3>
@@ -493,14 +493,16 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
         {/* Summary Bar */}
         <div style={{ 
           marginTop: '1rem', 
-          padding: '1.5rem', 
+          padding: 'min(1.5rem, 4vw)', 
           background: 'var(--bg-gradient)', 
           borderRadius: 'var(--radius)', 
           border: '2px solid var(--primary)', 
           display: 'flex', 
           flexDirection: 'column',
           gap: '1rem',
-          boxShadow: '0 10px 30px rgba(255, 0, 132, 0.2)'
+          boxShadow: '0 10px 30px rgba(255, 0, 132, 0.2)',
+          maxWidth: '100%',
+          boxSizing: 'border-box'
         }}>
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
@@ -518,9 +520,9 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
             )}
 
             <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Total Pembayaran Akhir:</p>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', flexWrap: 'wrap' }}>
               <span style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--primary)' }}>Rp</span>
-              <h2 style={{ fontSize: '2.5rem', fontWeight: 900, color: 'white', letterSpacing: '-1px', lineHeight: 1 }}>
+              <h2 style={{ fontSize: 'clamp(1.8rem, 10vw, 2.5rem)', fontWeight: 900, color: 'white', letterSpacing: '-1px', lineHeight: 1, wordBreak: 'break-all' }}>
                 {Math.max(0, grandTotal - (discountType === 'percentage' ? (grandTotal * Number(discountValue) / 100) : Number(discountValue))).toLocaleString('id-ID')}
               </h2>
             </div>
