@@ -12,6 +12,7 @@ export const TransactionList = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<TransactionStatus | 'Semua'>('Semua');
+  const [paymentFilter, setPaymentFilter] = useState<'Semua' | 'Lunas' | 'Belum Lunas'>('Semua');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [isReceiptOpen, setIsReceiptOpen] = useState(false);
@@ -104,7 +105,7 @@ export const TransactionList = () => {
     });
     
     message += `\nTotal Pembayaran: *Rp ${totalGroupPrice.toLocaleString('id-ID')}*\n`;
-    message += `Status Pembayaran: *${allPaid ? 'LUNAS' : 'BELUM BAYAR'}*\n`;
+    message += `Status Pembayaran: *${allPaid ? 'LUNAS' : 'BELUM LUNAS'}*\n`;
 
     if (!allPaid && (settings?.bank_name || settings?.qris_url)) {
       message += `\n*Informasi Pembayaran (Transfer):*\n`;
@@ -145,6 +146,12 @@ export const TransactionList = () => {
 
   const filteredData = transactions
     .filter(t => filter === 'Semua' ? true : t.status === filter)
+    .filter(t => {
+      if (paymentFilter === 'Semua') return true;
+      if (paymentFilter === 'Lunas') return t.is_paid;
+      if (paymentFilter === 'Belum Lunas') return !t.is_paid;
+      return true;
+    })
     .filter(t => t.customer_name.toLowerCase().includes(searchTerm.toLowerCase()));
 
   const getStatusStyle = (status: TransactionStatus) => {
@@ -170,22 +177,46 @@ export const TransactionList = () => {
             />
             <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
           </div>
-          <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', padding: '0.25rem' }}>
-            {['Semua', 'Baru', 'Proses', 'Siap Ambil', 'Siap Kirim'].map(s => (
-              <button 
-                key={s} 
-                className={`tab-btn ${filter === s ? 'active' : ''}`}
-                style={{ 
-                  padding: '0.6rem 1.2rem', 
-                  fontSize: '0.875rem', 
-                  border: '1px solid var(--glass-border)',
-                  whiteSpace: 'nowrap'
-                }}
-                onClick={() => setFilter(s as any)}
-              >
-                {s}
-              </button>
-            ))}
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', padding: '0.25rem' }}>
+              {['Semua', 'Baru', 'Proses', 'Siap Ambil', 'Siap Kirim'].map(s => (
+                <button 
+                  key={s} 
+                  className={`tab-btn ${filter === s ? 'active' : ''}`}
+                  style={{ 
+                    padding: '0.6rem 1.2rem', 
+                    fontSize: '0.875rem', 
+                    border: '1px solid var(--glass-border)',
+                    whiteSpace: 'nowrap'
+                  }}
+                  onClick={() => setFilter(s as any)}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+            
+            <div style={{ display: 'flex', gap: '0.5rem', background: 'rgba(255,255,255,0.02)', padding: '0.4rem', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+              {['Semua', 'Lunas', 'Belum Lunas'].map(p => (
+                <button 
+                  key={p} 
+                  onClick={() => setPaymentFilter(p as any)}
+                  style={{ 
+                    padding: '0.4rem 1rem', 
+                    fontSize: '0.75rem', 
+                    background: paymentFilter === p ? 'var(--primary-gradient)' : 'transparent',
+                    color: paymentFilter === p ? 'white' : 'var(--text-muted)',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontWeight: 700,
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  {p}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -299,7 +330,7 @@ export const TransactionList = () => {
                           gap: '0.3rem'
                         }}>
                           {allPaid ? <CheckCircle size={14} /> : <Clock size={14} />}
-                          {allPaid ? 'LUNAS' : 'BELUM BAYAR'}
+                          {allPaid ? 'LUNAS' : 'BELUM LUNAS'}
                         </button>
                       </div>
                       <div style={{ textAlign: 'right' }}>
