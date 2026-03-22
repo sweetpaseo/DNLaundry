@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { 
-  DollarSign, Package, TrendingUp, Settings, Users, Plus, Trash2, Power, 
+  DollarSign, TrendingUp, Settings, Users, Plus, Trash2, Power, 
   Briefcase, Calculator, History, Phone, Wallet, Receipt, Edit, Store, Tag
 } from 'lucide-react';
 import type { Service, MemberType, Employee, Incentive, Transaction, Expense, ExpenseCategory } from '../../types';
@@ -39,7 +39,7 @@ export const AdminDashboard = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
 
-  const [activeTab, setActiveTab] = useState<'rekap' | 'management' | 'payroll' | 'expenses' | 'users' | 'identity' | 'wallet'>('rekap');
+  const [activeTab, setActiveTab] = useState<'report' | 'management' | 'payroll' | 'expenses' | 'users' | 'identity' | 'wallet'>('report');
 
   // Modal States
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
@@ -346,13 +346,13 @@ export const AdminDashboard = () => {
         flexWrap: 'wrap'
       }}>
         <button
-          onClick={() => setActiveTab('rekap')}
+          onClick={() => setActiveTab('report')}
           style={{
-            display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 0', background: 'transparent', border: 'none', borderBottom: activeTab === 'rekap' ? '2px solid var(--primary)' : '2px solid transparent', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600,
-            color: activeTab === 'rekap' ? 'white' : 'var(--text-muted)', transition: 'all 0.2s', flexShrink: 0
+            display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 0', background: 'transparent', border: 'none', borderBottom: activeTab === 'report' ? '2px solid var(--primary)' : '2px solid transparent', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600,
+            color: activeTab === 'report' ? 'white' : 'var(--text-muted)', transition: 'all 0.2s', flexShrink: 0
           }}
         >
-          <TrendingUp size={16} color={activeTab === 'rekap' ? 'var(--primary)' : 'var(--text-muted)'} /> Rekap
+          <TrendingUp size={16} color={activeTab === 'report' ? 'var(--primary)' : 'var(--text-muted)'} /> Report
         </button>
         <button
           onClick={() => setActiveTab('management')}
@@ -410,9 +410,9 @@ export const AdminDashboard = () => {
         </button>
       </div>
  
-      {activeTab === 'rekap' ? (
+      {activeTab === 'report' ? (
         <>
-          {/* Rekap Filter Bar */}
+          {/* Report Filter Bar */}
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1.5rem', gap: '0.5rem' }}>
             <select 
               value={filterMonth} 
@@ -438,27 +438,126 @@ export const AdminDashboard = () => {
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.25rem', marginBottom: '2rem' }}>
-            {[
-              { label: 'Total Omzet (Filter)', value: `Rp ${stats.omzetTotal.toLocaleString()}`, icon: <DollarSign size={20} />, color: '#FF0084' },
-              { label: 'Order Masuk (Filter)', value: stats.orderTotal.toString(), icon: <Package size={20} />, color: '#D3D3D3' },
-              { label: 'Pelanggan Baru (Filter)', value: stats.pelangganTotal.toString(), icon: <TrendingUp size={20} />, color: '#FF0084' },
-              { label: 'Pengeluaran (Filter)', value: `Rp ${expenses.filter(ex => {
+            {(() => {
+              const filteredEx = expenses.filter(ex => {
                 const d = new Date(ex.date);
                 const m = filterMonth === 'all' || d.getMonth() === filterMonth;
                 const y = filterYear === 'all' || d.getFullYear() === filterYear;
                 return m && y;
-              }).reduce((acc, ex) => acc + ex.amount, 0).toLocaleString()}`, icon: <Wallet size={20} />, color: '#D3D3D3' },
-            ].map(stat => (
-              <div key={stat.label} className="glass-card" style={{ padding: '1.25rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                <div style={{ padding: '0.75rem', borderRadius: '10px', background: `${stat.color}22`, color: stat.color }}>
-                  {stat.icon}
+              });
+              const totalEx = filteredEx.reduce((acc, ex) => acc + ex.amount, 0);
+              const totalIncome = stats.omzetTotal;
+              const netProfit = totalIncome - totalEx;
+              const profitColor = netProfit >= 0 ? '#10b981' : '#f43f5e';
+
+              return [
+                { label: 'Total Pendapatan', value: `Rp ${totalIncome.toLocaleString()}`, icon: <TrendingUp size={20} />, color: '#FF0084' },
+                { label: 'Total Pengeluaran', value: `Rp ${totalEx.toLocaleString()}`, icon: <DollarSign size={20} />, color: '#D3D3D3' },
+                { label: 'Laba / Rugi Bersih', value: `Rp ${netProfit.toLocaleString()}`, icon: <Calculator size={20} />, color: profitColor },
+                { label: 'Margin Keuntungan', value: totalIncome > 0 ? `${((netProfit / totalIncome) * 100).toFixed(1)}%` : '0%', icon: <TrendingUp size={20} />, color: profitColor },
+              ].map(stat => (
+                <div key={stat.label} className="glass-card" style={{ padding: '1.25rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                  <div style={{ padding: '0.75rem', borderRadius: '10px', background: `${stat.color}22`, color: stat.color }}>
+                    {stat.icon}
+                  </div>
+                  <div>
+                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{stat.label}</p>
+                    <h4 style={{ fontSize: '1.1rem', fontWeight: 700 }}>{stat.value}</h4>
+                  </div>
                 </div>
-                <div>
-                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{stat.label}</p>
-                  <h4 style={{ fontSize: '1.1rem', fontWeight: 700 }}>{stat.value}</h4>
-                </div>
+              ));
+            })()}
+          </div>
+
+          {/* Detailed P&L Statement */}
+          <div className="glass-card" style={{ padding: '1.5rem', marginBottom: '2rem' }}>
+            <h4 style={{ marginBottom: '1.5rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Calculator size={18} color="var(--primary)" /> Laporan Laba Rugi Detil
+            </h4>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+              {/* Income Column */}
+              <div>
+                <h5 style={{ color: 'var(--primary)', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem', marginBottom: '1rem', fontSize: '0.9rem' }}>PENDAPATAN</h5>
+                {(() => {
+                  const filteredT = transactions.filter(t => {
+                    const d = new Date(t.created_at);
+                    const m = filterMonth === 'all' || d.getMonth() === filterMonth;
+                    const y = filterYear === 'all' || d.getFullYear() === filterYear;
+                    return m && y && t.is_paid;
+                  });
+
+                  const serviceIncome = filteredT
+                    .filter(t => {
+                      const s = services.find(srv => srv.id === t.service_id);
+                      return !s || s.category !== 'product';
+                    })
+                    .reduce((acc, t) => acc + t.final_price, 0);
+
+                  const productIncome = filteredT
+                    .filter(t => {
+                      const s = services.find(srv => srv.id === t.service_id);
+                      return s?.category === 'product';
+                    })
+                    .reduce((acc, t) => acc + t.final_price, 0);
+
+                  return (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+                        <span style={{ color: 'var(--text-muted)' }}>Penjualan Jasa (Service)</span>
+                        <span style={{ fontWeight: 600 }}>Rp {serviceIncome.toLocaleString()}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+                        <span style={{ color: 'var(--text-muted)' }}>Penjualan Barang (Product)</span>
+                        <span style={{ fontWeight: 600 }}>Rp {productIncome.toLocaleString()}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px dashed var(--glass-border)', fontWeight: 700 }}>
+                        <span>TOTAL PENDAPATAN</span>
+                        <span style={{ color: 'var(--primary)' }}>Rp {(serviceIncome + productIncome).toLocaleString()}</span>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
-            ))}
+
+              {/* Expense Column */}
+              <div>
+                <h5 style={{ color: '#f43f5e', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem', marginBottom: '1rem', fontSize: '0.9rem' }}>BIAYA / PENGELUARAN</h5>
+                {(() => {
+                  const filteredEx = expenses.filter(ex => {
+                    const d = new Date(ex.date);
+                    const m = filterMonth === 'all' || d.getMonth() === filterMonth;
+                    const y = filterYear === 'all' || d.getFullYear() === filterYear;
+                    return m && y;
+                  });
+
+                  // Group by category
+                  const expenseMap: Record<string, number> = {};
+                  filteredEx.forEach(ex => {
+                    const catName = ex.expense_category?.name || 'Lainnya';
+                    expenseMap[catName] = (expenseMap[catName] || 0) + ex.amount;
+                  });
+
+                  return (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                      {Object.entries(expenseMap).map(([cat, amt]) => (
+                        <div key={cat} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+                          <span style={{ color: 'var(--text-muted)' }}>{cat}</span>
+                          <span style={{ fontWeight: 600 }}>Rp {amt.toLocaleString()}</span>
+                        </div>
+                      ))}
+                      {Object.keys(expenseMap).length === 0 && (
+                        <div style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.8rem', padding: '1rem' }}>Tidak ada data pengeluaran</div>
+                      )}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px dashed var(--glass-border)', fontWeight: 700 }}>
+                        <span>TOTAL BIAYA</span>
+                        <span style={{ color: '#f43f5e' }}>Rp {Object.values(expenseMap).reduce((a, b) => a + b, 0).toLocaleString()}</span>
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+            </div>
           </div>
         </>
       ) : activeTab === 'management' ? (
@@ -491,7 +590,12 @@ export const AdminDashboard = () => {
                 {services.map(service => (
                   <tr key={service.id} style={{ borderBottom: '1px solid var(--glass-border)', opacity: service.is_active ? 1 : 0.5 }}>
                     <td style={{ padding: '1rem' }}>
-                      <div style={{ fontWeight: 600, marginBottom: '0.5rem' }}>{service.name}</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                        <span style={{ fontWeight: 600 }}>{service.name}</span>
+                        <span style={{ fontSize: '0.65rem', padding: '2px 6px', borderRadius: '4px', background: service.category === 'product' ? 'rgba(59, 130, 246, 0.1)' : 'rgba(168, 85, 247, 0.1)', color: service.category === 'product' ? '#3b82f6' : '#a855f7' }}>
+                          {service.category === 'product' ? 'Product' : 'Service'}
+                        </span>
+                      </div>
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.4rem', fontSize: '0.7rem' }}>
                         <div style={{ padding: '2px 6px', background: 'rgba(255,255,255,0.03)', borderRadius: '4px' }}>
                           <span style={{ color: 'var(--text-muted)' }}>N:</span> Rp {service.price_normal?.toLocaleString()}

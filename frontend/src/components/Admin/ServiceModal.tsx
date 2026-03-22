@@ -19,7 +19,8 @@ export const ServiceModal = ({ isOpen, onClose, onSave, initialData }: ServiceMo
     price_special: 0,
     unit: 'kg',
     is_active: true,
-    processing_days: 0
+    processing_days: 0,
+    category: 'service'
   });
 
   useEffect(() => {
@@ -34,7 +35,8 @@ export const ServiceModal = ({ isOpen, onClose, onSave, initialData }: ServiceMo
         price_special: 0, 
         unit: 'kg', 
         is_active: true,
-        processing_days: 0
+        processing_days: 0,
+        category: 'service'
       });
     }
   }, [initialData, isOpen]);
@@ -76,15 +78,14 @@ export const ServiceModal = ({ isOpen, onClose, onSave, initialData }: ServiceMo
               />
             </div>
             <div className="form-group">
-              <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.875rem' }}>Satuan</label>
+              <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.875rem' }}>Kategori</label>
               <select 
-                value={formData.unit}
-                onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
-                style={{ width: '100%' }}
+                value={formData.category || 'service'}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value as 'service' | 'product' })}
+                style={{ width: '100%', borderColor: 'var(--primary)', color: 'var(--primary)', fontWeight: 600 }}
               >
-                <option value="kg">Per Kilogram (kg)</option>
-                <option value="pcs">Per Potong (pcs)</option>
-                <option value="m2">Per Meter (m2)</option>
+                <option value="service" style={{ color: 'black' }}>Service (Jasa)</option>
+                <option value="product" style={{ color: 'black' }}>Product (Barang)</option>
               </select>
             </div>
           </div>

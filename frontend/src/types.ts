@@ -11,6 +11,7 @@ export interface Service {
   commission_type?: 'percentage' | 'fixed';
   commission_value?: number;
   processing_days?: number;
+  category?: 'service' | 'product';
 }
 
 export type TransactionStatus = 'Baru' | 'Proses' | 'Siap Ambil' | 'Siap Kirim';
