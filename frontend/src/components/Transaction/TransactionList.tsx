@@ -392,14 +392,11 @@ export const TransactionList = () => {
                     </div>
                   </div>
                 );
-              });
-          })()}
-        </div>
-      )}
-      
-      {!loading && filteredData.length === 0 && (
-        <div style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-muted)' }}>
-          <p>Tidak ada transaksi ditemukan.</p>
+          {filteredGroups.length === 0 && !loading && (
+            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '4rem', color: 'var(--text-muted)' }}>
+              <p>Tidak ada transaksi ditemukan.</p>
+            </div>
+          )}
         </div>
       )}
 
