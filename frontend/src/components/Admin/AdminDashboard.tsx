@@ -558,6 +558,55 @@ export const AdminDashboard = () => {
                 })()}
               </div>
             </div>
+
+            {/* Item-wise Revenue Breakdown */}
+            <div style={{ marginTop: '2.5rem', borderTop: '1px solid var(--glass-border)', paddingTop: '1.5rem' }}>
+              <h5 style={{ color: 'var(--text-muted)', marginBottom: '1.25rem', fontSize: '0.8rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>DETIL PENDAPATAN PER ITEM (JASA & PRODUK)</h5>
+              {(() => {
+                const filteredT = transactions.filter(t => {
+                  const d = new Date(t.created_at);
+                  const m = filterMonth === 'all' || d.getMonth() === filterMonth;
+                  const y = filterYear === 'all' || d.getFullYear() === filterYear;
+                  return m && y && t.is_paid;
+                });
+
+                const itemMap: Record<string, { amount: number, category: string, count: number }> = {};
+                filteredT.forEach(t => {
+                  const s = services.find(srv => srv.id === t.service_id);
+                  const cat = s?.category || 'service';
+                  const name = t.service_name;
+                  if (!itemMap[name]) {
+                    itemMap[name] = { amount: 0, category: cat, count: 0 };
+                  }
+                  itemMap[name].amount += t.final_price;
+                  itemMap[name].count += 1;
+                });
+
+                const sortedItems = Object.entries(itemMap)
+                  .sort(([, a], [, b]) => b.amount - a.amount);
+
+                if (sortedItems.length === 0) return <div style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.8rem', padding: '1rem' }}>Tidak ada data pendapatan per item</div>;
+
+                return (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
+                    {sortedItems.map(([name, data]) => (
+                      <div key={name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>{name}</span>
+                            <span style={{ fontSize: '0.65rem', padding: '2px 6px', borderRadius: '4px', background: data.category === 'product' ? 'rgba(59, 130, 246, 0.1)' : 'rgba(168, 85, 247, 0.1)', color: data.category === 'product' ? '#3b82f6' : '#a855f7' }}>
+                              {data.category === 'product' ? 'Product' : 'Service'}
+                            </span>
+                          </div>
+                          <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{data.count} Transaksi</span>
+                        </div>
+                        <span style={{ fontWeight: 800, color: 'var(--primary)', fontSize: '1rem' }}>Rp {data.amount.toLocaleString()}</span>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
+            </div>
           </div>
         </>
       ) : activeTab === 'management' ? (
