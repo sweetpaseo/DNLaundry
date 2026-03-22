@@ -389,9 +389,9 @@ export const TransactionList = () => {
                       >
                         <Trash2 size={16} />
                       </button>
-                    </div>
                   </div>
                 );
+              })}
           {filteredGroups.length === 0 && !loading && (
             <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '4rem', color: 'var(--text-muted)' }}>
               <p>Tidak ada transaksi ditemukan.</p>
