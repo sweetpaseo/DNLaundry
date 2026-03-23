@@ -138,17 +138,17 @@ function App() {
             <div className="sub-nav">
               <button 
                 className={`tab-btn ${activeTab === 'input' ? 'active' : ''}`}
-                style={{ background: activeTab === 'input' ? 'rgba(255,255,255,0.1)' : 'transparent', border: '1px solid var(--glass-border)' }}
                 onClick={() => setActiveTab('input')}
               >
-                <PlusCircle size={18} /> Input Order
+                <div className="tab-icon"><PlusCircle size={18} /></div>
+                <span className="tab-label">Input Order</span>
               </button>
               <button 
                 className={`tab-btn ${activeTab === 'list' ? 'active' : ''}`}
-                style={{ background: activeTab === 'list' ? 'rgba(255,255,255,0.1)' : 'transparent', border: '1px solid var(--glass-border)' }}
                 onClick={() => setActiveTab('list')}
               >
-                <List size={18} /> Daftar Transaksi
+                <div className="tab-icon"><List size={18} /></div>
+                <span className="tab-label">Daftar Transaksi</span>
               </button>
             </div>
             

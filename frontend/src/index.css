@@ -474,7 +474,7 @@ body.modal-open {
     padding-bottom: 2rem;
   }
   
-  .tab-nav {
+  .tab-nav, .sub-nav {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 0.75rem;
