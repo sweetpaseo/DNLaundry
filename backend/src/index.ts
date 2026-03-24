@@ -578,7 +578,10 @@ stock.post('/', async (c) => {
   const body = await c.req.json()
   const supabase = getSupabase(c.env)
   const { data, error } = await supabase.from('laundry_stock').insert(body).select()
-  if (error) return c.json({ error: error.message }, 500)
+  if (error) {
+    console.error('Stock creation error:', error)
+    return c.json({ error: error.message }, 500)
+  }
   return c.json(data[0], 201)
 })
 

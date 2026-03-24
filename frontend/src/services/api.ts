@@ -463,7 +463,10 @@ export const api = {
       headers: getHeaders(),
       body: JSON.stringify(data),
     });
-    if (!res.ok) throw new Error('Gagal menambah stok barang');
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Gagal menambah stok barang');
+    }
     return res.json();
   },
   async updateStock(id: string, data: any) {
@@ -472,7 +475,10 @@ export const api = {
       headers: getHeaders(),
       body: JSON.stringify(data),
     });
-    if (!res.ok) throw new Error('Gagal update stok barang');
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Gagal update stok barang');
+    }
     return res.json();
   },
   async deleteStock(id: string) {

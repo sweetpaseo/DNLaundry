@@ -255,7 +255,7 @@ export function StockManager({ user }: StockManagerProps) {
                 else await api.createStock(data);
                 setIsItemModalOpen(false);
                 fetchData();
-              } catch (e) { alert('Gagal menyimpan barang'); }
+              } catch (e: any) { alert(e.message || 'Gagal menyimpan barang'); }
             }}>
               <div style={{ marginBottom: '1rem' }}>
                 <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.4rem' }}>Nama Barang</label>
