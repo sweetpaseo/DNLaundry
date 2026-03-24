@@ -76,6 +76,7 @@ export type PaymentMethod = 'Cash' | 'Transfer Bank' | 'QRIS' | 'Saldo';
 
 export interface Transaction {
   id: string;
+  receipt_no?: string; // New custom sequential ID (DN260300001)
   customer_id: string; // Foreign key UUID
   customer_no?: string; // Sequential ID (e.g. DN00001) from customer table
   customer_name: string;

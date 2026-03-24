@@ -52,6 +52,30 @@ app.get('/api', (c) => {
 
 // Transactions
 const transactions = new Hono<{ Bindings: Bindings }>()
+// Helper: Generate Receipt Number (DN + YYMM + 5-digit sequence)
+const generateReceiptNo = async (supabase: any) => {
+  const now = new Date();
+  const year = now.getFullYear().toString().slice(-2);
+  const month = (now.getMonth() + 1).toString().padStart(2, '0');
+  const prefix = `DN${year}${month}`;
+
+  // Find the highest sequence for the current month
+  const { data, error } = await supabase
+    .from('transactions')
+    .select('receipt_no')
+    .like('receipt_no', `${prefix}%`)
+    .order('receipt_no', { ascending: false })
+    .limit(1);
+
+  let sequence = 1;
+  if (!error && data && data.length > 0 && data[0].receipt_no) {
+    const lastSeq = parseInt(data[0].receipt_no.slice(-5));
+    if (!isNaN(lastSeq)) sequence = lastSeq + 1;
+  }
+
+  return `${prefix}${sequence.toString().padStart(5, '0')}`;
+};
+
 transactions.get('/', async (c) => {
   const supabase = getSupabase(c)
   const { data, error } = await supabase.from('transactions').select('*, customer:customers(phone, customer_id)').order('created_at', { ascending: false })
@@ -62,7 +86,36 @@ transactions.get('/', async (c) => {
 transactions.post('/', async (c) => {
   const body = await c.req.json()
   const supabase = getSupabase(c)
-  const { data, error } = await supabase.from('transactions').insert(body).select()
+  
+  // Custom Receipt No Logic
+  let receiptNo = body.receipt_no;
+  
+  if (!receiptNo) {
+    if (body.group_id) {
+      // Check if group already has a receipt_no
+      const { data: existing } = await supabase
+        .from('transactions')
+        .select('receipt_no')
+        .eq('group_id', body.group_id)
+        .not('receipt_no', 'is', null)
+        .limit(1);
+      
+      if (existing && existing.length > 0) {
+        receiptNo = existing[0].receipt_no;
+      }
+    }
+    
+    // If still no receipt_no, generate new
+    if (!receiptNo) {
+      receiptNo = await generateReceiptNo(supabase);
+    }
+  }
+
+  const { data, error } = await supabase
+    .from('transactions')
+    .insert({ ...body, receipt_no: receiptNo })
+    .select()
+    
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data[0], 201)
 })

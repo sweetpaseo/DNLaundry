@@ -21,7 +21,7 @@ export const ReceiptModal = ({ isOpen, onClose, transaction, settings }: Receipt
   const items = Array.isArray(transaction) ? transaction : [transaction];
   const firstItem = items[0];
   const totalPrice = items.reduce((sum, item) => sum + item.final_price, 0);
-  const receiptId = (firstItem.group_id || firstItem.id).slice(0, 8).toUpperCase();
+  const receiptId = firstItem.receipt_no || (firstItem.group_id || firstItem.id).slice(0, 8).toUpperCase();
   const allPaid = items.every(item => item.is_paid);
 
   const handleWhatsAppShare = () => {

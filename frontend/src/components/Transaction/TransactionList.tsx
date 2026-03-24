@@ -74,7 +74,7 @@ export const TransactionList = () => {
     const totalGroupPrice = group.reduce((sum, item) => sum + item.final_price, 0);
     const allPaid = group.every(item => item.is_paid);
 
-    const receiptId = (firstTransaction.group_id || firstTransaction.id).slice(0, 8).toUpperCase();
+    const receiptId = firstTransaction.receipt_no || (firstTransaction.group_id || firstTransaction.id).slice(0, 8).toUpperCase();
     
     let message = `*DETAIL TRANSAKSI LAUNDRY*\n`;
     message += `No. Nota: *#${receiptId}*\n\n`;
@@ -279,6 +279,11 @@ export const TransactionList = () => {
                         <span style={{ fontSize: '0.65rem', fontWeight: 700, opacity: 0.4, background: 'rgba(255,255,255,0.1)', padding: '0.05rem 0.3rem', borderRadius: '4px' }}>
                           {formatDisplayId(customer ? getDisplayId(customer) : (t.customer?.customer_id || (t.customer_id ? `#DN-${t.customer_id.slice(0, 5).toUpperCase()}` : '#DN-NEW')))}
                         </span>
+                        {t.receipt_no && (
+                          <span style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--primary)', background: 'rgba(255, 0, 132, 0.1)', padding: '0.05rem 0.3rem', borderRadius: '4px', border: '1px solid rgba(255, 0, 132, 0.2)' }}>
+                            #{t.receipt_no}
+                          </span>
+                        )}
                       </div>
                         <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                           <Clock size={14} /> {new Date(t.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}
