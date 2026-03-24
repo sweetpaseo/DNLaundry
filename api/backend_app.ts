@@ -295,12 +295,33 @@ expenseCategories.delete('/:id', async (c) => {
 const expenses = new Hono<{ Bindings: Bindings }>()
 expenses.get('/', async (c) => {
   const supabase = getSupabase(c)
-  const query = supabase.from('laundry_expenses').select('*, expense_category:expense_categories(*)').order('date', { ascending: false })
+  
+  // 1. Fetch expenses (raw)
+  const query = supabase
+    .from('laundry_expenses')
+    .select('*')
+    .order('date', { ascending: false })
+    
   const cashType = c.req.query('cash_type')
-  if (cashType) query.eq('cash_type', cashType)
-  const { data, error } = await query
-  if (error) return c.json({ error: error.message }, 500)
-  return c.json(data || [])
+  if (cashType) {
+    query.eq('cash_type', cashType)
+  }
+
+  const { data: expensesData, error: expError } = await query
+  if (expError) return c.json({ error: expError.message }, 500)
+  
+  // 2. Fetch categories
+  const { data: categoriesData } = await supabase.from('expense_categories').select('*')
+  
+  // 3. Join in memory (matching the frontend requirement of 'expense_categories' as an array or object)
+  const joined = (expensesData || []).map(ex => ({
+    ...ex,
+    expense_category: categoriesData?.find(c => c.id === ex.category_id) || null,
+    // Add compatibility array if frontend expects it
+    expense_categories: categoriesData?.filter(c => c.id === ex.category_id) || []
+  }))
+
+  return c.json(joined)
 })
 
 expenses.post('/', async (c) => {
