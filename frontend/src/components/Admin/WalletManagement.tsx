@@ -84,7 +84,7 @@ export const WalletManagement = () => {
             <Wallet size={24} />
           </div>
           <div>
-            <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.8)', fontWeight: 600 }}>Total Dana Deposit (Liabilitas)</p>
+            <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.8)', fontWeight: 600 }}>Total Saldo Member (Titipan)</p>
             <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'white' }}>Rp {totalDeposits.toLocaleString()}</h3>
           </div>
         </div>
@@ -114,7 +114,7 @@ export const WalletManagement = () => {
       <div className="glass-card" style={{ padding: '1.5rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
           <h4 style={{ fontSize: '1.1rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <ArrowUpRight size={20} color="var(--primary)" /> Laporan Keuangan Member
+            <ArrowUpRight size={20} color="var(--primary)" /> Manajemen Saldo Pelanggan
           </h4>
           
           <div style={{ position: 'relative', width: 'min(100%, 300px)' }}>
@@ -135,8 +135,8 @@ export const WalletManagement = () => {
             <thead>
               <tr style={{ borderBottom: '1px solid var(--glass-border)', textAlign: 'left', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
                 <th style={{ padding: '1rem' }}>Pelanggan</th>
-                <th style={{ padding: '1rem' }}>Sisa Deposit (Saldo)</th>
-                <th style={{ padding: '1rem' }}>Piutang (Hutang)</th>
+                <th style={{ padding: '1rem' }}>Saldo (Titipan)</th>
+                <th style={{ padding: '1rem' }}>Hutang (Piutang)</th>
                 <th style={{ padding: '1rem' }}>Status</th>
                 <th style={{ padding: '1rem', textAlign: 'right' }}>Aksi</th>
               </tr>
@@ -189,7 +189,7 @@ export const WalletManagement = () => {
                       className="btn-primary"
                       style={{ padding: '0.4rem 0.8rem', fontSize: '0.75rem', borderRadius: '8px', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
                     >
-                      <Plus size={14} /> Top Up
+                      <Plus size={14} /> Top Up / Bayar
                     </button>
                   </td>
                 </tr>

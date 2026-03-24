@@ -6,6 +6,7 @@ import { OrderInput } from './components/Transaction/OrderInput';
 import { TransactionList } from './components/Transaction/TransactionList';
 import { CustomerCRM } from './components/CRM/CustomerCRM';
 import { AdminDashboard } from './components/Admin/AdminDashboard';
+import { WalletManagement } from './components/Admin/WalletManagement';
 import { ExpenseManager } from './components/Expense/ExpenseManager';
 import { Login } from './components/Auth/Login';
 
@@ -16,6 +17,7 @@ function App() {
   });
   const [activeMenu, setActiveMenu] = useState<'transaksi' | 'biaya' | 'pelanggan' | 'admin'>('transaksi');
   const [activeTab, setActiveTab] = useState<'input' | 'list'>('input');
+  const [activeTabPelanggan, setActiveTabPelanggan] = useState<'list' | 'saldo'>('list');
   const [settings, setSettings] = useState<any>({
     name: 'DN Laundry',
     address: 'Jl. Dewi Sartika A8/4, Jatiasih, Kota Bekasi. (Gmaps: DN Office)',
@@ -173,8 +175,41 @@ function App() {
         )}
 
         {activeMenu === 'pelanggan' && (
-          <div className="glass-card animate-fade-in">
-            <CustomerCRM currentUser={user} />
+          <div>
+            <div className="sub-nav">
+              <button 
+                className={`tab-btn ${activeTabPelanggan === 'list' ? 'active' : ''}`}
+                onClick={() => setActiveTabPelanggan('list')}
+              >
+                <div className="tab-icon"><Users size={18} /></div>
+                <span className="tab-label">Daftar Pelanggan</span>
+              </button>
+              <button 
+                className={`tab-btn ${activeTabPelanggan === 'saldo' ? 'active' : ''}`}
+                onClick={() => setActiveTabPelanggan('saldo')}
+              >
+                <div className="tab-icon"><Receipt size={18} /></div>
+                <span className="tab-label">Saldo</span>
+              </button>
+            </div>
+
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTabPelanggan}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+              >
+                {activeTabPelanggan === 'list' ? (
+                  <div className="glass-card">
+                    <CustomerCRM currentUser={user} />
+                  </div>
+                ) : (
+                  <WalletManagement />
+                )}
+              </motion.div>
+            </AnimatePresence>
           </div>
         )}
 

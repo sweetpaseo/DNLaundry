@@ -12,7 +12,6 @@ import { UserModal } from './UserModal';
 import { ExpenseModal } from '../Expense/ExpenseModal';
 import { ExpenseCategoryModal } from '../Expense/ExpenseCategoryModal';
 import { IdentitySettings } from './IdentitySettings';
-import { WalletManagement } from './WalletManagement';
 import { api } from '../../services/api';
 
 // Helpers
@@ -39,7 +38,7 @@ export const AdminDashboard = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
 
-  const [activeTab, setActiveTab] = useState<'report' | 'management' | 'payroll' | 'expenses' | 'users' | 'identity' | 'wallet'>('report');
+  const [activeTab, setActiveTab] = useState<'report' | 'management' | 'payroll' | 'expenses' | 'users' | 'identity'>('report');
 
   // Modal States
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
@@ -389,15 +388,6 @@ export const AdminDashboard = () => {
           }}
         >
           <Users size={16} color={activeTab === 'users' ? 'var(--primary)' : 'var(--text-muted)'} /> Manajemen User
-        </button>
-        <button
-          onClick={() => setActiveTab('wallet')}
-          style={{
-            display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 0', background: 'transparent', border: 'none', borderBottom: activeTab === 'wallet' ? '2px solid var(--primary)' : '2px solid transparent', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600,
-            color: activeTab === 'wallet' ? 'white' : 'var(--text-muted)', transition: 'all 0.2s', flexShrink: 0
-          }}
-        >
-          <Wallet size={16} color={activeTab === 'wallet' ? 'var(--primary)' : 'var(--text-muted)'} /> Manajemen Wallet
         </button>
         <button
           onClick={() => setActiveTab('identity')}
@@ -1123,8 +1113,6 @@ export const AdminDashboard = () => {
       </div>
       ) : activeTab === 'identity' ? (
         <IdentitySettings />
-      ) : activeTab === 'wallet' ? (
-        <WalletManagement />
       ) : activeTab === 'users' ? (
         /* Users Tab Content */
         <div className="glass-card" style={{ padding: '2rem' }}>

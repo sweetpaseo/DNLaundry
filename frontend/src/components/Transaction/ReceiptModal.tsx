@@ -143,7 +143,7 @@ export const ReceiptModal = ({ isOpen, onClose, transaction, settings }: Receipt
                 </span>
                 {allPaid && items[0].payment_method && (
                   <div style={{ fontSize: '0.7rem', marginTop: '0.2rem', fontWeight: 600 }}>
-                    Mode: {items[0].payment_method}
+                    Mode: {items[0].payment_method === 'Saldo' ? 'Potong Saldo' : items[0].payment_method}
                   </div>
                 )}
               </div>

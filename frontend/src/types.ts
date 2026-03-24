@@ -72,7 +72,7 @@ export interface Expense {
   created_at: string;
 }
 
-export type PaymentMethod = 'Cash' | 'Transfer Bank' | 'QRIS' | 'Wallet';
+export type PaymentMethod = 'Cash' | 'Transfer Bank' | 'QRIS' | 'Saldo';
 
 export interface Transaction {
   id: string;
