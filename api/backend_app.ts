@@ -559,6 +559,7 @@ stockLogs.post('/', async (c) => {
   return c.json(logData[0], 201)
 })
 
+app.route('/api/transactions', transactions)
 app.route('/api/stock', stock)
 app.route('/api/stock-logs', stockLogs)
 app.route('/api/customers', customers)
