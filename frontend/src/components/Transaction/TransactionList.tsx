@@ -424,6 +424,7 @@ export const TransactionList = () => {
             onClose={() => { setIsReceiptOpen(false); setSelectedTransaction(null); }}
             transaction={selectedTransaction}
             settings={settings}
+            customers={customers}
           />
         )}
       </div>

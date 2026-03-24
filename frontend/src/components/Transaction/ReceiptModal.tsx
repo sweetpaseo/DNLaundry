@@ -9,9 +9,10 @@ interface ReceiptModalProps {
   onClose: () => void;
   transaction: Transaction | Transaction[];
   settings: any;
+  customers?: any[];
 }
 
-export const ReceiptModal = ({ isOpen, onClose, transaction, settings }: ReceiptModalProps) => {
+export const ReceiptModal = ({ isOpen, onClose, transaction, settings, customers = [] }: ReceiptModalProps) => {
   if (!isOpen) return null;
 
   const handlePrint = () => {
@@ -26,6 +27,13 @@ export const ReceiptModal = ({ isOpen, onClose, transaction, settings }: Receipt
 
   const handleWhatsAppShare = () => {
     let customerPhone = firstItem.customer?.phone;
+    
+    // Fallback: look in customers list if join is missing
+    if (!customerPhone && customers.length > 0) {
+      const customer = customers.find(c => c.id === firstItem.customer_id || c.name === firstItem.customer_name);
+      if (customer) customerPhone = customer.phone;
+    }
+
     if (!customerPhone) {
       const manualPhone = window.prompt("Nomor WhatsApp pelanggan tidak ditemukan. Silakan masukkan nomor WhatsApp (contoh: 08123456789):");
       if (!manualPhone) return;
