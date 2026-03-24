@@ -380,7 +380,17 @@ expenses.get('/', async (c) => {
 expenses.post('/', async (c) => {
   const body = await c.req.json()
   const supabase = getSupabase(c)
-  const { data, error } = await supabase.from('laundry_expenses').insert(body).select()
+  
+  // Pick only valid columns to avoid Supabase errors
+  const insertData = {
+    amount: body.amount,
+    category_id: body.category_id,
+    description: body.description,
+    date: body.date,
+    cash_type: body.cash_type
+  };
+
+  const { data, error } = await supabase.from('laundry_expenses').insert(insertData).select()
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data[0], 201)
 })
@@ -389,7 +399,16 @@ expenses.put('/:id', async (c) => {
   const id = c.req.param('id')
   const body = await c.req.json()
   const supabase = getSupabase(c)
-  const { data, error } = await supabase.from('laundry_expenses').update(body).eq('id', id).select()
+
+  // Pick only valid columns to avoid Supabase errors
+  const updateData: any = {};
+  if (body.amount !== undefined) updateData.amount = body.amount;
+  if (body.category_id !== undefined) updateData.category_id = body.category_id;
+  if (body.description !== undefined) updateData.description = body.description;
+  if (body.date !== undefined) updateData.date = body.date;
+  if (body.cash_type !== undefined) updateData.cash_type = body.cash_type;
+
+  const { data, error } = await supabase.from('laundry_expenses').update(updateData).eq('id', id).select()
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data[0])
 })
