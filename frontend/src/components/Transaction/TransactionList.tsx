@@ -178,6 +178,15 @@ export const TransactionList = () => {
 
     return matchesStatus && matchesPayment && matchesSearch;
   }).sort((a, b) => {
+    const isSelesaiA = a[0].status === 'Selesai';
+    const isSelesaiB = b[0].status === 'Selesai';
+
+    // Prioritize non-Selesai (active transactions)
+    if (isSelesaiA !== isSelesaiB) {
+      return isSelesaiA ? 1 : -1;
+    }
+
+    // Secondary sort: newest first
     const timeA = new Date(a[0].created_at).getTime();
     const timeB = new Date(b[0].created_at).getTime();
     return timeB - timeA;
