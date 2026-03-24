@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { api } from '../../services/api';
-import { Stock, StockLog } from '../../types';
-import { Package, Plus, Minus, History, AlertTriangle, ArrowUpRight, ArrowDownLeft, Info, Trash2, Edit } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import type { Stock, StockLog } from '../../types';
+import { Package, Plus, Minus, History, AlertTriangle, ArrowUpRight, ArrowDownLeft, Trash2, Edit } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface StockManagerProps {
   user: any;
