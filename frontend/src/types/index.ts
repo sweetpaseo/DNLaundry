@@ -29,7 +29,7 @@ export interface Customer {
   type_id: string;
   member_type?: MemberType;
   tags?: string[];
-  customer_id?: string; // New dedicated column
+  customer_id?: string;
   wallet_balance?: number;
   default_delivery_type?: 'Pickup' | 'Delivery';
 }
@@ -64,9 +64,9 @@ export interface Expense {
   id: string;
   amount: number;
   description: string;
-  category: string; // Keep for backward compatibility/legacy name
+  category: string;
   category_id?: string;
-  expense_category?: ExpenseCategory; // For joined data
+  expense_category?: ExpenseCategory;
   cash_type: 'petty' | 'main';
   date: string;
   created_at: string;
@@ -76,9 +76,9 @@ export type PaymentMethod = 'Cash' | 'Transfer Bank' | 'QRIS' | 'Saldo';
 
 export interface Transaction {
   id: string;
-  receipt_no?: string; // New custom sequential ID (DN260300001)
-  customer_id: string; // Foreign key UUID
-  customer_no?: string; // Sequential ID (e.g. DN00001) from customer table
+  receipt_no?: string;
+  customer_id: string;
+  customer_no?: string;
   customer_name: string;
   customer?: { phone: string; customer_id?: string };
   service_id: string;
@@ -117,5 +117,5 @@ export interface StockLog {
   note?: string;
   created_at: string;
   user_id?: string;
-  stock?: { name: string; unit: string }; // For joined data
+  stock?: { name: string; unit: string };
 }
