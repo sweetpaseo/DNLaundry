@@ -61,9 +61,14 @@ export const AdminDashboard = () => {
   const [users, setUsers] = useState<any[]>([]);
   const [customers, setCustomers] = useState<any[]>([]);
 
-  // Filter States - Default to 'all' to show comprehensive data
-  const [filterMonth, setFilterMonth] = useState<number | 'all'>('all');
-  const [filterYear, setFilterYear] = useState<number | 'all'>('all');
+  // Filter States
+  const [filterType, setFilterType] = useState<'monthly' | 'weekly' | 'range'>('monthly');
+  const [filterMonth, setFilterMonth] = useState<number | 'all'>(new Date().getMonth());
+  const [filterYear, setFilterYear] = useState<number | 'all'>(new Date().getFullYear());
+  const [filterDay, setFilterDay] = useState<number | 'all'>('all');
+  const [filterWeek, setFilterWeek] = useState<number | 'all'>('all');
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
 
   const months = [
     'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
@@ -116,32 +121,53 @@ export const AdminDashboard = () => {
 
   // Calculate Filtered Stats
   const getFilteredStats = () => {
-    const filteredTransactions = transactions.filter(t => {
-      const date = new Date(t.created_at);
-      const mMatch = filterMonth === 'all' || date.getMonth() === filterMonth;
-      const yMatch = filterYear === 'all' || date.getFullYear() === filterYear;
-      return mMatch && yMatch;
-    });
+    const isWithinFilter = (dateStr: string | null | undefined) => {
+      if (!dateStr) return filterType === 'monthly' && filterMonth === 'all' && filterYear === 'all';
+      const d = new Date(dateStr);
+      const day = d.getDate();
+      const month = d.getMonth();
+      const year = d.getFullYear();
 
-    const filteredCustomers = customers.filter(c => {
-      if (!c.created_at) return filterMonth === 'all' && filterYear === 'all';
-      const date = new Date(c.created_at);
-      const mMatch = filterMonth === 'all' || date.getMonth() === filterMonth;
-      const yMatch = filterYear === 'all' || date.getFullYear() === filterYear;
-      return mMatch && yMatch;
-    });
+      if (filterType === 'range') {
+        if (!startDate || !endDate) return true;
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        return d >= start && d <= end;
+      }
+
+      if (filterType === 'weekly') {
+        const mMatch = filterMonth === 'all' || month === filterMonth;
+        const yMatch = filterYear === 'all' || year === filterYear;
+        if (!mMatch || !yMatch) return false;
+        if (filterWeek === 'all') return true;
+        // W1: 1-7, W2: 8-14, W3: 15-21, W4: 22+
+        if (filterWeek === 1) return day >= 1 && day <= 7;
+        if (filterWeek === 2) return day >= 8 && day <= 14;
+        if (filterWeek === 3) return day >= 15 && day <= 21;
+        if (filterWeek === 4) return day >= 22;
+        return true;
+      }
+
+      // Default: monthly/standard
+      const mMatch = filterMonth === 'all' || month === filterMonth;
+      const yMatch = filterYear === 'all' || year === filterYear;
+      const dMatch = filterDay === 'all' || day === filterDay;
+      return mMatch && yMatch && dMatch;
+    };
+
+    const filteredTransactions = transactions.filter(t => isWithinFilter(t.created_at));
+    const filteredCustomers = customers.filter(c => isWithinFilter(c.created_at));
 
     const omzetTotal = filteredTransactions
       .filter(t => t.is_paid)
       .reduce((acc, t) => acc + t.final_price, 0);
 
-    // Count unique orders (by group_id or ID) to match the Transaction List cards
     const uniqueOrders = new Set(filteredTransactions.map(t => t.group_id || t.id));
     const orderTotal = uniqueOrders.size;
-    
     const pelangganTotal = filteredCustomers.length;
 
-    return { omzetTotal, orderTotal, pelangganTotal };
+    return { omzetTotal, orderTotal, pelangganTotal, filteredTransactions, isWithinFilter };
   };
 
   const stats = getFilteredStats();
@@ -412,38 +438,122 @@ export const AdminDashboard = () => {
       {activeTab === 'report' ? (
         <>
           {/* Report Filter Bar */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1.5rem', gap: '0.5rem' }}>
-            <select 
-              value={filterMonth} 
-              onChange={(e) => setFilterMonth(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-              style={{ padding: '0.4rem 0.8rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', fontSize: '0.8rem' }}
-            >
-              <option value="all">Semua Bulan</option>
-              {months.map((m, i) => (
-                <option key={m} value={i}>{m}</option>
+          {/* New Advanced Filter Bar */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem' }}>
+            <div style={{ display: 'flex', gap: '0.5rem', background: 'rgba(255,255,255,0.02)', padding: '0.4rem', borderRadius: '12px', border: '1px solid var(--glass-border)', width: 'fit-content', alignSelf: 'flex-end' }}>
+              {[
+                { id: 'monthly', label: 'Bulanan' },
+                { id: 'weekly', label: 'Mingguan' },
+                { id: 'range', label: 'Rentang' }
+              ].map(m => (
+                <button 
+                  key={m.id} 
+                  onClick={() => setFilterType(m.id as any)}
+                  style={{ 
+                    padding: '0.5rem 1.2rem', 
+                    fontSize: '0.8rem', 
+                    background: filterType === m.id ? 'var(--primary-gradient)' : 'transparent',
+                    color: filterType === m.id ? 'white' : 'var(--text-muted)',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontWeight: 700,
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  {m.label}
+                </button>
               ))}
-            </select>
-            
-            <select 
-              value={filterYear} 
-              onChange={(e) => setFilterYear(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-              style={{ padding: '0.4rem 0.8rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', fontSize: '0.8rem' }}
-            >
-              <option value="all">Semua Tahun</option>
-              {years.map(y => (
-                <option key={y} value={y}>{y}</option>
-              ))}
-            </select>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', flexWrap: 'wrap' }}>
+              {filterType === 'monthly' && (
+                <>
+                  <select 
+                    value={filterDay} 
+                    onChange={(e) => setFilterDay(e.target.value === 'all' ? 'all' : Number(e.target.value))}
+                    style={{ padding: '0.5rem 0.8rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', fontSize: '0.8rem' }}
+                  >
+                    <option value="all">Semua Tanggal</option>
+                    {Array.from({ length: 31 }, (_, i) => i + 1).map(d => (
+                      <option key={d} value={d}>Tgl {d}</option>
+                    ))}
+                  </select>
+                  <select 
+                    value={filterMonth} 
+                    onChange={(e) => setFilterMonth(e.target.value === 'all' ? 'all' : Number(e.target.value))}
+                    style={{ padding: '0.5rem 0.8rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', fontSize: '0.8rem' }}
+                  >
+                    <option value="all">Semua Bulan</option>
+                    {months.map((m, i) => (
+                      <option key={m} value={i}>{m}</option>
+                    ))}
+                  </select>
+                </>
+              )}
+
+              {filterType === 'weekly' && (
+                <>
+                  <select 
+                    value={filterWeek} 
+                    onChange={(e) => setFilterWeek(e.target.value === 'all' ? 'all' : Number(e.target.value))}
+                    style={{ padding: '0.5rem 0.8rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', fontSize: '0.8rem' }}
+                  >
+                    <option value="all">Semua Minggu</option>
+                    <option value={1}>Minggu 1 (1-7)</option>
+                    <option value={2}>Minggu 2 (8-14)</option>
+                    <option value={3}>Minggu 3 (15-21)</option>
+                    <option value={4}>Minggu 4 (22+)</option>
+                  </select>
+                  <select 
+                    value={filterMonth} 
+                    onChange={(e) => setFilterMonth(e.target.value === 'all' ? 'all' : Number(e.target.value))}
+                    style={{ padding: '0.5rem 0.8rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', fontSize: '0.8rem' }}
+                  >
+                    <option value="all">Semua Bulan</option>
+                    {months.map((m, i) => (
+                      <option key={m} value={i}>{m}</option>
+                    ))}
+                  </select>
+                </>
+              )}
+
+              {filterType === 'range' && (
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                  <input 
+                    type="date" 
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    style={{ padding: '0.4rem 0.8rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', fontSize: '0.8rem' }}
+                  />
+                  <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>sd</span>
+                  <input 
+                    type="date" 
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    style={{ padding: '0.4rem 0.8rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', fontSize: '0.8rem' }}
+                  />
+                </div>
+              )}
+
+              {(filterType === 'monthly' || filterType === 'weekly') && (
+                <select 
+                  value={filterYear} 
+                  onChange={(e) => setFilterYear(e.target.value === 'all' ? 'all' : Number(e.target.value))}
+                  style={{ padding: '0.5rem 0.8rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', fontSize: '0.8rem' }}
+                >
+                  <option value="all">Semua Tahun</option>
+                  {years.map(y => (
+                    <option key={y} value={y}>{y}</option>
+                  ))}
+                </select>
+              )}
+            </div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.25rem', marginBottom: '2rem' }}>
             {(() => {
-              const filteredEx = expenses.filter(ex => {
-                const d = new Date(ex.date);
-                const m = filterMonth === 'all' || d.getMonth() === filterMonth;
-                const y = filterYear === 'all' || d.getFullYear() === filterYear;
-                return m && y;
-              });
+              const filteredEx = expenses.filter(ex => stats.isWithinFilter(ex.date));
               const totalEx = filteredEx.reduce((acc, ex) => acc + ex.amount, 0);
               const totalIncome = stats.omzetTotal;
               const netProfit = totalIncome - totalEx;
@@ -576,12 +686,7 @@ export const AdminDashboard = () => {
               <div>
                 <h5 style={{ color: '#f43f5e', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem', marginBottom: '1rem', fontSize: '0.9rem' }}>BIAYA / PENGELUARAN</h5>
                 {(() => {
-                  const filteredEx = expenses.filter(ex => {
-                    const d = new Date(ex.date);
-                    const m = filterMonth === 'all' || d.getMonth() === filterMonth;
-                    const y = filterYear === 'all' || d.getFullYear() === filterYear;
-                    return m && y;
-                  });
+                  const filteredEx = expenses.filter(ex => stats.isWithinFilter(ex.date));
 
                   const filteredInc = transactions.filter(t => {
                     const d = new Date(t.created_at);
@@ -890,19 +995,9 @@ export const AdminDashboard = () => {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             {employees.filter(e => e.is_active).map(emp => {
-              const filteredTransactions = transactions.filter(t => {
-                const date = new Date(t.created_at);
-                const monthMatch = filterMonth === 'all' || date.getMonth() === filterMonth;
-                const yearMatch = filterYear === 'all' || date.getFullYear() === filterYear;
-                return monthMatch && yearMatch;
-              });
+              const filteredTransactions = transactions.filter(t => t.employee_id === emp.id && stats.isWithinFilter(t.created_at));
 
-              const filteredIncentives = incentives.filter(i => {
-                const date = new Date(i.date);
-                const monthMatch = filterMonth === 'all' || date.getMonth() === filterMonth;
-                const yearMatch = filterYear === 'all' || date.getFullYear() === filterYear;
-                return i.employee_id === emp.id && monthMatch && yearMatch;
-              });
+              const filteredIncentives = incentives.filter(i => i.employee_id === emp.id && stats.isWithinFilter(i.date));
 
               const commissionTotal = calculateCommission(emp.id, filteredTransactions, services);
               const incentiveTotal = filteredIncentives.reduce((acc, i) => acc + i.amount, 0);
@@ -1018,11 +1113,11 @@ export const AdminDashboard = () => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {expenseSubTab === 'history' ? (
               <div style={{ display: 'grid', gap: '1rem' }}>
-                {expenses.filter(ex => expenseCashFilter === 'all' || ex.cash_type === expenseCashFilter).length === 0 ? (
+                {expenses.filter(ex => (expenseCashFilter === 'all' || ex.cash_type === expenseCashFilter) && stats.isWithinFilter(ex.date)).length === 0 ? (
                   <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>Belum ada catatan pengeluaran.</div>
                 ) : (
                   expenses
-                    .filter(ex => expenseCashFilter === 'all' || ex.cash_type === expenseCashFilter)
+                    .filter(ex => (expenseCashFilter === 'all' || ex.cash_type === expenseCashFilter) && stats.isWithinFilter(ex.date))
                     .map(ex => (
                       <div key={ex.id} className="glass-card" style={{ padding: '1.25rem', background: 'rgba(255,255,255,0.02)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
                         <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', minWidth: 'min(100%, 250px)', flex: 1 }}>
