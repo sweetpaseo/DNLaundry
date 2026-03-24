@@ -177,6 +177,10 @@ export const TransactionList = () => {
     const matchesSearch = !searchTerm || t.customer_name.toLowerCase().includes(searchTerm.toLowerCase());
 
     return matchesStatus && matchesPayment && matchesSearch;
+  }).sort((a, b) => {
+    const timeA = new Date(a[0].created_at).getTime();
+    const timeB = new Date(b[0].created_at).getTime();
+    return timeB - timeA;
   });
 
   return (
@@ -243,9 +247,7 @@ export const TransactionList = () => {
         </div>
       ) : (
         <div className="responsive-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 350px), 1fr))' }}>
-          {filteredGroups
-            .sort((a, b) => new Date(b[0].created_at).getTime() - new Date(a[0].created_at).getTime())
-            .map(group => {
+          {filteredGroups.map(group => {
                 const t = group[0]; // Primary record
                 const groupId = t.group_id || t.id;
                 const totalGroupPrice = group.reduce((sum, item) => sum + item.final_price, 0);
