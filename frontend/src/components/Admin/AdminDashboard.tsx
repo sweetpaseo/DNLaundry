@@ -245,10 +245,11 @@ export const AdminDashboard = () => {
 
   const handleSaveExpense = async (data: Partial<Expense>) => {
     try {
+      const { expense_categories, ...cleanData } = data as any;
       if (editingExpense) {
-        await api.updateExpense(editingExpense.id, data);
+        await api.updateExpense(editingExpense.id, cleanData);
       } else {
-        await api.createExpense(data);
+        await api.createExpense(cleanData);
       }
       fetchData();
       setIsExpenseModalOpen(false);
@@ -1024,7 +1025,7 @@ export const AdminDashboard = () => {
                             <div style={{ fontWeight: 600, fontSize: '1rem' }}>{ex.description}</div>
                             <div style={{ display: 'flex', gap: '1rem', marginTop: '0.25rem', flexWrap: 'wrap', alignItems: 'center' }}>
                               <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.05)', padding: '0.1rem 0.5rem', borderRadius: '4px' }}>
-                                {(ex as any).expense_category?.name || ex.category || 'Tanpa Kategori'}
+                                {(ex as any).expense_categories?.[0]?.name || ex.category || 'Tanpa Kategori'}
                               </span>
                               <span style={{ fontSize: '0.65rem', padding: '2px 6px', borderRadius: '4px', background: ex.cash_type === 'main' ? 'var(--primary)' : 'rgba(255,255,255,0.1)', color: 'white', fontWeight: 600 }}>
                                 {ex.cash_type === 'main' ? 'KAS UTAMA' : 'KAS KECIL'}

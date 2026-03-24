@@ -12,6 +12,12 @@ const app = new Hono<{ Bindings: Bindings }>()
 app.use('*', cors())
 
 // Health Check / Landing Page
+
+
+
+
+
+
 app.get('/api/health', async (c) => {
   try {
     const supabase = getSupabase(c.env)
@@ -299,9 +305,11 @@ const expenses = new Hono<{ Bindings: Bindings }>()
 
 expenses.get('/', async (c) => {
   const supabase = getSupabase(c.env)
+  
+  // 1. Fetch expenses (raw)
   const query = supabase
     .from('laundry_expenses')
-    .select('*, expense_category:expense_categories(*)')
+    .select('*')
     .order('date', { ascending: false })
     
   const cashType = c.req.query('cash_type')
@@ -309,25 +317,32 @@ expenses.get('/', async (c) => {
     query.eq('cash_type', cashType)
   }
 
-  const { data, error } = await query
-  if (error) return c.json({ error: error.message }, 500)
-  return c.json(data || [])
+  const { data: expensesData, error: expError } = await query
+  if (expError) return c.json({ error: expError.message }, 500)
+  
+  // 2. Fetch categories
+  const { data: categoriesData } = await supabase.from('expense_categories').select('*')
+  
+  // 3. Join in memory
+  const joined = (expensesData || []).map(ex => ({
+    ...ex,
+    expense_categories: categoriesData?.filter(c => c.id === ex.category_id) || []
+  }))
+
+  return c.json(joined)
 })
 
 expenses.post('/', async (c) => {
   const body = await c.req.json()
   const supabase = getSupabase(c.env)
   
-  console.log('Inserting Expense Body:', body);
-  
   const { data, error } = await supabase
     .from('laundry_expenses')
     .insert(body)
-    .select('*, expense_category:expense_categories(*)')
+    .select() // Standard select without join
     
   if (error) {
-    console.error('POST /expenses Error:', error);
-    return c.json({ error: error.message, detail: error.details }, 500);
+    return c.json({ error: error.message }, 500);
   }
   return c.json(data?.[0] || {}, 201)
 })
@@ -337,17 +352,14 @@ expenses.put('/:id', async (c) => {
   const body = await c.req.json()
   const supabase = getSupabase(c.env)
 
-  console.log(`Updating Expense ${id} Body:`, body);
-
   const { data, error } = await supabase
     .from('laundry_expenses')
     .update(body)
     .eq('id', id)
-    .select('*, expense_category:expense_categories(*)')
+    .select()
     
   if (error) {
-    console.error(`PUT /expenses/${id} Error:`, error);
-    return c.json({ error: error.message, detail: error.details }, 500);
+    return c.json({ error: error.message }, 500);
   }
   return c.json(data?.[0] || {})
 })

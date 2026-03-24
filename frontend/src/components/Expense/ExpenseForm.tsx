@@ -47,8 +47,7 @@ export const ExpenseForm = ({ onSave, initialData, forcedCashType }: ExpenseForm
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const selectedCat = categories.find(c => c.id === formData.category_id);
-    onSave({ ...formData, category: selectedCat?.name || '' });
+    onSave({ ...formData });
     
     // Reset form if it's a new entry (not editing)
     if (!initialData) {

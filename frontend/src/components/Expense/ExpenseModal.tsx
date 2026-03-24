@@ -35,7 +35,7 @@ export const ExpenseModal = ({ isOpen, onClose, onSave, initialData, forcedCashT
         setCategories(filtered);
         
         if (initialData) {
-          setFormData({ ...initialData });
+          setFormData({ ...initialData, date: initialData.date || new Date().toISOString().split('T')[0] });
         } else {
           setFormData({
             amount: 0,
@@ -65,8 +65,7 @@ export const ExpenseModal = ({ isOpen, onClose, onSave, initialData, forcedCashT
         <form 
           onSubmit={(e) => { 
             e.preventDefault(); 
-            const selectedCat = categories.find(c => c.id === formData.category_id);
-            onSave({ ...formData, category: selectedCat?.name || '' }); 
+            onSave({ ...formData }); 
           }} 
           style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}
         >

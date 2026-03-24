@@ -39,11 +39,14 @@ export const ExpenseManager = ({ userRole = 'staff' }: ExpenseManagerProps) => {
 
   const handleSave = async (data: Partial<Expense>) => {
     try {
+      // Strip non-database fields
+      const { expense_categories, ...cleanData } = data as any;
+      
       if (editingExpense) {
-        await api.updateExpense(editingExpense.id, data);
+        await api.updateExpense(editingExpense.id, cleanData);
         alert('Pengeluaran berhasil diperbarui!');
       } else {
-        await api.createExpense(data);
+        await api.createExpense(cleanData);
         alert('Pengeluaran berhasil dicatat!');
       }
       setIsModalOpen(false);

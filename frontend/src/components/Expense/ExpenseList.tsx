@@ -37,7 +37,7 @@ export const ExpenseList = ({ expenses, onEdit, onDelete, filter = 'all' }: Expe
               <div style={{ fontWeight: 600, fontSize: '1rem' }}>{ex.description}</div>
               <div className="expense-meta">
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.05)', padding: '0.1rem 0.5rem', borderRadius: '4px' }}>
-                  {(ex as any).expense_category?.name || ex.category || 'Tanpa Kategori'}
+                  {(ex as any).expense_categories?.[0]?.name || ex.category || 'Tanpa Kategori'}
                 </span>
                 <span style={{ fontSize: '0.65rem', padding: '2px 6px', borderRadius: '4px', background: ex.cash_type === 'main' ? 'var(--primary)' : 'rgba(255,255,255,0.1)', color: 'white', fontWeight: 600, letterSpacing: '0.5px' }}>
                   {ex.cash_type === 'main' ? 'KAS UTAMA' : 'KAS KECIL'}
