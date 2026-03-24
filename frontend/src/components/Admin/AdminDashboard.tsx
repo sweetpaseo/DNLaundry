@@ -263,8 +263,8 @@ export const AdminDashboard = () => {
       setIsExpenseModalOpen(false);
       setEditingExpense(null);
       alert('Perubahan berhasil disimpan!');
-    } catch (error) {
-      alert('Gagal menyimpan pengeluaran');
+    } catch (error: any) {
+      alert('Gagal menyimpan pengeluaran: ' + (error.message || 'Terjadi kesalahan sistem'));
     }
   };
 
