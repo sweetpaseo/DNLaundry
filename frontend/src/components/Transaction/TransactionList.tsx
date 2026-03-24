@@ -308,7 +308,7 @@ export const TransactionList = () => {
                         </div>
                         {totalDebt > 0 && (
                           <div style={{ padding: '0.3rem 0.6rem', borderRadius: '6px', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                            <Clock size={12} /> Total Hutang: Rp {totalDebt.toLocaleString()}
+                            <Clock size={12} /> Saldo Gantung: Rp {totalDebt.toLocaleString()}
                           </div>
                         )}
                       </div>

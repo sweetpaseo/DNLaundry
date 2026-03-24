@@ -94,7 +94,7 @@ export const WalletManagement = () => {
             <AlertTriangle size={24} />
           </div>
           <div>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>Total Piutang Toko (Hutang Member)</p>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>Total Piutang Toko (Saldo Gantung)</p>
             <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#ef4444' }}>Rp {totalPiutang.toLocaleString()}</h3>
           </div>
         </div>
@@ -104,7 +104,7 @@ export const WalletManagement = () => {
             <User size={24} />
           </div>
           <div>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Pelanggan Bermasalah (Hutang)</p>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Belum Lunas</p>
             <h3 style={{ fontSize: '1.5rem', fontWeight: 800 }}>{customers.filter(c => getCustomerDebt(c.id, c.name) > 0).length} Orang</h3>
           </div>
         </div>
@@ -136,7 +136,7 @@ export const WalletManagement = () => {
               <tr style={{ borderBottom: '1px solid var(--glass-border)', textAlign: 'left', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
                 <th style={{ padding: '1rem' }}>Pelanggan</th>
                 <th style={{ padding: '1rem' }}>Saldo (Titipan)</th>
-                <th style={{ padding: '1rem' }}>Hutang (Piutang)</th>
+                <th style={{ padding: '1rem' }}>Saldo Gantung</th>
                 <th style={{ padding: '1rem' }}>Status</th>
                 <th style={{ padding: '1rem', textAlign: 'right' }}>Aksi</th>
               </tr>
@@ -203,7 +203,7 @@ export const WalletManagement = () => {
         <Info size={18} color="#ffc107" />
         <p style={{ fontSize: '0.75rem', color: 'rgba(255, 193, 7, 0.8)' }}>
           <b>Deposit:</b> Kelebihan bayar yang bisa digunakan untuk laundry berikutnya.<br/>
-          <b>Piutang:</b> Tagihan yang belum dibayar oleh pelanggan. Segera konfirmasi pembayaran jika ada piutang.
+          <b>Saldo Gantung:</b> Tagihan yang belum dibayar oleh pelanggan. Segera konfirmasi pembayaran jika ada tagihan belum lunas.
         </p>
       </div>
     </div>
