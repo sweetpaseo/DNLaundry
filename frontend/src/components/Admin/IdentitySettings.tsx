@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Store, MapPin, Save, Instagram, MessageSquare, Wallet, Users, DollarSign, Plus } from 'lucide-react';
+import { Store, MapPin, Save, Instagram, MessageSquare, Wallet, Users, DollarSign, Plus, Calculator } from 'lucide-react';
 import { api } from '../../services/api';
 import { WhatsAppIcon } from '../Icons';
 
@@ -18,7 +18,8 @@ export const IdentitySettings = () => {
     bank_account_name: '',
     bank_account_number: '',
     qris_url: '',
-    qris_whatsapp_url: ''
+    qris_whatsapp_url: '',
+    rounding_enabled: true
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -72,7 +73,10 @@ export const IdentitySettings = () => {
   const fetchSettings = async () => {
     try {
       const data = await api.getSettings();
-      setSettings(data);
+      setSettings({
+        ...data,
+        rounding_enabled: data.rounding_enabled ?? true
+      });
     } catch (error) {
       console.error('Failed to fetch settings:', error);
     } finally {
@@ -376,6 +380,47 @@ export const IdentitySettings = () => {
                 rows={3}
                 style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', resize: 'vertical' }}
               />
+            </div>
+
+            {/* Rounding Feature Toggle */}
+            <div className="form-group" style={{ 
+              marginTop: '0.5rem', 
+              padding: '1.25rem', 
+              background: 'rgba(var(--primary-rgb), 0.05)', 
+              borderRadius: '16px', 
+              border: '1px solid rgba(var(--primary-rgb), 0.1)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '1rem'
+            }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem', fontWeight: 700, fontSize: '0.95rem' }}>
+                  <Calculator size={18} color="var(--primary)" /> Pembulatan Otomatis (500)
+                </div>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', lineHeight: '1.4' }}>
+                  Membulatkan total tagihan ke atas (misal: 5.200 jadi 5.500, 5.750 jadi 6.000).
+                </p>
+              </div>
+              <label style={{ position: 'relative', display: 'inline-block', width: '48px', height: '24px', flexShrink: 0 }}>
+                <input 
+                  type="checkbox" 
+                  checked={settings.rounding_enabled} 
+                  onChange={e => setSettings({ ...settings, rounding_enabled: e.target.checked })}
+                  style={{ opacity: 0, width: 0, height: 0 }} 
+                />
+                <span style={{ 
+                  position: 'absolute', cursor: 'pointer', top: 0, left: 0, right: 0, bottom: 0, 
+                  backgroundColor: settings.rounding_enabled ? 'var(--primary)' : '#475569', 
+                  transition: '.4s', borderRadius: '24px' 
+                }}>
+                  <span style={{ 
+                    position: 'absolute', content: '""', height: '18px', width: '18px', 
+                    left: settings.rounding_enabled ? '26px' : '4px', bottom: '3px', 
+                    backgroundColor: 'white', transition: '.4s', borderRadius: '50%' 
+                  }}></span>
+                </span>
+              </label>
             </div>
           </div>
         </div>

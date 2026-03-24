@@ -4,6 +4,7 @@ import type { Service, Employee, Customer, MemberType } from '../../types';
 import { AddCustomerModal } from '../CRM/AddCustomerModal';
 import { api } from '../../services/api';
 import { getDisplayId, formatDisplayId } from '../../utils/customer';
+import { roundUpTo500 } from '../../utils/format';
 
 interface OrderItem {
   id: string; // Temporary local ID for list management
@@ -42,6 +43,7 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
   const [orderDate, setOrderDate] = useState(() => {
     return new Date().toISOString().split('T')[0];
   });
+  const [roundingEnabled, setRoundingEnabled] = useState(true);
 
   const fetchData = async () => {
     try {
@@ -59,6 +61,9 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
       setMemberTypes(m || []);
       if (activeServices.length > 0) setSelectedServiceId(activeServices[0].id);
       if (activeEmployees.length > 0) setSelectedEmployeeId(activeEmployees[0].id);
+      
+      const settings = await api.getSettings();
+      if (settings) setRoundingEnabled(settings.rounding_enabled !== false);
     } catch (error) {
       console.error('Failed to fetch order input data:', error);
     }
@@ -204,7 +209,7 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
           total_price: item.subtotal,
           discount_amount: itemDiscountAmount,
           discount_percent: itemDiscountPercent,
-          final_price: item.subtotal - itemDiscountAmount,
+          final_price: roundingEnabled ? roundUpTo500(item.subtotal - itemDiscountAmount) : (item.subtotal - itemDiscountAmount),
           status: 'Baru',
           is_paid: false,
           due_date: item.due_date,
@@ -523,9 +528,17 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', flexWrap: 'wrap' }}>
               <span style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--primary)' }}>Rp</span>
               <h2 style={{ fontSize: 'clamp(1.8rem, 10vw, 2.5rem)', fontWeight: 900, color: 'white', letterSpacing: '-1px', lineHeight: 1, wordBreak: 'break-all' }}>
-                {Math.max(0, grandTotal - (discountType === 'percentage' ? (grandTotal * Number(discountValue) / 100) : Number(discountValue))).toLocaleString('id-ID')}
+                {(roundingEnabled 
+                  ? roundUpTo500(Math.max(0, grandTotal - (discountType === 'percentage' ? (grandTotal * Number(discountValue) / 100) : Number(discountValue))))
+                  : Math.max(0, grandTotal - (discountType === 'percentage' ? (grandTotal * Number(discountValue) / 100) : Number(discountValue)))
+                ).toLocaleString('id-ID')}
               </h2>
             </div>
+            {roundingEnabled && (
+              <p style={{ fontSize: '0.7rem', color: 'var(--primary)', marginTop: '0.4rem', fontWeight: 700, textTransform: 'uppercase' }}>
+                ✨ Termasuk Pembulatan Ke Atas (500)
+              </p>
+            )}
             <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
               Estimasi Selesai: <span style={{ color: 'white', fontWeight: 600 }}>{orderItems.length > 0 ? new Date(maxDueDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'}</span>
             </p>
