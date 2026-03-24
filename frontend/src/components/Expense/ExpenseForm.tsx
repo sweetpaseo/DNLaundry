@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Save } from 'lucide-react';
+import { Save, RefreshCw } from 'lucide-react';
 import type { Expense, ExpenseCategory } from '../../types';
 import { api } from '../../services/api';
 
@@ -11,6 +11,7 @@ interface ExpenseFormProps {
 
 export const ExpenseForm = ({ onSave, initialData, forcedCashType }: ExpenseFormProps) => {
   const [categories, setCategories] = useState<ExpenseCategory[]>([]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [formData, setFormData] = useState<Partial<Expense>>({
     amount: 0,
     category_id: '',
@@ -19,8 +20,9 @@ export const ExpenseForm = ({ onSave, initialData, forcedCashType }: ExpenseForm
     cash_type: 'petty'
   });
 
-  useEffect(() => {
-    const loadCategories = async () => {
+  const loadCategories = async () => {
+    setIsRefreshing(true);
+    try {
       const fetched = await api.getExpenseCategories();
       
       // Filter based on forcedCashType if provided
@@ -33,15 +35,18 @@ export const ExpenseForm = ({ onSave, initialData, forcedCashType }: ExpenseForm
       if (initialData) {
         setFormData({ ...initialData });
       } else {
-        setFormData({
-          amount: 0,
-          category_id: filtered[0]?.id || '',
-          description: '',
-          date: new Date().toISOString().split('T')[0],
-          cash_type: forcedCashType || 'petty'
-        });
+        setFormData(prev => ({
+          ...prev,
+          category_id: prev.category_id || filtered[0]?.id || '',
+          cash_type: forcedCashType || prev.cash_type || 'petty'
+        }));
       }
-    };
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
     loadCategories();
   }, [initialData, forcedCashType]);
 
@@ -76,17 +81,29 @@ export const ExpenseForm = ({ onSave, initialData, forcedCashType }: ExpenseForm
 
       <div className="form-group">
         <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.875rem' }}>Kategori</label>
-        <select 
-          value={formData.category_id}
-          onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
-          style={{ width: '100%' }}
-          required
-        >
-          <option value="" disabled>Pilih Kategori</option>
-          {categories.map(cat => (
-            <option key={cat.id} value={cat.id}>{cat.name}</option>
-          ))}
-        </select>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <select 
+            value={formData.category_id}
+            onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
+            style={{ width: '100%' }}
+            required
+          >
+            <option value="" disabled>Pilih Kategori</option>
+            {categories.map(cat => (
+              <option key={cat.id} value={cat.id}>{cat.name}</option>
+            ))}
+          </select>
+          <button 
+            type="button" 
+            onClick={loadCategories} 
+            className="btn-secondary"
+            style={{ padding: '0.5rem', width: '3rem', flexShrink: 0 }}
+            title="Refresh Kategori"
+            disabled={isRefreshing}
+          >
+            <RefreshCw size={16} className={isRefreshing ? 'animate-spin' : ''} />
+          </button>
+        </div>
       </div>
 
       {!forcedCashType && (
