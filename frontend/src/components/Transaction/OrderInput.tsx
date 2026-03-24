@@ -24,6 +24,7 @@ interface OrderInputProps {
 export const OrderInput = ({ currentUser }: OrderInputProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [customerName, setCustomerName] = useState('');
+  const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
   const [services, setServices] = useState<Service[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -99,8 +100,9 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
 
     const lowVal = val.toLowerCase();
     const foundCustomer = customers.find(c => c.name.toLowerCase() === lowVal || c.phone === val);
-
-    if (foundCustomer && foundCustomer.type_id) {
+    if (foundCustomer) {
+      setSelectedCustomerId(foundCustomer.id);
+      if (foundCustomer.type_id) {
       const mType = memberTypes.find(m => m.id === foundCustomer.type_id);
       const typeName = mType?.name.toLowerCase() || '';
       if (typeName.includes('reseller')) {
@@ -110,7 +112,9 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
       } else {
         setSelectedTier('normal');
       }
+      }
     } else {
+      setSelectedCustomerId(null);
       if (lowVal.includes('reseller')) {
         setSelectedTier('reseller');
       } else if (lowVal.includes('member')) {
@@ -123,6 +127,7 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
 
   const selectCustomer = (customer: Customer) => {
     setCustomerName(customer.name);
+    setSelectedCustomerId(customer.id);
     setShowSuggestions(false);
     
     if (customer.type_id) {
@@ -202,6 +207,7 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
 
         const orderData = {
           customer_name: customerName,
+          customer_id: selectedCustomerId,
           service_id: item.service_id,
           service_name: item.service_name,
           employee_id: selectedEmployeeId,
@@ -225,6 +231,7 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
       
       // Reset form
       setCustomerName('');
+      setSelectedCustomerId(null);
       setOrderItems([]);
       setNotes('');
       setDiscountValue(0);
@@ -567,10 +574,11 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
         onClose={() => setIsModalOpen(false)}
         onSave={async (customer) => {
           try {
-            await api.createCustomer(customer);
+            const newCustomer = await api.createCustomer(customer);
             fetchData(); // Refresh customers list
-            setCustomerName(customer.name);
-            if (customer.type_id) setSelectedTier('member');
+            setCustomerName(newCustomer.name);
+            setSelectedCustomerId(newCustomer.id);
+            if (newCustomer.type_id) setSelectedTier('member');
             alert('Pelanggan berhasil ditambahkan!');
           } catch (error) {
             alert('Gagal menambah pelanggan');
