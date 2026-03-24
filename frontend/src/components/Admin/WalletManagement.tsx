@@ -41,7 +41,7 @@ export const WalletManagement = () => {
 
     try {
       const newBalance = (customer.wallet_balance || 0) + amount;
-      await api.updateCustomerBalance(customer.id, { wallet_balance: newBalance } as any);
+      await api.updateCustomerBalance(customer.id, newBalance);
       alert(`Berhasil menambah Rp ${amount.toLocaleString()} ke saldo ${customer.name}`);
       fetchData();
     } catch (error) {

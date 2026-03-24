@@ -90,6 +90,7 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
         }
 
         if (newBalance !== walletBalance) {
+          console.log(`Updating customer ${customer.id} balance: ${walletBalance} -> ${newBalance} (Surplus: ${balance}, Used Wallet: ${usedWalletAmount})`);
           await api.updateCustomerBalance(customer.id, newBalance);
         }
       }
