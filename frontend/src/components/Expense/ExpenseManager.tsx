@@ -39,8 +39,14 @@ export const ExpenseManager = ({ userRole = 'staff' }: ExpenseManagerProps) => {
 
   const handleSave = async (data: Partial<Expense>) => {
     try {
-      // Strip non-database fields
-      const { expense_categories, ...cleanData } = data as any;
+      // Strip ALL non-database fields and redundant IDs/timestamps
+      const cleanData = {
+        amount: data.amount,
+        category_id: data.category_id,
+        description: data.description,
+        date: data.date,
+        cash_type: data.cash_type
+      };
       
       if (editingExpense) {
         await api.updateExpense(editingExpense.id, cleanData);
