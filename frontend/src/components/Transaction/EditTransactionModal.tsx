@@ -68,7 +68,7 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
       await onSave(transaction.id, {
         status,
         is_paid: isPaid,
-        payment_method: useWallet && amountReceived === 0 ? 'Wallet' : paymentMethod,
+        payment_method: useWallet && amountReceived === 0 ? 'Saldo' : paymentMethod,
         notes
       });
 
