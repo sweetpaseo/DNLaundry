@@ -34,7 +34,10 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
       setSurplusAction('deposit');
       
       api.getCustomers().then(customers => {
-        const found = customers.find((c: Customer) => c.id === transaction.customer_id);
+        let found = customers.find((c: Customer) => c.id === transaction.customer_id);
+        if (!found && transaction.customer_name) {
+          found = customers.find((c: Customer) => c.name.toLowerCase() === transaction.customer_name.toLowerCase());
+        }
         if (found) setCustomer(found);
       });
     }
