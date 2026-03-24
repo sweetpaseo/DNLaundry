@@ -489,7 +489,78 @@ settings.put('/', async (c) => {
   return c.json(result.data?.[0] || dataToSave)
 })
 
-app.route('/api/transactions', transactions)
+// Stock Management
+const stock = new Hono<{ Bindings: Bindings }>()
+stock.get('/', async (c) => {
+  const supabase = getSupabase(c)
+  const { data, error } = await supabase.from('laundry_stock').select('*').order('name')
+  if (error) return c.json({ error: error.message }, 500)
+  return c.json(data || [])
+})
+
+stock.post('/', async (c) => {
+  const body = await c.req.json()
+  const supabase = getSupabase(c)
+  const { data, error } = await supabase.from('laundry_stock').insert(body).select()
+  if (error) return c.json({ error: error.message }, 500)
+  return c.json(data[0], 201)
+})
+
+stock.put('/:id', async (c) => {
+  const id = c.req.param('id')
+  const body = await c.req.json()
+  const supabase = getSupabase(c)
+  const { data, error } = await supabase.from('laundry_stock').update(body).eq('id', id).select()
+  if (error) return c.json({ error: error.message }, 500)
+  return c.json(data[0])
+})
+
+stock.delete('/:id', async (c) => {
+  const id = c.req.param('id')
+  const supabase = getSupabase(c)
+  const { error } = await supabase.from('laundry_stock').delete().eq('id', id)
+  if (error) return c.json({ error: error.message }, 500)
+  return c.json({ success: true })
+})
+
+// Stock Logs (Movements)
+const stockLogs = new Hono<{ Bindings: Bindings }>()
+stockLogs.get('/', async (c) => {
+  const supabase = getSupabase(c)
+  const stockId = c.req.query('stock_id')
+  let query = supabase.from('laundry_stock_logs').select('*, stock:laundry_stock(name, unit)').order('created_at', { ascending: false })
+  if (stockId) query = query.eq('stock_id', stockId)
+  
+  const { data, error } = await query
+  if (error) return c.json({ error: error.message }, 500)
+  return c.json(data || [])
+})
+
+stockLogs.post('/', async (c) => {
+  const body = await c.req.json() // { stock_id, type, amount, note, user_id }
+  const supabase = getSupabase(c)
+  
+  // 1. Insert Log
+  const { data: logData, error: logError } = await supabase.from('laundry_stock_logs').insert(body).select()
+  if (logError) return c.json({ error: logError.message }, 500)
+
+  // 2. Update current_stock in laundry_stock
+  // We need to fetch current stock first OR use a smart update
+  const { data: currentStockData } = await supabase.from('laundry_stock').select('current_stock').eq('id', body.stock_id).single()
+  
+  if (currentStockData) {
+    const newStock = body.type === 'in' 
+      ? (currentStockData.current_stock + body.amount) 
+      : (currentStockData.current_stock - body.amount);
+      
+    await supabase.from('laundry_stock').update({ current_stock: newStock }).eq('id', body.stock_id)
+  }
+
+  return c.json(logData[0], 201)
+})
+
+app.route('/api/stock', stock)
+app.route('/api/stock-logs', stockLogs)
 app.route('/api/customers', customers)
 app.route('/api/membership', customerTypes)
 app.route('/api/services', services)

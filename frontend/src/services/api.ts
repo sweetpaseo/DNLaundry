@@ -449,5 +449,53 @@ export const api = {
 
   async uploadQRIS(file: File) {
     return this.uploadAsset(file, 'qris');
+  },
+
+  // Stock Management
+  async getStock() {
+    const res = await fetch(`${API_BASE_URL}/stock`, { headers: getHeaders() });
+    if (!res.ok) throw new Error('Gagal mengambil data stok');
+    return res.json();
+  },
+  async createStock(data: any) {
+    const res = await fetch(`${API_BASE_URL}/stock`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error('Gagal menambah stok barang');
+    return res.json();
+  },
+  async updateStock(id: string, data: any) {
+    const res = await fetch(`${API_BASE_URL}/stock/${id}`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error('Gagal update stok barang');
+    return res.json();
+  },
+  async deleteStock(id: string) {
+    const res = await fetch(`${API_BASE_URL}/stock/${id}`, {
+      method: 'DELETE',
+      headers: getHeaders(),
+    });
+    if (!res.ok) throw new Error('Gagal menghapus stok barang');
+    return res.json();
+  },
+  async getStockLogs(stockId?: string) {
+    const url = stockId ? `${API_BASE_URL}/stock-logs?stock_id=${stockId}` : `${API_BASE_URL}/stock-logs`;
+    const res = await fetch(url, { headers: getHeaders() });
+    if (!res.ok) throw new Error('Gagal mengambil log stok');
+    return res.json();
+  },
+  async recordStockMovement(data: { stock_id: string; type: 'in' | 'out' | 'adjustment'; amount: number; note?: string; user_id?: string }) {
+    const res = await fetch(`${API_BASE_URL}/stock-logs`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error('Gagal mencatat mutasi stok');
+    return res.json();
   }
 };

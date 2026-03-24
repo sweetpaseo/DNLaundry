@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Users, Settings, PlusCircle, List, LogOut, Calculator, Receipt } from 'lucide-react';
+import { Users, Settings, PlusCircle, List, LogOut, Calculator, Receipt, Archive } from 'lucide-react';
+import { StockManager } from './components/Stock/StockManager';
 import { motion, AnimatePresence } from 'framer-motion';
 import { api } from './services/api';
 import { OrderInput } from './components/Transaction/OrderInput';
@@ -15,7 +16,7 @@ function App() {
     const saved = localStorage.getItem('laundry_user');
     return saved ? JSON.parse(saved) : null;
   });
-  const [activeMenu, setActiveMenu] = useState<'transaksi' | 'biaya' | 'pelanggan' | 'admin'>('transaksi');
+  const [activeMenu, setActiveMenu] = useState<'transaksi' | 'biaya' | 'pelanggan' | 'admin' | 'stok'>('transaksi');
   const [activeTab, setActiveTab] = useState<'input' | 'list'>('input');
   const [activeTabPelanggan, setActiveTabPelanggan] = useState<'list' | 'saldo'>('list');
   const [settings, setSettings] = useState<any>({
@@ -77,6 +78,7 @@ function App() {
     { id: 'transaksi', label: 'Transaksi', icon: <Calculator size={18} /> },
     { id: 'biaya', label: 'Biaya', icon: <Receipt size={18} /> },
     { id: 'pelanggan', label: 'Pelanggan', icon: <Users size={18} /> },
+    { id: 'stok', label: 'Stok', icon: <Archive size={18} /> },
     ...(user.role === 'owner' ? [{ id: 'admin', label: 'Admin', icon: <Settings size={18} /> }] : []),
   ];
 
@@ -174,6 +176,7 @@ function App() {
           <ExpenseManager userRole={user.role} />
         )}
 
+        {activeMenu === 'stok' && <StockManager user={user} />}
         {activeMenu === 'pelanggan' && (
           <div>
             <div className="sub-nav">

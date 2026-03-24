@@ -98,3 +98,24 @@ export interface Transaction {
   group_id?: string;
   created_at: string;
 }
+
+export interface Stock {
+  id: string;
+  name: string;
+  unit: string;
+  current_stock: number;
+  min_stock: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface StockLog {
+  id: string;
+  stock_id: string;
+  type: 'in' | 'out' | 'adjustment';
+  amount: number;
+  note?: string;
+  created_at: string;
+  user_id?: string;
+  stock?: { name: string; unit: string }; // For joined data
+}
