@@ -35,14 +35,28 @@ export const TransactionList = () => {
   const handleUpdate = async (id: string, data: Partial<Transaction>) => {
     try {
       const transaction = transactions.find(t => t.id === id);
+      
+      // 1. Update the MUST-HAVE fields for the specific item
+      await api.updateTransaction(id, data);
+
+      // 2. If it's part of a group, sync group-level fields only
       if (transaction?.group_id) {
-        const groupItems = transactions.filter(t => t.group_id === transaction.group_id);
-        for (const item of groupItems) {
-          await api.updateTransaction(item.id, data);
+        const otherItems = transactions.filter(t => t.group_id === transaction.group_id && t.id !== id);
+        for (const item of otherItems) {
+          // Only update fields that are actually present in the data
+          const updateObj: any = {};
+          if (data.status !== undefined) updateObj.status = data.status;
+          if (data.is_paid !== undefined) updateObj.is_paid = data.is_paid;
+          if (data.payment_method !== undefined) updateObj.payment_method = data.payment_method;
+          if (data.notes !== undefined) updateObj.notes = data.notes;
+          if (data.created_at !== undefined) updateObj.created_at = data.created_at;
+
+          if (Object.keys(updateObj).length > 0) {
+            await api.updateTransaction(item.id, updateObj);
+          }
         }
-      } else {
-        await api.updateTransaction(id, data);
       }
+      
       fetchTransactions();
     } catch (error) {
       console.error('Failed to update transaction:', error);

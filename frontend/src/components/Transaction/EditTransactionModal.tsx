@@ -1,8 +1,9 @@
 import { useState, useEffect, type FormEvent } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Save, Wallet, CheckCircle2, AlertCircle } from 'lucide-react';
-import type { Transaction, TransactionStatus, PaymentMethod, Customer } from '../../types';
+import { X, Save, Wallet, CheckCircle2, Calendar, User, Star, Hash, Plus, Percent } from 'lucide-react';
+import type { Transaction, TransactionStatus, PaymentMethod, Customer, Service, Employee } from '../../types';
 import { api } from '../../services/api';
+import { roundUpTo500 } from '../../utils/format';
 
 interface EditTransactionModalProps {
   isOpen: boolean;
@@ -23,6 +24,20 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
+  // New states for expanded editing
+  const [services, setServices] = useState<Service[]>([]);
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [roundingEnabled, setRoundingEnabled] = useState(true);
+  
+  const [serviceId, setServiceId] = useState(transaction.service_id);
+  const [employeeId, setEmployeeId] = useState(transaction.employee_id || '');
+  const [weight, setWeight] = useState(transaction.weight);
+  const [selectedTier, setSelectedTier] = useState<'normal' | 'member' | 'express' | 'reseller'>('normal');
+  const [orderDate, setOrderDate] = useState(transaction.created_at.split('T')[0]);
+  const [discountType, setDiscountType] = useState<'fixed' | 'percentage'>(transaction.discount_percent > 0 ? 'percentage' : 'fixed');
+  const [discountValue, setDiscountValue] = useState(transaction.discount_percent > 0 ? transaction.discount_percent : transaction.discount_amount);
+  const [finalPrice, setFinalPrice] = useState(transaction.final_price);
+
   useEffect(() => {
     if (transaction && isOpen) {
       setStatus(transaction.status);
@@ -33,15 +48,76 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
       setUseWallet(false);
       setSurplusAction('deposit');
       
-      api.getCustomers().then(customers => {
-        let found = customers.find((c: Customer) => c.id === transaction.customer_id);
+      setServiceId(transaction.service_id);
+      setEmployeeId(transaction.employee_id || '');
+      setWeight(transaction.weight);
+      setOrderDate(transaction.created_at.split('T')[0]);
+      setDiscountType(transaction.discount_percent > 0 ? 'percentage' : 'fixed');
+      setDiscountValue(transaction.discount_percent > 0 ? transaction.discount_percent : transaction.discount_amount);
+      setFinalPrice(transaction.final_price);
+
+      // Fetch supporting data
+      Promise.all([
+        api.getServices(),
+        api.getEmployees(),
+        api.getSettings(),
+        api.getCustomers()
+      ]).then(([s, e, settings, custs]) => {
+        setServices(s.filter((srv: Service) => srv.is_active || srv.id === transaction.service_id));
+        setEmployees(e.filter((emp: Employee) => emp.is_active || emp.id === transaction.employee_id));
+        if (settings) setRoundingEnabled(settings.rounding_enabled !== false);
+        
+        // Find customer
+        let found = custs.find((c: Customer) => c.id === transaction.customer_id);
         if (!found && transaction.customer_name) {
-          found = customers.find((c: Customer) => c.name.toLowerCase() === transaction.customer_name.toLowerCase());
+          found = custs.find((c: Customer) => c.name.toLowerCase() === transaction.customer_name.toLowerCase());
         }
-        if (found) setCustomer(found);
+        if (found) {
+          setCustomer(found);
+          // Infer tier from customer type if possible
+          api.getMemberTypes().then(mTypes => {
+            const mType = mTypes.find((m: any) => m.id === found?.type_id);
+            const typeName = mType?.name.toLowerCase() || '';
+            if (typeName.includes('reseller')) setSelectedTier('reseller');
+            else if (typeName.includes('member')) setSelectedTier('member');
+            else setSelectedTier('normal');
+          });
+        }
       });
     }
   }, [transaction, isOpen]);
+
+  // Price Calculation logic
+  useEffect(() => {
+    const srv = services.find(s => s.id === serviceId);
+    if (!srv) return;
+
+    let basePrice = srv.price_normal || 0;
+    if (selectedTier === 'member') basePrice = srv.price_member || 0;
+    else if (selectedTier === 'express') basePrice = srv.price_express || 0;
+    else if (selectedTier === 'reseller') basePrice = srv.price_special || 0;
+
+    const subtotal = basePrice * weight;
+    let discAmount = 0;
+    let discPercent = 0;
+
+    if (discountType === 'percentage') {
+      discPercent = Number(discountValue);
+      discAmount = (subtotal * discPercent) / 100;
+    } else {
+      discAmount = Number(discountValue);
+      discPercent = subtotal > 0 ? (discAmount / subtotal) * 100 : 0;
+    }
+
+    const calculatedFinal = roundingEnabled 
+      ? roundUpTo500(Math.max(0, subtotal - discAmount))
+      : Math.max(0, subtotal - discAmount);
+    
+    setFinalPrice(calculatedFinal);
+    if (isPaid && amountReceived < calculatedFinal) {
+      setAmountReceived(calculatedFinal);
+    }
+  }, [serviceId, weight, selectedTier, discountType, discountValue, services, roundingEnabled]);
 
   useEffect(() => {
     if (isOpen) {
@@ -54,12 +130,13 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
 
   if (!isOpen) return null;
 
-  const displayTotal = groupTotal || transaction.final_price;
+  const displayTotal = groupTotal 
+    ? (groupTotal - transaction.final_price + finalPrice)
+    : finalPrice;
   
   // Live Calculations
   const walletBalance = customer?.wallet_balance || 0;
   const usedWalletAmount = useWallet ? Math.min(walletBalance, displayTotal) : 0;
-  const remainingBill = displayTotal - usedWalletAmount;
   const totalIn = amountReceived + usedWalletAmount;
   const balance = totalIn - displayTotal;
 
@@ -67,12 +144,41 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
     e.preventDefault();
     setIsSaving(true);
     try {
+      const srv = services.find(s => s.id === serviceId);
+      if (!srv) throw new Error('Layanan tidak ditemukan');
+
+      let basePrice = srv.price_normal || 0;
+      if (selectedTier === 'member') basePrice = srv.price_member || 0;
+      else if (selectedTier === 'express') basePrice = srv.price_express || 0;
+      else if (selectedTier === 'reseller') basePrice = srv.price_special || 0;
+
+      const subtotal = basePrice * weight;
+      let discAmount = 0;
+      let discPercent = 0;
+
+      if (discountType === 'percentage') {
+        discPercent = Number(discountValue);
+        discAmount = (subtotal * discPercent) / 100;
+      } else {
+        discAmount = Number(discountValue);
+        discPercent = subtotal > 0 ? (discAmount / subtotal) * 100 : 0;
+      }
+
       // 2. Update Transaction
       await onSave(transaction.id, {
         status,
         is_paid: isPaid,
         payment_method: useWallet && amountReceived === 0 ? 'Saldo' : paymentMethod,
-        notes
+        notes,
+        service_id: serviceId,
+        service_name: srv.name,
+        employee_id: employeeId || undefined,
+        weight: weight,
+        total_price: subtotal,
+        discount_amount: discAmount,
+        discount_percent: discPercent,
+        final_price: finalPrice,
+        created_at: new Date(orderDate).toISOString()
       });
 
       // 3. Handle Wallet Update
@@ -106,11 +212,11 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
 
   return createPortal(
     <div className="modal-overlay">
-      <div className="modal-content glass-card animate-scale-in" style={{ width: 'min(95%, 480px)', padding: '0', maxHeight: '90vh', overflowY: 'auto', border: '1px solid var(--glass-border)' }}>
+      <div className="modal-content glass-card animate-scale-in" style={{ width: 'min(95%, 520px)', padding: '0', maxHeight: '95vh', overflowY: 'auto', border: '1px solid var(--glass-border)' }}>
         <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, background: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(10px)', zIndex: 10 }}>
           <div>
             <h3 style={{ fontSize: '1.1rem', fontWeight: 800 }}>Edit Transaksi</h3>
-            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>ID: {transaction.id.slice(0, 8)}...</p>
+            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>ID: {transaction.receipt_no || transaction.id.slice(0, 8)}</p>
           </div>
           <button onClick={onClose} style={{ color: 'var(--text-muted)', background: 'transparent', border: 'none', cursor: 'pointer', padding: '0.5rem' }}>
             <X size={20} />
@@ -118,21 +224,134 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
         </div>
 
         <form onSubmit={handleSubmit} style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          {/* Status Section */}
-          <div className="form-group">
-            <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.8rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Status Pesanan</label>
-            <select 
-              value={status} 
-              onChange={(e) => setStatus(e.target.value as TransactionStatus)}
-              style={{ width: '100%', height: '3rem', fontSize: '1rem' }}
-            >
-              <option value="Baru" style={{ background: '#1a1a1a' }}>🆕 Baru</option>
-              <option value="Proses" style={{ background: '#1a1a1a' }}>🔄 Proses</option>
-              <option value="Siap Ambil" style={{ background: '#1a1a1a' }}>✅ Siap Ambil</option>
-              <option value="Siap Kirim" style={{ background: '#1a1a1a' }}>🚚 Siap Kirim</option>
-              <option value="Selesai" style={{ background: '#1a1a1a' }}>🏁 Selesai</option>
-            </select>
+          
+          {/* Date & Status Row */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="form-group">
+              <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase' }}>Tanggal Order</label>
+              <div style={{ position: 'relative' }}>
+                <input 
+                  type="date" 
+                  value={orderDate}
+                  onChange={(e) => setOrderDate(e.target.value)}
+                  style={{ width: '100%', paddingLeft: '2.5rem', height: '3rem' }} 
+                />
+                <Calendar size={16} style={{ position: 'absolute', left: '0.8rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+              </div>
+            </div>
+            <div className="form-group">
+              <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase' }}>Status Pesanan</label>
+              <select 
+                value={status} 
+                onChange={(e) => setStatus(e.target.value as TransactionStatus)}
+                style={{ width: '100%', height: '3rem' }}
+              >
+                <option value="Baru" style={{ background: '#1a1a1a' }}>🆕 Baru</option>
+                <option value="Proses" style={{ background: '#1a1a1a' }}>🔄 Proses</option>
+                <option value="Siap Ambil" style={{ background: '#1a1a1a' }}>✅ Siap Ambil</option>
+                <option value="Siap Kirim" style={{ background: '#1a1a1a' }}>🚚 Siap Kirim</option>
+                <option value="Selesai" style={{ background: '#1a1a1a' }}>🏁 Selesai</option>
+              </select>
+            </div>
           </div>
+
+          {/* Service & Employee */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '1rem' }}>
+            <div className="form-group">
+              <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase' }}>Layanan</label>
+              <select 
+                value={serviceId} 
+                onChange={(e) => setServiceId(e.target.value)}
+                style={{ width: '100%', height: '3rem' }}
+              >
+                {services.map(s => (
+                  <option key={s.id} value={s.id} style={{ background: '#1a1a1a' }}>{s.name}</option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group">
+              <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase' }}>Petugas</label>
+              <select 
+                value={employeeId} 
+                onChange={(e) => setEmployeeId(e.target.value)}
+                style={{ width: '100%', height: '3rem' }}
+              >
+                <option value="">Pilih Petugas</option>
+                {employees.map(e => (
+                  <option key={e.id} value={e.id} style={{ background: '#1a1a1a' }}>{e.name}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Tier & Quantity */}
+          <div style={{ background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 100px', gap: '1rem', alignItems: 'end' }}>
+              <div className="form-group">
+                <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.7rem', fontWeight: 600 }}>TIER HARGA</label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.4rem' }}>
+                  {(['normal', 'member', 'express', 'reseller'] as const).map(t => (
+                    <button
+                      key={t}
+                      type="button"
+                      onClick={() => setSelectedTier(t)}
+                      style={{
+                        padding: '0.5rem 0',
+                        fontSize: '0.65rem',
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                        borderRadius: '6px',
+                        border: '1px solid var(--glass-border)',
+                        background: selectedTier === t ? 'var(--primary-gradient)' : 'transparent',
+                        color: selectedTier === t ? 'white' : 'var(--text-muted)'
+                      }}
+                    >
+                      {t}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="form-group">
+                <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.7rem', fontWeight: 600 }}>JUMLAH</label>
+                <input 
+                  type="number" 
+                  step="0.1"
+                  value={weight} 
+                  onChange={(e) => setWeight(Number(e.target.value))}
+                  style={{ width: '100%', height: '2.5rem', textAlign: 'center', fontWeight: 700 }} 
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Discount Section */}
+          <div className="form-group" style={{ background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+            <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.7rem', fontWeight: 600, textTransform: 'uppercase' }}>Diskon Khusus</label>
+            <div style={{ display: 'flex', gap: '0.75rem' }}>
+              <select 
+                value={discountType}
+                onChange={(e) => setDiscountType(e.target.value as 'fixed' | 'percentage')}
+                style={{ width: '70px', height: '2.5rem' }}
+              >
+                <option value="fixed">Rp</option>
+                <option value="percentage">%</option>
+              </select>
+              <div style={{ position: 'relative', flex: 1 }}>
+                <input 
+                  type="number" 
+                  value={discountValue}
+                  onChange={(e) => setDiscountValue(Number(e.target.value))}
+                  style={{ width: '100%', height: '2.5rem', paddingLeft: '2rem' }} 
+                />
+                {discountType === 'percentage' ? 
+                  <Percent size={14} style={{ position: 'absolute', left: '0.7rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} /> :
+                  <Hash size={14} style={{ position: 'absolute', left: '0.7rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                }
+              </div>
+            </div>
+          </div>
+
+          <div style={{ margin: '0.25rem 0', height: '1px', background: 'var(--glass-border)' }}></div>
 
           {/* Payment Section */}
           <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1.25rem', borderRadius: '16px', border: '1px solid var(--glass-border)' }}>
@@ -148,8 +367,8 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
                   onChange={(e) => {
                     const checked = e.target.checked;
                     setIsPaid(checked);
-                    if (checked && amountReceived < displayTotal) {
-                      setAmountReceived(displayTotal);
+                    if (checked && amountReceived < finalPrice) {
+                      setAmountReceived(finalPrice);
                     } else if (!checked) {
                       setAmountReceived(0);
                     }
@@ -162,14 +381,14 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
                   style={{ opacity: 0, width: 0, height: 0 }} 
                 />
                 <span style={{ position: 'absolute', cursor: 'pointer', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: isPaid ? '#22c55e' : '#475569', transition: '.4s', borderRadius: '20px' }}>
-                  <span style={{ position: 'absolute', content: '""', height: '14px', width: '14px', left: isPaid ? '23px' : '3px', bottom: '3px', backgroundColor: 'white', transition: '.4s', borderRadius: '50%' }}></span>
+                  <span style={{ position: 'absolute', height: '14px', width: '14px', left: isPaid ? '23px' : '3px', bottom: '3px', backgroundColor: 'white', transition: '.4s', borderRadius: '50%' }}></span>
                 </span>
               </label>
             </div>
 
             {isPaid && (
               <div className="animate-slide-down" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                {/* Wallet Usage */}
+                {/* Wallet Usage omitted for brevity or integrated if needed */}
                 {walletBalance > 0 && (
                   <div style={{ padding: '0.75rem', background: 'rgba(34, 197, 94, 0.05)', borderRadius: '12px', border: '1px solid rgba(34, 197, 94, 0.1)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -191,11 +410,12 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
                       value={paymentMethod} 
                       onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
                       style={{ width: '100%', height: '2.5rem', borderRadius: '10px' }}
-                      disabled={useWallet && remainingBill <= 0}
+                      disabled={useWallet && balance >= 0}
                     >
                       <option value="Cash">💵 Cash</option>
                       <option value="Transfer Bank">🏦 Transfer</option>
                       <option value="QRIS">📱 QRIS</option>
+                      <option value="Saldo" disabled>👛 Saldo</option>
                     </select>
                   </div>
                   <div>
@@ -212,20 +432,10 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
 
                 {/* Live Summary */}
                 <div style={{ marginTop: '0.25rem', padding: '1rem', background: 'rgba(0,0,0,0.2)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '0.5rem', opacity: 0.8 }}>
-                    <span style={{ color: 'var(--text-muted)' }}>Saldo Terkini Pelanggan:</span>
-                    <span style={{ fontWeight: 600 }}>Rp {walletBalance.toLocaleString()}</span>
-                  </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '0.5rem' }}>
-                    <span style={{ color: 'var(--text-muted)' }}>{groupTotal ? 'Total Tagihan Group:' : 'Total Tagihan:'}</span>
-                    <span style={{ fontWeight: 700 }}>Rp {displayTotal.toLocaleString()}</span>
+                    <span style={{ color: 'var(--text-muted)' }}>Tagihan Akhir:</span>
+                    <span style={{ fontWeight: 800, color: 'var(--primary)', fontSize: '1.1rem' }}>Rp {finalPrice.toLocaleString()}</span>
                   </div>
-                  {useWallet && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '0.5rem', color: '#22c55e' }}>
-                      <span>Pakai Saldo Dompet:</span>
-                      <span>- Rp {usedWalletAmount.toLocaleString()}</span>
-                    </div>
-                  )}
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', paddingTop: '0.5rem', borderTop: '1px dashed rgba(255,255,255,0.1)' }}>
                     <span style={{ fontWeight: 600 }}>{balance >= 0 ? 'Kembalian:' : 'Sisa Kurang:'}</span>
                     <span style={{ fontWeight: 800, color: balance >= 0 ? '#22c55e' : '#ef4444', fontSize: '1rem' }}>
@@ -233,46 +443,13 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
                     </span>
                   </div>
 
-                  {/* Surplus Choice */}
                   {balance > 0 && (
-                    <div className="animate-fade-in" style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                      <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '0.5rem', fontWeight: 600 }}>TINDAKAN UNTUK KELEBIHAN BAYAR:</p>
+                    <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                      <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>TINDAKAN KELEBIHAN:</p>
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
-                        <button 
-                          type="button"
-                          onClick={() => setSurplusAction('deposit')}
-                          style={{ 
-                            padding: '0.5rem', borderRadius: '8px', fontSize: '0.75rem', cursor: 'pointer',
-                            background: surplusAction === 'deposit' ? 'rgba(34, 197, 94, 0.2)' : 'transparent',
-                            border: `1px solid ${surplusAction === 'deposit' ? '#22c55e' : 'rgba(255,255,255,0.1)'}`,
-                            color: surplusAction === 'deposit' ? '#22c55e' : 'var(--text-muted)',
-                            fontWeight: surplusAction === 'deposit' ? 700 : 400
-                          }}
-                        >
-                          👛 Jadi Deposit
-                        </button>
-                        <button 
-                          type="button"
-                          onClick={() => setSurplusAction('change')}
-                          style={{ 
-                            padding: '0.5rem', borderRadius: '8px', fontSize: '0.75rem', cursor: 'pointer',
-                            background: surplusAction === 'change' ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
-                            border: `1px solid ${surplusAction === 'change' ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.1)'}`,
-                            color: surplusAction === 'change' ? 'white' : 'var(--text-muted)',
-                            fontWeight: surplusAction === 'change' ? 700 : 400
-                          }}
-                        >
-                          💵 Kasih Kembalian
-                        </button>
+                        <button type="button" onClick={() => setSurplusAction('deposit')} style={{ padding: '0.4rem', borderRadius: '6px', fontSize: '0.7rem', background: surplusAction === 'deposit' ? 'rgba(34, 197, 94, 0.2)' : 'transparent', border: `1px solid ${surplusAction === 'deposit' ? '#22c55e' : 'rgba(255,255,255,0.1)'}`, color: surplusAction === 'deposit' ? '#22c55e' : 'var(--text-muted)' }}>👛 Jadi Deposit</button>
+                        <button type="button" onClick={() => setSurplusAction('change')} style={{ padding: '0.4rem', borderRadius: '6px', fontSize: '0.7rem', background: surplusAction === 'change' ? 'rgba(255, 255, 255, 0.1)' : 'transparent', border: `1px solid ${surplusAction === 'change' ? 'white' : 'rgba(255,255,255,0.1)'}`, color: surplusAction === 'change' ? 'white' : 'var(--text-muted)' }}>💵 Kembalian</button>
                       </div>
-                    </div>
-                  )}
-
-                  {/* Debt Info */}
-                  {balance < 0 && (
-                    <div style={{ marginTop: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#ef4444', fontSize: '0.75rem' }}>
-                      <AlertCircle size={14} />
-                      <span>Input kurang mencukupi. Sisa akan dicatat sebagai hutang.</span>
                     </div>
                   )}
                 </div>
@@ -285,7 +462,7 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
             <textarea 
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              style={{ width: '100%', minHeight: '80px', padding: '1rem', fontSize: '0.9rem' }}
+              style={{ width: '100%', minHeight: '60px', padding: '0.75rem', fontSize: '0.9rem' }}
               placeholder="Tambahkan catatan di sini..."
             />
           </div>
