@@ -429,6 +429,46 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
                 <Plus size={20} /> Tambahkan Item
               </button>
             </div>
+            
+            {/* Price Simulation Display */}
+            {Number(amount) > 0 && selectedServiceId && (
+              <div 
+                className="animate-fade-in"
+                style={{ 
+                  marginTop: '0.75rem', 
+                  padding: '0.75rem 1rem', 
+                  background: 'rgba(255,255,255,0.03)', 
+                  borderRadius: '10px', 
+                  border: '1px dashed var(--glass-border)',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}
+              >
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+                  SIMULASI: {amount} {services.find(s => s.id === selectedServiceId)?.unit} x 
+                  Rp {(() => {
+                    const srv = services.find(s => s.id === selectedServiceId);
+                    if (!srv) return 0;
+                    if (selectedTier === 'member') return srv.price_member || 0;
+                    if (selectedTier === 'express') return srv.price_express || 0;
+                    if (selectedTier === 'reseller') return srv.price_special || 0;
+                    return srv.price_normal || 0;
+                  })().toLocaleString()}
+                </div>
+                <div style={{ fontWeight: 800, color: 'var(--primary)', fontSize: '1rem' }}>
+                  Rp {(() => {
+                    const srv = services.find(s => s.id === selectedServiceId);
+                    if (!srv) return 0;
+                    let price = srv.price_normal || 0;
+                    if (selectedTier === 'member') price = srv.price_member || 0;
+                    else if (selectedTier === 'express') price = srv.price_express || 0;
+                    else if (selectedTier === 'reseller') price = srv.price_special || 0;
+                    return (price * Number(amount)).toLocaleString();
+                  })()}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* List of Added Items */}
