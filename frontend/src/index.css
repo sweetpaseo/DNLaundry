@@ -177,8 +177,7 @@ input:focus, select:focus {
   }
 
   .sub-nav button:last-child {
-    grid-column: span 2;
-    margin-left: 0 !important;
+    grid-column: span 1;
   }
 
   .tab-btn {
