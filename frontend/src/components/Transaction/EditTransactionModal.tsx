@@ -1,6 +1,6 @@
 import { useState, useEffect, type FormEvent } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Save, Wallet, CheckCircle2, Calendar, User, Star, Hash, Plus, Percent } from 'lucide-react';
+import { X, Save, Wallet, CheckCircle2, Calendar, Hash, Percent } from 'lucide-react';
 import type { Transaction, TransactionStatus, PaymentMethod, Customer, Service, Employee } from '../../types';
 import { api } from '../../services/api';
 import { roundUpTo500 } from '../../utils/format';
