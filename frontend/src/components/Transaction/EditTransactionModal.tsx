@@ -37,6 +37,7 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
   const [discountType, setDiscountType] = useState<'fixed' | 'percentage'>(transaction.discount_percent > 0 ? 'percentage' : 'fixed');
   const [discountValue, setDiscountValue] = useState(transaction.discount_percent > 0 ? transaction.discount_percent : transaction.discount_amount);
   const [finalPrice, setFinalPrice] = useState(transaction.final_price);
+  const [dueDate, setDueDate] = useState(transaction.due_date || '');
 
   useEffect(() => {
     if (transaction && isOpen) {
@@ -55,6 +56,7 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
       setDiscountType(transaction.discount_percent > 0 ? 'percentage' : 'fixed');
       setDiscountValue(transaction.discount_percent > 0 ? transaction.discount_percent : transaction.discount_amount);
       setFinalPrice(transaction.final_price);
+      setDueDate(transaction.due_date || '');
 
       // Fetch supporting data
       Promise.all([
@@ -121,6 +123,16 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
       setAmountReceived(calculatedFinal);
     }
   }, [serviceId, weight, selectedTier, discountType, discountValue, services, roundingEnabled]);
+  
+  useEffect(() => {
+    const srv = services.find(s => s.id === serviceId);
+    if (srv) {
+      const days = srv.processing_days || 0;
+      const date = new Date(orderDate);
+      date.setDate(date.getDate() + days);
+      setDueDate(date.toISOString());
+    }
+  }, [serviceId, orderDate, services]);
 
   useEffect(() => {
     if (isOpen) {
@@ -181,6 +193,7 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
         discount_amount: discAmount,
         discount_percent: discPercent,
         final_price: finalPrice,
+        due_date: dueDate,
         created_at: new Date(orderDate).toISOString()
       });
 

@@ -81,11 +81,11 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
     if (srv) {
       // SLA Calculation
       const days = srv.processing_days || 0;
-      const date = new Date();
+      const date = new Date(orderDate);
       date.setDate(date.getDate() + days);
       setDueDate(date.toISOString());
     }
-  }, [selectedServiceId, selectedTier, amount, services]);
+  }, [selectedServiceId, selectedTier, amount, services, orderDate]);
 
   const handleCustomerChange = (val: string) => {
     setCustomerName(val);
