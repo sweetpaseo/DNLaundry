@@ -196,17 +196,19 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
 
     return matchesStatus && matchesPayment && matchesSearch;
   }).sort((a, b) => {
-    const isSelesaiA = a[0].status === 'Selesai';
-    const isSelesaiB = b[0].status === 'Selesai';
+    const tA = a[0];
+    const tB = b[0];
 
-    // Prioritize non-Selesai (active transactions)
-    if (isSelesaiA !== isSelesaiB) {
-      return isSelesaiA ? 1 : -1;
+    // Primary sort: receipt_no (if exists) descending
+    if (tA.receipt_no && tB.receipt_no) {
+      if (tA.receipt_no !== tB.receipt_no) {
+        return tB.receipt_no.localeCompare(tA.receipt_no);
+      }
     }
 
-    // Secondary sort: newest first
-    const timeA = new Date(a[0].created_at).getTime();
-    const timeB = new Date(b[0].created_at).getTime();
+    // Secondary sort: created_at descending
+    const timeA = new Date(tA.created_at).getTime();
+    const timeB = new Date(tB.created_at).getTime();
     return timeB - timeA;
   });
 
