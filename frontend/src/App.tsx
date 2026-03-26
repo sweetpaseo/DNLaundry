@@ -165,7 +165,7 @@ function App() {
                 transition={{ duration: 0.2 }}
               >
                 <div className="glass-card">
-                   {activeTab === 'input' ? <OrderInput currentUser={user} /> : <TransactionList />}
+                   {activeTab === 'input' ? <OrderInput currentUser={user} /> : <TransactionList currentUser={user} />}
                 </div>
               </motion.div>
             </AnimatePresence>

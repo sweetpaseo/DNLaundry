@@ -8,7 +8,11 @@ import { WhatsAppIcon } from '../Icons';
 import { getWhatsAppUrl } from '../../utils/whatsapp';
 import { getDisplayId, formatDisplayId } from '../../utils/customer';
 
-export const TransactionList = () => {
+interface TransactionListProps {
+  currentUser?: any;
+}
+
+export const TransactionList = ({ currentUser }: TransactionListProps) => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<TransactionStatus | 'Semua'>('Semua');
@@ -411,15 +415,17 @@ export const TransactionList = () => {
                           <Edit3 size={16} />
                         </button>
 
-                        <button 
-                          onClick={() => handleDelete(groupId)}
-                          style={{ 
-                            width: '2.5rem', height: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(244, 63, 94, 0.1)', borderRadius: '8px', color: '#f43f5e', border: '1px solid rgba(244, 63, 94, 0.2)', cursor: 'pointer', transition: 'all 0.2s'
-                          }}
-                          title="Hapus Transaksi"
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                        {currentUser?.role === 'owner' && (
+                          <button 
+                            onClick={() => handleDelete(groupId)}
+                            style={{ 
+                              width: '2.5rem', height: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(244, 63, 94, 0.1)', borderRadius: '8px', color: '#f43f5e', border: '1px solid rgba(244, 63, 94, 0.2)', cursor: 'pointer', transition: 'all 0.2s'
+                            }}
+                            title="Hapus Transaksi"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        )}
                       </div>
                     </div>
                   );
