@@ -54,7 +54,9 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
         api.getCustomers(),
         api.getMemberTypes()
       ]);
-      const activeServices = s.filter((srv: Service) => srv.is_active);
+      const activeServices = s
+        .filter((srv: Service) => srv.is_active)
+        .sort((a: Service, b: Service) => (a.price_normal || 0) - (b.price_normal || 0));
       const activeEmployees = e.filter((emp: Employee) => emp.is_active);
       setServices(activeServices);
       setEmployees(activeEmployees);

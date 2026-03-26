@@ -63,7 +63,10 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
         api.getSettings(),
         api.getCustomers()
       ]).then(([s, e, settings, custs]) => {
-        setServices(s.filter((srv: Service) => srv.is_active || srv.id === transaction.service_id));
+        setServices(s
+          .filter((srv: Service) => srv.is_active || srv.id === transaction.service_id)
+          .sort((a: Service, b: Service) => (a.price_normal || 0) - (b.price_normal || 0))
+        );
         setEmployees(e.filter((emp: Employee) => emp.is_active || emp.id === transaction.employee_id));
         if (settings) setRoundingEnabled(settings.rounding_enabled !== false);
         
