@@ -242,7 +242,7 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
         <form onSubmit={handleSubmit} style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           
           {/* Date & Status Row */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <div className="mobile-grid-stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <div className="form-group">
               <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase' }}>Tanggal Order</label>
               <div style={{ position: 'relative' }}>
@@ -272,7 +272,7 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
           </div>
 
           {/* Service & Employee */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '1rem' }}>
+          <div className="mobile-grid-stack" style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '1rem' }}>
             <div className="form-group">
               <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase' }}>Layanan</label>
               <select 
@@ -302,10 +302,10 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
 
           {/* Tier & Quantity */}
           <div style={{ background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 100px', gap: '1rem', alignItems: 'end' }}>
+            <div className="mobile-grid-stack" style={{ display: 'grid', gridTemplateColumns: '1fr 100px', gap: '1rem', alignItems: 'end' }}>
               <div className="form-group">
                 <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.7rem', fontWeight: 600 }}>TIER HARGA</label>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.4rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(60px, 1fr))', gap: '0.4rem' }}>
                   {(['normal', 'member', 'express', 'reseller'] as const).map(t => (
                     <button
                       key={t}

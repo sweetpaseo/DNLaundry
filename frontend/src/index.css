@@ -190,7 +190,17 @@ input:focus, select:focus {
   }
 
   .glass-card {
-    padding: 1rem;
+    padding: 1.25rem 1rem;
+  }
+
+  .mobile-grid-stack {
+    grid-template-columns: 1fr !important;
+    gap: 1.25rem !important;
+  }
+
+  .mobile-flex-stack {
+    flex-direction: column !important;
+    align-items: stretch !important;
   }
 
   .btn-primary {
@@ -508,4 +518,15 @@ body.modal-open {
     width: 18px;
     height: 18px;
   }
+}
+
+.scroll-x {
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding-bottom: 4px;
+}
+
+.scroll-x::-webkit-scrollbar {
+  display: none;
 }

@@ -253,7 +253,7 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
             <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Data Pelanggan</h3>
           </div>
           
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))', gap: '1.25rem', marginBottom: '1rem' }}>
+          <div className="mobile-grid-stack" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))', gap: '1.25rem', marginBottom: '1rem' }}>
             <div className="form-group">
               <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>Tgl Masuk Order</label>
               <div style={{ position: 'relative' }}>
@@ -340,7 +340,7 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
             <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Pilih Layanan & Petugas</h3>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 180px), 1fr))', gap: '1.25rem' }}>
+          <div className="mobile-grid-stack" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 180px), 1fr))', gap: '1.25rem' }}>
             <div className="form-group">
               <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>Jenis Layanan</label>
               <select 
@@ -402,7 +402,7 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
             <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>
               Jumlah ({services.find(s => s.id === selectedServiceId)?.unit})
             </label>
-            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+            <div className="mobile-flex-stack" style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
               <input 
                 type="number" 
                 step="0.1"
@@ -410,7 +410,7 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
                 onChange={(e) => setAmount(e.target.value === '' ? '' : Number(e.target.value))}
                 onFocus={() => { if (amount === 0 || amount === '0') setAmount(''); }}
                 onBlur={() => { if (amount === '') setAmount(0); }}
-                style={{ flex: '1 1 120px', height: '3.5rem', fontSize: '1.2rem', fontWeight: 700, textAlign: 'center' }} 
+                style={{ flex: '1 1 120px', height: '3.5rem', fontSize: '1.2rem', fontWeight: 700, textAlign: 'center', width: '100%' }} 
                 placeholder="0.0"
               />
               <button 
@@ -502,7 +502,7 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
         </div>
 
         {/* Step 3: Notes & Discount */}
-        <div className="glass-card" style={{ padding: 'min(1.5rem, 4vw)', borderLeft: '4px solid var(--primary)', position: 'relative', zIndex: 1 }}>
+        <div className="glass-card" style={{ padding: 'min(1.5rem, 5vw)', borderLeft: '4px solid var(--primary)', position: 'relative', zIndex: 1, width: '100%', boxSizing: 'border-box' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
             <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255, 0, 132, 0.1)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>3</div>
             <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Catatan & Diskon</h3>
@@ -511,11 +511,11 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem' }}>
             <div className="form-group">
               <label style={{ display: 'block', marginBottom: '0.8rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>Diskon Khusus (Per Kasus)</label>
-              <div style={{ display: 'flex', gap: '0.75rem' }}>
+              <div className="mobile-flex-stack" style={{ display: 'flex', gap: '0.75rem' }}>
                 <select 
                   value={discountType}
                   onChange={(e) => setDiscountType(e.target.value as 'fixed' | 'percentage')}
-                  style={{ width: 'min(80px, 30%)', height: '3rem' }}
+                  style={{ width: 'min(100px, 30%)', flexShrink: 0, height: '3rem' }}
                 >
                   <option value="fixed">Rp</option>
                   <option value="percentage">%</option>

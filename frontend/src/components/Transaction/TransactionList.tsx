@@ -225,7 +225,7 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
             <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
           </div>
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
-            <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', padding: '0.25rem' }}>
+            <div className="scroll-x" style={{ display: 'flex', gap: '0.5rem', padding: '0.25rem' }}>
               {['Semua', 'Baru', 'Proses', 'Siap Ambil', 'Siap Kirim', 'Selesai'].map(s => (
                 <button 
                   key={s} 
