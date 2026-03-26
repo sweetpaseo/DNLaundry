@@ -399,7 +399,7 @@ export const IdentitySettings = () => {
                   <Calculator size={18} color="var(--primary)" /> Pembulatan Otomatis (500)
                 </div>
                 <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', lineHeight: '1.4' }}>
-                  Membulatkan total tagihan ke atas (misal: 5.200 jadi 5.500, 5.750 jadi 6.000).
+                  Membulatkan total tagihan (misal: 5.200 jadi 5.000, 5.310 jadi 5.500).
                 </p>
               </div>
               <label style={{ position: 'relative', display: 'inline-block', width: '48px', height: '24px', flexShrink: 0 }}>
