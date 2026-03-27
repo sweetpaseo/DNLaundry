@@ -243,6 +243,11 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
     return timeB - timeA;
   });
 
+  const totalFilteredAmount = filteredGroups.reduce((sum: number, group: Transaction[]) => {
+    const groupTotal = group.reduce((groupSum: number, item: Transaction) => groupSum + (item.final_price || 0), 0);
+    return sum + groupTotal;
+  }, 0);
+
   return (
     <div className="transaction-list">
       <div style={{ marginBottom: '2rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
@@ -366,6 +371,30 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
           </div>
         </div>
       </div>
+
+      {/* Summary Stats */}
+      {!loading && filteredGroups.length > 0 && (
+        <div className="glass-card animate-fade-in" style={{ 
+          marginBottom: '1.5rem', 
+          padding: '1rem 1.5rem', 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          background: 'linear-gradient(135deg, rgba(255, 0, 132, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)',
+          border: '1px solid rgba(255, 0, 132, 0.1)'
+        }}>
+          <div>
+            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.2rem' }}>Total Transaksi Terfilter:</p>
+            <h4 style={{ fontSize: '1.1rem', fontWeight: 800 }}>{filteredGroups.length} <span style={{ fontSize: '0.8rem', fontWeight: 600, opacity: 0.6 }}>Nota</span></h4>
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.2rem' }}>Total Nilai:</p>
+            <h4 style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--primary)' }}>
+              Rp {totalFilteredAmount.toLocaleString('id-ID')}
+            </h4>
+          </div>
+        </div>
+      )}
 
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}>
