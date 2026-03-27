@@ -17,6 +17,7 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<TransactionStatus | 'Semua'>('Semua');
   const [paymentFilter, setPaymentFilter] = useState<'Semua' | 'Lunas' | 'Belum Lunas'>('Semua');
+  const [timeFilter, setTimeFilter] = useState<'Semua' | 'Hari Ini' | '7 Hari' | '30 Hari'>('Semua');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [isReceiptOpen, setIsReceiptOpen] = useState(false);
@@ -191,10 +192,26 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
     const allPaid = group.every(item => item.is_paid);
     const matchesPayment = paymentFilter === 'Semua' || (paymentFilter === 'Lunas' ? allPaid : !allPaid);
 
+    // Time Filter
+    let matchesTime = true;
+    const createdAt = new Date(t.created_at);
+    const now = new Date();
+    if (timeFilter === 'Hari Ini') {
+      matchesTime = createdAt.toDateString() === now.toDateString();
+    } else if (timeFilter === '7 Hari') {
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(now.getDate() - 7);
+      matchesTime = createdAt >= sevenDaysAgo;
+    } else if (timeFilter === '30 Hari') {
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(now.getDate() - 30);
+      matchesTime = createdAt >= thirtyDaysAgo;
+    }
+
     // Search Filter (customer name)
     const matchesSearch = !searchTerm || t.customer_name.toLowerCase().includes(searchTerm.toLowerCase());
 
-    return matchesStatus && matchesPayment && matchesSearch;
+    return matchesStatus && matchesPayment && matchesTime && matchesSearch;
   }).sort((a, b) => {
     const tA = a[0];
     const tB = b[0];
@@ -227,40 +244,65 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
             <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
           </div>
           
-          <div className="mobile-flex-stack" style={{ display: 'flex', gap: '1rem', alignItems: 'center', justifyContent: 'space-between', width: '100%', overflow: 'hidden' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%' }}>
+            {/* Status & Time Filter Row */}
             <div className="scroll-x" style={{ 
               display: 'flex', 
-              gap: '0.5rem', 
-              padding: '0.25rem 0',
-              flex: 1,
-              minWidth: 0 // Crucial for horizontal scroll in flex
+              gap: '0.4rem', 
+              padding: '0.2rem 0',
+              width: '100%',
+              minWidth: 0
             }}>
-              {['Semua', 'Baru', 'Proses', 'Siap Ambil', 'Siap Kirim', 'Selesai'].map(s => (
-                <button 
-                  key={s} 
-                  className={`tab-btn ${filter === s ? 'active' : ''}`}
-                  style={{ 
-                    padding: '0.5rem 1rem', 
-                    fontSize: '0.8rem', 
-                    border: '1px solid var(--glass-border)',
-                    whiteSpace: 'nowrap',
-                    borderRadius: '10px'
-                  }}
-                  onClick={() => setFilter(s as any)}
-                >
-                  {s}
-                </button>
-              ))}
+              <div style={{ display: 'flex', gap: '0.4rem', paddingRight: '1rem', borderRight: '1px solid var(--glass-border)' }}>
+                {['Semua', 'Hari Ini', '7 Hari', '30 Hari'].map(tf => (
+                  <button 
+                    key={tf} 
+                    onClick={() => setTimeFilter(tf as any)}
+                    className={`tab-btn ${timeFilter === tf ? 'active' : ''}`}
+                    style={{ 
+                      padding: '0.4rem 0.85rem', 
+                      fontSize: '0.75rem', 
+                      border: '1px solid var(--glass-border)',
+                      whiteSpace: 'nowrap',
+                      borderRadius: '8px',
+                      background: timeFilter === tf ? 'var(--primary-gradient)' : 'rgba(255,255,255,0.02)',
+                      color: timeFilter === tf ? 'white' : 'var(--text-muted)'
+                    }}
+                  >
+                    {tf}
+                  </button>
+                ))}
+              </div>
+              
+              <div style={{ display: 'flex', gap: '0.4rem', paddingLeft: '0.4rem' }}>
+                {['Semua', 'Baru', 'Proses', 'Siap Ambil', 'Siap Kirim', 'Selesai'].map(s => (
+                  <button 
+                    key={s} 
+                    className={`tab-btn ${filter === s ? 'active' : ''}`}
+                    style={{ 
+                      padding: '0.4rem 0.85rem', 
+                      fontSize: '0.75rem', 
+                      border: '1px solid var(--glass-border)',
+                      whiteSpace: 'nowrap',
+                      borderRadius: '8px'
+                    }}
+                    onClick={() => setFilter(s as any)}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
             </div>
-            
+
+            {/* Payment Filter row */}
             <div style={{ 
               display: 'flex', 
               gap: '0.25rem', 
-              background: 'rgba(255,255,255,0.02)', 
+              background: 'rgba(255,255,255,0.03)', 
               padding: '0.3rem', 
               borderRadius: '12px', 
               border: '1px solid var(--glass-border)',
-              flexShrink: 0
+              width: 'fit-content'
             }}>
               {['Semua', 'Lunas', 'Belum Lunas'].map(p => (
                 <button 
@@ -313,141 +355,143 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
                 
                 return (
                   <div key={groupId} className="glass-card animate-fade-in" style={{ 
-                    padding: '1.5rem', 
+                    padding: '1.25rem', 
                     display: 'flex', 
                     flexDirection: 'column', 
-                    gap: '1.25rem',
+                    gap: '1rem',
                     border: isOverdue ? '2px solid #ef4444' : '1px solid var(--glass-border)',
                     boxShadow: isOverdue ? '0 0 15px rgba(239, 68, 68, 0.2)' : 'none'
                   }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                      <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.2rem' }}>
-                        <h4 style={{ fontSize: '1.2rem', fontWeight: 800 }}>{t.customer_name}</h4>
-                        <span style={{ fontSize: '0.65rem', fontWeight: 700, opacity: 0.4, background: 'rgba(255,255,255,0.1)', padding: '0.05rem 0.3rem', borderRadius: '4px' }}>
-                          {formatDisplayId(customer ? getDisplayId(customer) : (t.customer?.customer_id || (t.customer_id ? `#DN-${t.customer_id.slice(0, 5).toUpperCase()}` : '#DN-NEW')))}
+                    {/* Responsive Header */}
+                    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.75rem' }}>
+                      <div style={{ flex: 1, minWidth: '150px' }}>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', gap: '0.4rem', marginBottom: '0.2rem' }}>
+                          <h4 style={{ fontSize: '1.1rem', fontWeight: 800, whiteSpace: 'nowrap' }}>{t.customer_name}</h4>
+                          <span style={{ fontSize: '0.6rem', fontWeight: 600, opacity: 0.5, background: 'rgba(255,255,255,0.1)', padding: '0.1rem 0.3rem', borderRadius: '4px' }}>
+                            {formatDisplayId(customer ? getDisplayId(customer) : (t.customer?.customer_id || (t.customer_id ? `#DN-${t.customer_id.slice(0, 5).toUpperCase()}` : '#DN-NEW')))}
+                          </span>
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <Clock size={12} /> {new Date(t.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}
+                        </div>
+                      </div>
+                      
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.4rem' }}>
+                        <span style={{ 
+                          padding: '0.35rem 0.6rem', 
+                          borderRadius: '8px', 
+                          fontSize: '0.7rem', 
+                          fontWeight: 800,
+                          background: statusStyle.bg,
+                          color: statusStyle.color,
+                          border: `1px solid ${statusStyle.color}44`,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.3rem',
+                          whiteSpace: 'nowrap'
+                        }}>
+                          {['Siap Ambil', 'Siap Kirim'].includes(t.status) ? <CheckCircle size={12} /> : <Clock size={12} />}
+                          {t.status.toUpperCase()}
                         </span>
                         {t.receipt_no && (
-                          <span style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--primary)', background: 'rgba(255, 0, 132, 0.1)', padding: '0.05rem 0.3rem', borderRadius: '4px', border: '1px solid rgba(255, 0, 132, 0.2)' }}>
+                          <span style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--primary)', opacity: 0.8 }}>
                             #{t.receipt_no}
                           </span>
                         )}
                       </div>
-                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                          <Clock size={14} /> {new Date(t.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}
-                        </div>
-                      </div>
-                      <span style={{ 
-                        padding: '0.4rem 0.75rem', 
-                        borderRadius: '8px', 
-                        fontSize: '0.75rem', 
-                        fontWeight: 800,
-                        background: statusStyle.bg,
-                        color: statusStyle.color,
-                        border: `1px solid ${statusStyle.color}44`,
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.4rem'
-                      }}>
-                        {['Siap Ambil', 'Siap Kirim'].includes(t.status) ? <CheckCircle size={14} /> : <Clock size={14} />}
-                        {t.status.toUpperCase()}
-                      </span>
                     </div>
 
                     {customer && (
-                      <div style={{ display: 'flex', gap: '0.75rem', fontSize: '0.75rem', fontWeight: 600 }}>
-                        <div style={{ padding: '0.3rem 0.6rem', borderRadius: '6px', background: 'rgba(37, 211, 102, 0.1)', color: '#25D366', border: '1px solid rgba(37, 211, 102, 0.2)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                          <Wallet size={12} /> Saldo: Rp {(customer.wallet_balance || 0).toLocaleString()}
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', fontSize: '0.7rem', fontWeight: 600 }}>
+                        <div style={{ padding: '0.25rem 0.5rem', borderRadius: '6px', background: 'rgba(37, 211, 102, 0.1)', color: '#25D366', border: '1px solid rgba(37, 211, 102, 0.2)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                          <Wallet size={10} /> Rp {(customer.wallet_balance || 0).toLocaleString()}
                         </div>
                         {totalDebt > 0 && (
-                          <div style={{ padding: '0.3rem 0.6rem', borderRadius: '6px', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                            <Clock size={12} /> Saldo Gantung: Rp {totalDebt.toLocaleString()}
+                          <div style={{ padding: '0.25rem 0.5rem', borderRadius: '6px', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                            <Clock size={10} /> Hutang: Rp {totalDebt.toLocaleString()}
                           </div>
                         )}
                       </div>
                     )}
 
-                    <div style={{ padding: '0.75rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <div style={{ padding: '0.75rem', background: 'rgba(255,255,255,0.01)', borderRadius: '12px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                       {group.map((item, idx) => (
-                        <div key={item.id} style={{ display: idx === 0 ? 'block' : 'block', borderTop: idx === 0 ? 'none' : '1px solid rgba(255,255,255,0.05)', paddingTop: idx === 0 ? '0' : '0.5rem' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.2rem' }}>
-                            <span style={{ fontWeight: 700, color: 'white' }}>{item.service_name}</span>
-                            <span style={{ fontWeight: 700, color: 'white' }}>Rp {item.final_price.toLocaleString()}</span>
+                        <div key={item.id} style={{ borderTop: idx === 0 ? 'none' : '1px solid rgba(255,255,255,0.05)', paddingTop: idx === 0 ? '0' : '0.4rem' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.1rem' }}>
+                            <span style={{ fontWeight: 700, fontSize: '0.85rem' }}>{item.service_name}</span>
+                            <span style={{ fontWeight: 700, fontSize: '0.85rem' }}>Rp {item.final_price.toLocaleString()}</span>
                           </div>
-                          <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
-                            {item.weight} {item.unit || 'kg'} x Rp {((item.total_price / item.weight)).toLocaleString()}
+                          <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>
+                            {item.weight} {item.unit || 'kg'} x Rp {((item.total_price / (item.weight || 1))).toLocaleString()}
                           </div>
                         </div>
                       ))}
                     </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-                      <div style={{ display: 'flex', gap: '0.5rem' }}>
-                        <button style={{ 
-                          background: allPaid ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 0, 132, 0.1)',
-                          color: allPaid ? 'var(--text-muted)' : 'var(--primary)',
-                          border: `1px solid ${allPaid ? 'var(--glass-border)' : 'rgba(255, 0, 132, 0.2)'}`,
-                          padding: '0.4rem 0.8rem',
-                          borderRadius: '8px',
-                          fontSize: '0.7rem',
-                          fontWeight: 700,
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: '0.25rem' }}>
+                      <div style={{ display: 'flex', gap: '0.4rem' }}>
+                        <div style={{ 
+                          background: allPaid ? 'rgba(37, 211, 102, 0.1)' : 'rgba(255, 0, 132, 0.1)',
+                          color: allPaid ? '#25d366' : 'var(--primary)',
+                          border: `1px solid ${allPaid ? 'rgba(37, 211, 102, 0.2)' : 'rgba(255, 0, 132, 0.2)'}`,
+                          padding: '0.3rem 0.6rem',
+                          borderRadius: '6px',
+                          fontSize: '0.65rem',
+                          fontWeight: 800,
                           display: 'flex',
                           alignItems: 'center',
                           gap: '0.3rem'
                         }}>
-                          {allPaid ? <CheckCircle size={14} /> : <Clock size={14} />}
+                          {allPaid ? <CheckCircle size={12} /> : <Clock size={12} />}
                           {allPaid ? 'LUNAS' : 'BELUM LUNAS'}
-                        </button>
+                        </div>
                       </div>
                       <div style={{ textAlign: 'right' }}>
-                        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.1rem' }}>Total Bayar:</p>
-                        <h3 style={{ fontSize: '1.4rem', fontWeight: 900, color: 'white' }}>
+                        <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '0.1rem' }}>Total Bayar:</p>
+                        <h3 style={{ fontSize: '1.25rem', fontWeight: 900, color: 'white' }}>
                           Rp {totalGroupPrice.toLocaleString('id-ID')}
                         </h3>
                       </div>
                     </div>
 
-                      <div style={{ display: 'flex', gap: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid var(--glass-border)' }}>
-                        <button 
-                          title="Cetak Nota" 
-                          onClick={() => { setSelectedTransaction(group as any); setIsReceiptOpen(true); }}
-                          style={{ flex: 1, height: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', color: 'white', fontSize: '0.85rem', cursor: 'pointer' }}
-                        >
-                          <Printer size={16} /> Nota
-                        </button>
-                        
-                        <button 
-                          onClick={() => handleWhatsAppShare(group)}
-                          className="btn-secondary"
-                          style={{ width: '2.5rem', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(37, 211, 102, 0.1)', border: '1px solid rgba(37, 211, 102, 0.2)', borderRadius: '8px' }}
-                          title="Kirim ke WhatsApp"
-                        >
-                          <WhatsAppIcon size={18} color="#25D366" />
-                        </button>
+                    {/* Action buttons list */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', paddingTop: '0.75rem', borderTop: '1px solid var(--glass-border)' }}>
+                      <button 
+                        onClick={() => { setSelectedTransaction(group as any); setIsReceiptOpen(true); }}
+                        style={{ height: '2.4rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', color: 'white', fontSize: '0.75rem' }}
+                        title="Nota"
+                      >
+                        <Printer size={14} /> <span className="mobile-hide">Nota</span>
+                      </button>
+                      
+                      <button 
+                        onClick={() => handleWhatsAppShare(group)}
+                        style={{ height: '2.4rem', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(37, 211, 102, 0.1)', border: '1px solid rgba(37, 211, 102, 0.2)', borderRadius: '8px', color: '#25D366' }}
+                        title="WA"
+                      >
+                        <WhatsAppIcon size={16} color="#25D366" /> <span className="mobile-hide" style={{ marginLeft: '0.4rem' }}>WA</span>
+                      </button>
 
-                        <button 
-                          onClick={() => { setEditingTransaction(group[0]); setIsEditOpen(true); }}
-                          className="btn-secondary"
-                          style={{ width: '2.5rem', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255, 193, 7, 0.1)', border: '1px solid rgba(255, 193, 7, 0.2)', color: '#FFC107', borderRadius: '8px' }}
-                          title="Edit Transaksi"
-                        >
-                          <Edit3 size={16} />
-                        </button>
+                      <button 
+                        onClick={() => { setEditingTransaction(group[0]); setIsEditOpen(true); }}
+                        style={{ height: '2.4rem', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255, 193, 7, 0.1)', border: '1px solid rgba(255, 193, 7, 0.2)', color: '#FFC107', borderRadius: '8px' }}
+                        title="Edit"
+                      >
+                        <Edit3 size={14} /> <span className="mobile-hide" style={{ marginLeft: '0.4rem' }}>Edit</span>
+                      </button>
 
-                        {currentUser?.role === 'owner' && (
-                          <button 
-                            onClick={() => handleDelete(groupId)}
-                            style={{ 
-                              width: '2.5rem', height: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(244, 63, 94, 0.1)', borderRadius: '8px', color: '#f43f5e', border: '1px solid rgba(244, 63, 94, 0.2)', cursor: 'pointer', transition: 'all 0.2s'
-                            }}
-                            title="Hapus Transaksi"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        )}
-                      </div>
+                      {(currentUser?.role === 'owner' || true) && (
+                        <button 
+                          onClick={() => handleDelete(groupId)}
+                          style={{ height: '2.4rem', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(244, 63, 94, 0.1)', borderRadius: '8px', color: '#f43f5e', border: '1px solid rgba(244, 63, 94, 0.2)' }}
+                          title="Hapus"
+                        >
+                          <Trash2 size={14} /> <span className="mobile-hide" style={{ marginLeft: '0.4rem' }}>Hapus</span>
+                        </button>
+                      )}
                     </div>
-                  );
+                  </div>
+                );
                 })}
             
             {filteredGroups.length === 0 && !loading && (

@@ -529,3 +529,19 @@ body.modal-open {
 .scroll-x::-webkit-scrollbar {
   display: none;
 }
+
+@media (max-width: 480px) {
+  .mobile-hide {
+    display: none !important;
+  }
+  
+  .glass-card {
+    padding: 1rem !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .responsive-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
