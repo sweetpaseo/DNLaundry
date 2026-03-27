@@ -214,9 +214,9 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
 
   return (
     <div className="transaction-list">
-      <div style={{ marginBottom: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>
-          <div style={{ position: 'relative', flex: 1, minWidth: '280px' }}>
+      <div style={{ marginBottom: '2rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div style={{ position: 'relative', width: '100%' }}>
             <input 
               type="text" 
               placeholder="Cari transaksi (nama pelanggan)..." 
@@ -226,17 +226,25 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
             />
             <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
           </div>
-          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
-            <div className="scroll-x" style={{ display: 'flex', gap: '0.5rem', padding: '0.25rem' }}>
+          
+          <div className="mobile-flex-stack" style={{ display: 'flex', gap: '1rem', alignItems: 'center', justifyContent: 'space-between', width: '100%', overflow: 'hidden' }}>
+            <div className="scroll-x" style={{ 
+              display: 'flex', 
+              gap: '0.5rem', 
+              padding: '0.25rem 0',
+              flex: 1,
+              minWidth: 0 // Crucial for horizontal scroll in flex
+            }}>
               {['Semua', 'Baru', 'Proses', 'Siap Ambil', 'Siap Kirim', 'Selesai'].map(s => (
                 <button 
                   key={s} 
                   className={`tab-btn ${filter === s ? 'active' : ''}`}
                   style={{ 
-                    padding: '0.6rem 1.2rem', 
-                    fontSize: '0.875rem', 
+                    padding: '0.5rem 1rem', 
+                    fontSize: '0.8rem', 
                     border: '1px solid var(--glass-border)',
-                    whiteSpace: 'nowrap'
+                    whiteSpace: 'nowrap',
+                    borderRadius: '10px'
                   }}
                   onClick={() => setFilter(s as any)}
                 >
@@ -245,21 +253,30 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
               ))}
             </div>
             
-            <div style={{ display: 'flex', gap: '0.5rem', background: 'rgba(255,255,255,0.02)', padding: '0.4rem', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+            <div style={{ 
+              display: 'flex', 
+              gap: '0.25rem', 
+              background: 'rgba(255,255,255,0.02)', 
+              padding: '0.3rem', 
+              borderRadius: '12px', 
+              border: '1px solid var(--glass-border)',
+              flexShrink: 0
+            }}>
               {['Semua', 'Lunas', 'Belum Lunas'].map(p => (
                 <button 
                   key={p} 
                   onClick={() => setPaymentFilter(p as any)}
                   style={{ 
-                    padding: '0.4rem 1rem', 
-                    fontSize: '0.75rem', 
+                    padding: '0.4rem 0.8rem', 
+                    fontSize: '0.7rem', 
                     background: paymentFilter === p ? 'var(--primary-gradient)' : 'transparent',
                     color: paymentFilter === p ? 'white' : 'var(--text-muted)',
                     border: 'none',
                     borderRadius: '8px',
                     cursor: 'pointer',
                     fontWeight: 700,
-                    transition: 'all 0.2s'
+                    transition: 'all 0.2s',
+                    whiteSpace: 'nowrap'
                   }}
                 >
                   {p}
