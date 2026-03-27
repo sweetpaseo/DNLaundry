@@ -17,7 +17,9 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<TransactionStatus | 'Semua'>('Semua');
   const [paymentFilter, setPaymentFilter] = useState<'Semua' | 'Lunas' | 'Belum Lunas'>('Semua');
-  const [timeFilter, setTimeFilter] = useState<'Semua' | 'Hari Ini' | '7 Hari' | '30 Hari'>('Semua');
+  const [timeFilter, setTimeFilter] = useState<'Semua' | 'Hari Ini' | '7 Hari' | '30 Hari' | 'Kustom'>('Semua');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [isReceiptOpen, setIsReceiptOpen] = useState(false);
@@ -206,6 +208,18 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(now.getDate() - 30);
       matchesTime = createdAt >= thirtyDaysAgo;
+    } else if (timeFilter === 'Kustom') {
+      const start = startDate ? new Date(startDate) : null;
+      const end = endDate ? new Date(endDate) : null;
+      
+      if (start) {
+        start.setHours(0, 0, 0, 0);
+        matchesTime = matchesTime && createdAt >= start;
+      }
+      if (end) {
+        end.setHours(23, 59, 59, 999);
+        matchesTime = matchesTime && createdAt <= end;
+      }
     }
 
     // Search Filter (customer name)
@@ -254,7 +268,7 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
               minWidth: 0
             }}>
               <div style={{ display: 'flex', gap: '0.4rem', paddingRight: '1rem', borderRight: '1px solid var(--glass-border)' }}>
-                {['Semua', 'Hari Ini', '7 Hari', '30 Hari'].map(tf => (
+                {['Semua', 'Hari Ini', '7 Hari', '30 Hari', 'Kustom'].map(tf => (
                   <button 
                     key={tf} 
                     onClick={() => setTimeFilter(tf as any)}
@@ -293,6 +307,30 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
                 ))}
               </div>
             </div>
+
+            {/* Manual Date Range Inputs (Visible when 'Kustom' is selected) */}
+            {timeFilter === 'Kustom' && (
+              <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', background: 'rgba(255,255,255,0.02)', padding: '0.75rem', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+                <div style={{ flex: 1, minWidth: '140px' }}>
+                  <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Dari Tanggal:</p>
+                  <input 
+                    type="date" 
+                    value={startDate} 
+                    onChange={(e) => setStartDate(e.target.value)} 
+                    style={{ width: '100%', height: '2.5rem', fontSize: '0.8rem', padding: '0.4rem', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', borderRadius: '8px', color: 'white' }} 
+                  />
+                </div>
+                <div style={{ flex: 1, minWidth: '140px' }}>
+                  <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Sampai Tanggal:</p>
+                  <input 
+                    type="date" 
+                    value={endDate} 
+                    onChange={(e) => setEndDate(e.target.value)} 
+                    style={{ width: '100%', height: '2.5rem', fontSize: '0.8rem', padding: '0.4rem', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', borderRadius: '8px', color: 'white' }} 
+                  />
+                </div>
+              </div>
+            )}
 
             {/* Payment Filter row */}
             <div style={{ 
