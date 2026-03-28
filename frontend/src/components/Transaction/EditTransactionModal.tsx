@@ -18,7 +18,7 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
   const [isPaid, setIsPaid] = useState(transaction.is_paid);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(transaction.payment_method || 'Cash');
   const [notes, setNotes] = useState(transaction.notes || '');
-  const [amountReceived, setAmountReceived] = useState<number>(transaction.is_paid ? transaction.final_price : 0);
+  const [amountReceived, setAmountReceived] = useState<number>(transaction.is_paid ? (groupTotal || transaction.final_price) : 0);
   const [useWallet, setUseWallet] = useState(false);
   const [surplusAction, setSurplusAction] = useState<'deposit' | 'change'>('deposit');
   const [customer, setCustomer] = useState<Customer | null>(null);
@@ -45,7 +45,7 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
       setIsPaid(transaction.is_paid);
       setPaymentMethod(transaction.payment_method || 'Cash');
       setNotes(transaction.notes || '');
-      setAmountReceived(transaction.is_paid ? transaction.final_price : 0);
+      setAmountReceived(transaction.is_paid ? (groupTotal || transaction.final_price) : 0);
       setUseWallet(false);
       setSurplusAction('deposit');
       
@@ -118,11 +118,17 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
       ? roundUpTo500(Math.max(0, subtotal - discAmount))
       : Math.max(0, subtotal - discAmount);
     
-    setFinalPrice(calculatedFinal);
-    if (isPaid && amountReceived < calculatedFinal) {
-      setAmountReceived(calculatedFinal);
+    const newFinal = calculatedFinal;
+    const oldFinal = transaction.final_price;
+    const currentDisplayTotal = groupTotal ? (groupTotal - oldFinal + newFinal) : newFinal;
+
+    setFinalPrice(newFinal);
+    
+    // Auto-update amountReceived if it was matching the total (paid status)
+    if (isPaid && (amountReceived === 0 || amountReceived === (groupTotal || oldFinal))) {
+      setAmountReceived(currentDisplayTotal);
     }
-  }, [serviceId, weight, selectedTier, discountType, discountValue, services, roundingEnabled]);
+  }, [serviceId, weight, selectedTier, discountType, discountValue, services, roundingEnabled, isPaid]);
   
   useEffect(() => {
     const srv = services.find(s => s.id === serviceId);
@@ -484,7 +490,7 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
                 <div style={{ marginTop: '0.25rem', padding: '1rem', background: 'rgba(0,0,0,0.2)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '0.5rem' }}>
                     <span style={{ color: 'var(--text-muted)' }}>Tagihan Akhir:</span>
-                    <span style={{ fontWeight: 800, color: 'var(--primary)', fontSize: '1.1rem' }}>Rp {finalPrice.toLocaleString()}</span>
+                    <span style={{ fontWeight: 800, color: 'var(--primary)', fontSize: '1.1rem' }}>Rp {displayTotal.toLocaleString()}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', paddingTop: '0.5rem', borderTop: '1px dashed rgba(255,255,255,0.1)' }}>
                     <span style={{ fontWeight: 600 }}>{balance >= 0 ? 'Kembalian:' : 'Sisa Kurang:'}</span>
