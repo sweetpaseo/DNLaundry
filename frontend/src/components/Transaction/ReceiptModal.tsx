@@ -244,7 +244,7 @@ export const ReceiptModal = ({ isOpen, onClose, transaction, settings, customers
             onClick={handleDownloadImage}
             disabled={isDownloading}
             className="btn-secondary"
-            style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', height: '3rem', fontSize: '0.85rem' }}
+            style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', height: '3rem', fontSize: '0.85rem', borderRadius: 'var(--radius)' }}
           >
             {isDownloading ? <span className="animate-spin">⌛</span> : <Download size={18} />} 
             {isDownloading ? 'Memproses...' : 'Download Nota'}
@@ -253,7 +253,7 @@ export const ReceiptModal = ({ isOpen, onClose, transaction, settings, customers
           <button 
             onClick={handleWhatsAppShare}
             className="btn-secondary"
-            style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', height: '3rem', fontSize: '0.85rem', background: 'rgba(37, 211, 102, 0.1)', border: '1px solid rgba(37, 211, 102, 0.2)', color: '#25D366' }}
+            style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', height: '3rem', fontSize: '0.85rem', background: 'rgba(37, 211, 102, 0.1)', border: '1px solid rgba(37, 211, 102, 0.2)', color: '#25D366', borderRadius: 'var(--radius)' }}
           >
             <WhatsAppIcon size={18} color="#25D366" /> WhatsApp
           </button>
