@@ -191,7 +191,7 @@ export const ReceiptModal = ({ isOpen, onClose, transaction, settings, customers
               
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.75rem', borderTop: '2px solid #000', paddingTop: '0.4rem' }}>
                 <div>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 800, border: '1px solid #000', padding: '0.1rem 0.3rem' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 800, border: '1px solid #000', padding: '0.15rem 0.4rem', whiteSpace: 'nowrap' }}>
                     {allPaid ? 'LUNAS' : 'BELUM LUNAS'}
                   </span>
                   {allPaid && items[0].payment_method && (
@@ -231,31 +231,44 @@ export const ReceiptModal = ({ isOpen, onClose, transaction, settings, customers
           </div>
         </div>
 
-        <div style={{ padding: '1rem 1.25rem', borderTop: '1px solid var(--glass-border)', display: 'flex', gap: '0.75rem', flexShrink: 0 }}>
+        <div style={{ padding: '0.75rem', borderTop: '1px solid var(--glass-border)', display: 'flex', gap: '0.4rem', flexShrink: 0 }}>
           <button 
             onClick={handlePrint}
             className="btn-primary" 
-            style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', height: '3rem', fontSize: '0.85rem' }}
+            style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem', height: '2.8rem', fontSize: '0.7rem', padding: '0 0.5rem', borderRadius: 'var(--radius)' }}
           >
-            <Printer size={18} /> Cetak Nota
+            <Printer size={16} /> Cetak
           </button>
           
           <button 
             onClick={handleDownloadImage}
             disabled={isDownloading}
             className="btn-secondary"
-            style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', height: '3rem', fontSize: '0.85rem', borderRadius: 'var(--radius)' }}
+            style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.3rem', height: '2.8rem', fontSize: '0.7rem', padding: '0 0.5rem', borderRadius: 'var(--radius)' }}
           >
-            {isDownloading ? <span className="animate-spin">⌛</span> : <Download size={18} />} 
-            {isDownloading ? 'Memproses...' : 'Download Nota'}
+            {isDownloading ? <span className="animate-spin" style={{ fontSize: '0.8rem' }}>⌛</span> : <Download size={16} />} 
+            {isDownloading ? '...' : 'Simpan'}
           </button>
           
           <button 
             onClick={handleWhatsAppShare}
             className="btn-secondary"
-            style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', height: '3rem', fontSize: '0.85rem', background: 'rgba(37, 211, 102, 0.1)', border: '1px solid rgba(37, 211, 102, 0.2)', color: '#25D366', borderRadius: 'var(--radius)' }}
+            style={{ 
+              flex: 1, 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              gap: '0.3rem', 
+              height: '2.8rem', 
+              fontSize: '0.7rem', 
+              padding: '0 0.5rem',
+              background: 'rgba(37, 211, 102, 0.1)', 
+              border: '1px solid rgba(37, 211, 102, 0.2)', 
+              color: '#25D366',
+              borderRadius: 'var(--radius)'
+            }}
           >
-            <WhatsAppIcon size={18} color="#25D366" /> WhatsApp
+            <WhatsAppIcon size={16} color="#25D366" /> WA
           </button>
         </div>
       </div>
