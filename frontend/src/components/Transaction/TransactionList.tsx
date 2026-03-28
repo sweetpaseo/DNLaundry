@@ -17,6 +17,7 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<TransactionStatus | 'Semua'>('Semua');
   const [paymentFilter, setPaymentFilter] = useState<'Semua' | 'Lunas' | 'Belum Lunas'>('Semua');
+  const [methodFilter, setMethodFilter] = useState<'Semua' | 'Cash' | 'Transfer' | 'QRIS' | 'Saldo'>('Semua');
   const [timeFilter, setTimeFilter] = useState<'Semua' | 'Hari Ini' | '7 Hari' | '30 Hari' | 'Kustom'>('Semua');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -195,6 +196,9 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
     const allPaid = group.every(item => item.is_paid);
     const matchesPayment = paymentFilter === 'Semua' || (paymentFilter === 'Lunas' ? allPaid : !allPaid);
 
+    // Method Filter
+    const matchesMethod = methodFilter === 'Semua' || t.payment_method === methodFilter;
+
     // Time Filter
     let matchesTime = true;
     const createdAt = new Date(t.created_at);
@@ -226,7 +230,7 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
     // Search Filter (customer name)
     const matchesSearch = !searchTerm || t.customer_name.toLowerCase().includes(searchTerm.toLowerCase());
 
-    return matchesStatus && matchesPayment && matchesTime && matchesSearch;
+    return matchesStatus && matchesPayment && matchesTime && matchesSearch && matchesMethod;
   }).sort((a, b) => {
     const tA = a[0];
     const tB = b[0];
@@ -340,6 +344,32 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
               >
                 {['Semua', 'Lunas', 'Belum Lunas'].map(p => (
                   <option key={p} value={p}>{p}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Filter by Metode Payment */}
+            <div className="filter-item">
+              <label className="filter-label">Metode Payment</label>
+              <div className="desktop-filter-buttons">
+                {['Semua', 'Cash', 'Transfer', 'QRIS', 'Saldo'].map(m => (
+                  <button 
+                    key={m} 
+                    onClick={() => setMethodFilter(m as any)}
+                    className={`tab-btn ${methodFilter === m ? 'active' : ''}`}
+                    style={{ padding: '0.4rem 0.85rem', fontSize: '0.75rem', borderRadius: '8px', whiteSpace: 'nowrap' }}
+                  >
+                    {m}
+                  </button>
+                ))}
+              </div>
+              <select 
+                className="mobile-filter-select"
+                value={methodFilter}
+                onChange={(e) => setMethodFilter(e.target.value as any)}
+              >
+                {['Semua', 'Cash', 'Transfer', 'QRIS', 'Saldo'].map(m => (
+                  <option key={m} value={m}>{m}</option>
                 ))}
               </select>
             </div>
@@ -522,6 +552,23 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
                           {allPaid ? <CheckCircle size={12} /> : <Clock size={12} />}
                           {allPaid ? 'LUNAS' : 'BELUM LUNAS'}
                         </div>
+                        {allPaid && t.payment_method && (
+                          <div style={{ 
+                            background: 'rgba(255, 255, 255, 0.05)',
+                            color: 'var(--text-muted)',
+                            border: '1px solid var(--glass-border)',
+                            padding: '0.3rem 0.6rem',
+                            borderRadius: '6px',
+                            fontSize: '0.65rem',
+                            fontWeight: 800,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.3rem'
+                          }}>
+                            <Wallet size={12} />
+                            {t.payment_method.toUpperCase()}
+                          </div>
+                        )}
                       </div>
                       <div style={{ textAlign: 'right' }}>
                         <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '0.1rem' }}>Total Bayar:</p>
