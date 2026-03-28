@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Printer, Trash2, CheckCircle, Clock, Search, Loader2, Edit3, Wallet } from 'lucide-react';
+import { Printer, Trash2, CheckCircle, Clock, Search, Loader2, Edit3, Wallet, Eye, EyeOff } from 'lucide-react';
 import type { Transaction, TransactionStatus, Customer } from '../../types';
 import { api } from '../../services/api';
 import { ReceiptModal } from './ReceiptModal';
@@ -25,6 +25,7 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
   const [isReceiptOpen, setIsReceiptOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
+  const [showTotal, setShowTotal] = useState(false);
   const [settings, setSettings] = useState<any>(null);
   const [customers, setCustomers] = useState<Customer[]>([]);
 
@@ -389,9 +390,17 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
             <h4 style={{ fontSize: '1rem', fontWeight: 800 }}>{filteredGroups.length} <span style={{ fontSize: '0.75rem', fontWeight: 600, opacity: 0.6 }}>Nota</span></h4>
           </div>
           <div style={{ textAlign: 'right', flex: '1 1 120px' }}>
-            <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '0.1rem' }}>Total Nilai:</p>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '0.4rem', marginBottom: '0.1rem' }}>
+              <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Total Nilai:</p>
+              <button 
+                onClick={() => setShowTotal(!showTotal)}
+                style={{ background: 'transparent', padding: '0.2rem', display: 'flex', alignItems: 'center', color: showTotal ? 'var(--primary)' : 'var(--text-muted)', opacity: 0.8 }}
+              >
+                {showTotal ? <EyeOff size={14} /> : <Eye size={14} />}
+              </button>
+            </div>
             <h4 style={{ fontSize: '1.15rem', fontWeight: 900, color: 'var(--primary)' }}>
-              Rp {totalFilteredAmount.toLocaleString('id-ID')}
+              {showTotal ? `Rp ${totalFilteredAmount.toLocaleString('id-ID')}` : 'Rp ••••••••'}
             </h4>
           </div>
         </div>
