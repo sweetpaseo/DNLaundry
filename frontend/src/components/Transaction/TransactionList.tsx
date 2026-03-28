@@ -268,7 +268,7 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
             {/* Filter by Waktu */}
             <div className="filter-item">
               <label className="filter-label">Filter by Waktu</label>
-              <div className="desktop-filter-buttons" style={{ display: 'flex', gap: '0.4rem' }}>
+              <div className="desktop-filter-buttons">
                 {['Semua', 'Hari Ini', '7 Hari', '30 Hari', 'Kustom'].map(tf => (
                   <button 
                     key={tf} 
@@ -294,7 +294,7 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
             {/* Filter by Proses */}
             <div className="filter-item">
               <label className="filter-label">Filter by Proses</label>
-              <div className="desktop-filter-buttons" style={{ display: 'flex', gap: '0.4rem' }}>
+              <div className="desktop-filter-buttons">
                 {['Semua', 'Baru', 'Proses', 'Siap Ambil', 'Siap Kirim', 'Selesai'].map(s => (
                   <button 
                     key={s} 
@@ -320,7 +320,7 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
             {/* Filter by Payment */}
             <div className="filter-item">
               <label className="filter-label">Filter by Payment</label>
-              <div className="desktop-filter-buttons" style={{ display: 'flex', gap: '0.4rem' }}>
+              <div className="desktop-filter-buttons">
                 {['Semua', 'Lunas', 'Belum Lunas'].map(p => (
                   <button 
                     key={p} 

@@ -568,9 +568,14 @@ body.modal-open {
   display: none;
 }
 
+.desktop-filter-buttons {
+  display: flex;
+  gap: 0.4rem;
+}
+
 @media (max-width: 768px) {
   .desktop-filter-buttons {
-    display: none;
+    display: none !important;
   }
   .mobile-filter-select {
     display: block;
