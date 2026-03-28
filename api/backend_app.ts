@@ -116,7 +116,19 @@ transactions.post('/', async (c) => {
     .insert({ ...body, receipt_no: receiptNo })
     .select()
     
-  if (error) return c.json({ error: error.message }, 500)
+  if (error) {
+    // Resilience: If column amount_received is missing in Supabase, retry without it
+    if (error.message?.includes('amount_received') || error.code === '42703' || error.message?.includes('schema cache')) {
+      const { amount_received, ...cleanBody } = body
+      const retry = await supabase
+        .from('transactions')
+        .insert({ ...cleanBody, receipt_no: receiptNo })
+        .select()
+      if (retry.error) return c.json({ error: retry.error.message }, 500)
+      return c.json(retry.data?.[0] || {}, 201)
+    }
+    return c.json({ error: error.message }, 500)
+  }
   return c.json(data[0], 201)
 })
 
@@ -125,7 +137,17 @@ transactions.put('/:id', async (c) => {
   const body = await c.req.json()
   const supabase = getSupabase(c)
   const { data, error } = await supabase.from('transactions').update(body).eq('id', id).select()
-  if (error) return c.json({ error: error.message }, 500)
+  
+  if (error) {
+    // Resilience: If column amount_received is missing in Supabase, retry without it
+    if (error.message?.includes('amount_received') || error.code === '42703' || error.message?.includes('schema cache')) {
+      const { amount_received, ...cleanBody } = body
+      const retry = await supabase.from('transactions').update(cleanBody).eq('id', id).select()
+      if (retry.error) return c.json({ error: retry.error.message }, 500)
+      return c.json(retry.data?.[0] || {})
+    }
+    return c.json({ error: error.message }, 500)
+  }
   return c.json(data[0])
 })
 
