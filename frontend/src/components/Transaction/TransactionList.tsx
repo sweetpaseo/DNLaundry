@@ -264,110 +264,109 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
           </div>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%' }}>
-            {/* Status & Time Filter Row */}
-            <div className="scroll-x" style={{ 
-              display: 'flex', 
-              gap: '0.4rem', 
-              padding: '0.2rem 0',
-              width: '100%',
-              minWidth: 0
-            }}>
-              <div style={{ display: 'flex', gap: '0.4rem', paddingRight: '1rem', borderRight: '1px solid var(--glass-border)' }}>
+          <div className="filter-container">
+            {/* Filter by Waktu */}
+            <div className="filter-item">
+              <label className="filter-label">Filter by Waktu</label>
+              <div className="desktop-filter-buttons" style={{ display: 'flex', gap: '0.4rem' }}>
                 {['Semua', 'Hari Ini', '7 Hari', '30 Hari', 'Kustom'].map(tf => (
                   <button 
                     key={tf} 
                     onClick={() => setTimeFilter(tf as any)}
                     className={`tab-btn ${timeFilter === tf ? 'active' : ''}`}
-                    style={{ 
-                      padding: '0.4rem 0.85rem', 
-                      fontSize: '0.75rem', 
-                      border: '1px solid var(--glass-border)',
-                      whiteSpace: 'nowrap',
-                      borderRadius: '8px',
-                      background: timeFilter === tf ? 'var(--primary-gradient)' : 'rgba(255,255,255,0.02)',
-                      color: timeFilter === tf ? 'white' : 'var(--text-muted)'
-                    }}
+                    style={{ padding: '0.4rem 0.85rem', fontSize: '0.75rem', borderRadius: '8px', whiteSpace: 'nowrap' }}
                   >
                     {tf}
                   </button>
                 ))}
               </div>
-              
-              <div style={{ display: 'flex', gap: '0.4rem', paddingLeft: '0.4rem' }}>
+              <select 
+                className="mobile-filter-select"
+                value={timeFilter}
+                onChange={(e) => setTimeFilter(e.target.value as any)}
+              >
+                {['Semua', 'Hari Ini', '7 Hari', '30 Hari', 'Kustom'].map(tf => (
+                  <option key={tf} value={tf}>{tf}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Filter by Proses */}
+            <div className="filter-item">
+              <label className="filter-label">Filter by Proses</label>
+              <div className="desktop-filter-buttons" style={{ display: 'flex', gap: '0.4rem' }}>
                 {['Semua', 'Baru', 'Proses', 'Siap Ambil', 'Siap Kirim', 'Selesai'].map(s => (
                   <button 
                     key={s} 
-                    className={`tab-btn ${filter === s ? 'active' : ''}`}
-                    style={{ 
-                      padding: '0.4rem 0.85rem', 
-                      fontSize: '0.75rem', 
-                      border: '1px solid var(--glass-border)',
-                      whiteSpace: 'nowrap',
-                      borderRadius: '8px'
-                    }}
                     onClick={() => setFilter(s as any)}
+                    className={`tab-btn ${filter === s ? 'active' : ''}`}
+                    style={{ padding: '0.4rem 0.85rem', fontSize: '0.75rem', borderRadius: '8px', whiteSpace: 'nowrap' }}
                   >
                     {s}
                   </button>
                 ))}
               </div>
+              <select 
+                className="mobile-filter-select"
+                value={filter}
+                onChange={(e) => setFilter(e.target.value as any)}
+              >
+                {['Semua', 'Baru', 'Proses', 'Siap Ambil', 'Siap Kirim', 'Selesai'].map(s => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
             </div>
 
-            {/* Manual Date Range Inputs (Visible when 'Kustom' is selected) */}
-            {timeFilter === 'Kustom' && (
-              <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', background: 'rgba(255,255,255,0.02)', padding: '0.75rem', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
-                <div style={{ flex: 1, minWidth: '140px' }}>
-                  <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Dari Tanggal:</p>
-                  <input 
-                    type="date" 
-                    value={startDate} 
-                    onChange={(e) => setStartDate(e.target.value)} 
-                    style={{ width: '100%', height: '2.5rem', fontSize: '0.8rem', padding: '0.4rem', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', borderRadius: '8px', color: 'white' }} 
-                  />
-                </div>
-                <div style={{ flex: 1, minWidth: '140px' }}>
-                  <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Sampai Tanggal:</p>
-                  <input 
-                    type="date" 
-                    value={endDate} 
-                    onChange={(e) => setEndDate(e.target.value)} 
-                    style={{ width: '100%', height: '2.5rem', fontSize: '0.8rem', padding: '0.4rem', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', borderRadius: '8px', color: 'white' }} 
-                  />
-                </div>
+            {/* Filter by Payment */}
+            <div className="filter-item">
+              <label className="filter-label">Filter by Payment</label>
+              <div className="desktop-filter-buttons" style={{ display: 'flex', gap: '0.4rem' }}>
+                {['Semua', 'Lunas', 'Belum Lunas'].map(p => (
+                  <button 
+                    key={p} 
+                    onClick={() => setPaymentFilter(p as any)}
+                    className={`tab-btn ${paymentFilter === p ? 'active' : ''}`}
+                    style={{ padding: '0.4rem 0.85rem', fontSize: '0.75rem', borderRadius: '8px', whiteSpace: 'nowrap' }}
+                  >
+                    {p}
+                  </button>
+                ))}
               </div>
-            )}
-
-            {/* Payment Filter row */}
-            <div style={{ 
-              display: 'flex', 
-              gap: '0.25rem', 
-              background: 'rgba(255,255,255,0.03)', 
-              padding: '0.3rem', 
-              borderRadius: '12px', 
-              border: '1px solid var(--glass-border)',
-              width: 'fit-content'
-            }}>
-              {['Semua', 'Lunas', 'Belum Lunas'].map(p => (
-                <button 
-                  key={p} 
-                  onClick={() => setPaymentFilter(p as any)}
-                  style={{ 
-                    padding: '0.4rem 0.8rem', 
-                    fontSize: '0.7rem', 
-                    background: paymentFilter === p ? 'var(--primary-gradient)' : 'transparent',
-                    color: paymentFilter === p ? 'white' : 'var(--text-muted)',
-                    border: 'none',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    fontWeight: 700,
-                    transition: 'all 0.2s',
-                    whiteSpace: 'nowrap'
-                  }}
-                >
-                  {p}
-                </button>
-              ))}
+              <select 
+                className="mobile-filter-select"
+                value={paymentFilter}
+                onChange={(e) => setPaymentFilter(e.target.value as any)}
+              >
+                {['Semua', 'Lunas', 'Belum Lunas'].map(p => (
+                  <option key={p} value={p}>{p}</option>
+                ))}
+              </select>
             </div>
+          </div>
+
+          {/* Manual Date Range Inputs */}
+          {timeFilter === 'Kustom' && (
+            <div className="animate-fade-in" style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', background: 'rgba(255,255,255,0.02)', padding: '0.75rem', borderRadius: '12px', border: '1px solid var(--glass-border)', marginBottom: '1rem' }}>
+              <div style={{ flex: 1, minWidth: '140px' }}>
+                <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Dari Tanggal:</p>
+                <input 
+                  type="date" 
+                  value={startDate} 
+                  onChange={(e) => setStartDate(e.target.value)} 
+                  style={{ width: '100%', height: '2.5rem', fontSize: '0.8rem', padding: '0.4rem' }} 
+                />
+              </div>
+              <div style={{ flex: 1, minWidth: '140px' }}>
+                <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Sampai Tanggal:</p>
+                <input 
+                  type="date" 
+                  value={endDate} 
+                  onChange={(e) => setEndDate(e.target.value)} 
+                  style={{ width: '100%', height: '2.5rem', fontSize: '0.8rem', padding: '0.4rem' }} 
+                />
+              </div>
+            </div>
+          )}
           </div>
         </div>
       </div>
