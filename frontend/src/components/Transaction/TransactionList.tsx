@@ -19,6 +19,7 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
   const [paymentFilter, setPaymentFilter] = useState<'Semua' | 'Lunas' | 'Belum Lunas'>('Semua');
   const [methodFilter, setMethodFilter] = useState<'Semua' | 'Cash' | 'Transfer' | 'QRIS' | 'Saldo'>('Semua');
   const [timeFilter, setTimeFilter] = useState<'Semua' | 'Hari Ini' | '7 Hari' | '30 Hari' | 'Kustom'>('Semua');
+  const [dateSource, setDateSource] = useState<'Order' | 'Lunas'>('Order');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
@@ -201,29 +202,34 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
 
     // Time Filter
     let matchesTime = true;
-    const createdAt = new Date(t.created_at);
+    const baseDate = dateSource === 'Order' ? new Date(t.created_at) : (t.paid_at ? new Date(t.paid_at) : null);
     const now = new Date();
-    if (timeFilter === 'Hari Ini') {
-      matchesTime = createdAt.toDateString() === now.toDateString();
-    } else if (timeFilter === '7 Hari') {
-      const sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(now.getDate() - 7);
-      matchesTime = createdAt >= sevenDaysAgo;
-    } else if (timeFilter === '30 Hari') {
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(now.getDate() - 30);
-      matchesTime = createdAt >= thirtyDaysAgo;
-    } else if (timeFilter === 'Kustom') {
-      const start = startDate ? new Date(startDate) : null;
-      const end = endDate ? new Date(endDate) : null;
-      
-      if (start) {
-        start.setHours(0, 0, 0, 0);
-        matchesTime = matchesTime && createdAt >= start;
-      }
-      if (end) {
-        end.setHours(23, 59, 59, 999);
-        matchesTime = matchesTime && createdAt <= end;
+
+    if (dateSource === 'Lunas' && !baseDate) {
+      matchesTime = false;
+    } else if (baseDate) {
+      if (timeFilter === 'Hari Ini') {
+        matchesTime = baseDate.toDateString() === now.toDateString();
+      } else if (timeFilter === '7 Hari') {
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(now.getDate() - 7);
+        matchesTime = baseDate >= sevenDaysAgo;
+      } else if (timeFilter === '30 Hari') {
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(now.getDate() - 30);
+        matchesTime = baseDate >= thirtyDaysAgo;
+      } else if (timeFilter === 'Kustom') {
+        const start = startDate ? new Date(startDate) : null;
+        const end = endDate ? new Date(endDate) : null;
+        
+        if (start) {
+          start.setHours(0, 0, 0, 0);
+          matchesTime = matchesTime && baseDate >= start;
+        }
+        if (end) {
+          end.setHours(23, 59, 59, 999);
+          matchesTime = matchesTime && baseDate <= end;
+        }
       }
     }
 
@@ -272,7 +278,30 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
           <div className="filter-container">
             {/* Filter by Waktu */}
             <div className="filter-item">
-              <label className="filter-label">Filter by Waktu</label>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
+                <label className="filter-label" style={{ marginBottom: 0 }}>Filter by Waktu</label>
+                <div style={{ display: 'flex', gap: '0.5rem', background: 'rgba(255,255,255,0.05)', padding: '0.2rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
+                  {['Order', 'Lunas'].map(ds => (
+                    <button
+                      key={ds}
+                      onClick={() => setDateSource(ds as any)}
+                      style={{
+                        padding: '0.2rem 0.6rem',
+                        fontSize: '0.65rem',
+                        fontWeight: 700,
+                        borderRadius: '6px',
+                        background: dateSource === ds ? 'var(--primary)' : 'transparent',
+                        color: dateSource === ds ? 'white' : 'var(--text-muted)',
+                        border: 'none',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s'
+                      }}
+                    >
+                      {ds}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <div className="desktop-filter-buttons">
                 {['Semua', 'Hari Ini', '7 Hari', '30 Hari', 'Kustom'].map(tf => (
                   <button 
@@ -553,20 +582,27 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
                           {allPaid ? 'LUNAS' : 'BELUM LUNAS'}
                         </div>
                         {allPaid && t.payment_method && (
-                          <div style={{ 
-                            background: 'rgba(255, 255, 255, 0.05)',
-                            color: 'var(--text-muted)',
-                            border: '1px solid var(--glass-border)',
-                            padding: '0.3rem 0.6rem',
-                            borderRadius: '6px',
-                            fontSize: '0.65rem',
-                            fontWeight: 800,
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '0.3rem'
-                          }}>
-                            <Wallet size={12} />
-                            {t.payment_method.toUpperCase()}
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+                            <div style={{ 
+                              background: 'rgba(255, 255, 255, 0.05)',
+                              color: 'var(--text-muted)',
+                              border: '1px solid var(--glass-border)',
+                              padding: '0.3rem 0.6rem',
+                              borderRadius: '6px',
+                              fontSize: '0.65rem',
+                              fontWeight: 800,
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '0.3rem'
+                            }}>
+                              <Wallet size={12} />
+                              {t.payment_method.toUpperCase()}
+                            </div>
+                            {t.paid_at && (
+                              <span style={{ fontSize: '0.6rem', color: 'var(--text-muted)', opacity: 0.8, textAlign: 'right' }}>
+                                Lunas: {new Date(t.paid_at).toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' })}
+                              </span>
+                            )}
                           </div>
                         )}
                       </div>

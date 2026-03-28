@@ -87,6 +87,11 @@ transactions.post('/', async (c) => {
   const body = await c.req.json()
   const supabase = getSupabase(c)
   
+  // Auto-stamp paid_at if initial order is paid
+  if (body.is_paid && !body.paid_at) {
+    body.paid_at = new Date().toISOString();
+  }
+
   // Custom Receipt No Logic
   let receiptNo = body.receipt_no;
   
@@ -136,6 +141,14 @@ transactions.put('/:id', async (c) => {
   const id = c.req.param('id')
   const body = await c.req.json()
   const supabase = getSupabase(c)
+  
+  // Set paid_at if is_paid is true and not already set
+  if (body.is_paid && !body.paid_at) {
+    body.paid_at = new Date().toISOString();
+  } else if (body.is_paid === false) {
+    body.paid_at = null;
+  }
+
   const { data, error } = await supabase.from('transactions').update(body).eq('id', id).select()
   
   if (error) {

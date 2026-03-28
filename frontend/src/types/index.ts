@@ -98,6 +98,7 @@ export interface Transaction {
   due_date?: string;
   group_id?: string;
   created_at: string;
+  paid_at?: string;
 }
 
 export interface Stock {
