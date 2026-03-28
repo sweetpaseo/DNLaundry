@@ -91,6 +91,7 @@ export interface Transaction {
   is_paid: boolean;
   payment_method?: PaymentMethod;
   notes: string;
+  amount_received?: number;
   discount_percent: number;
   discount_amount: number;
   final_price: number;

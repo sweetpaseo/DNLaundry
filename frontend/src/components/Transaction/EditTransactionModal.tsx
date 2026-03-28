@@ -18,7 +18,7 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
   const [isPaid, setIsPaid] = useState(transaction.is_paid);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(transaction.payment_method || 'Cash');
   const [notes, setNotes] = useState(transaction.notes || '');
-  const [amountReceived, setAmountReceived] = useState<number>(transaction.is_paid ? (groupTotal || transaction.final_price) : 0);
+  const [amountReceived, setAmountReceived] = useState<number>(transaction.amount_received || (transaction.is_paid ? (groupTotal || transaction.final_price) : 0));
   const [useWallet, setUseWallet] = useState(false);
   const [surplusAction, setSurplusAction] = useState<'deposit' | 'change'>('deposit');
   const [customer, setCustomer] = useState<Customer | null>(null);
@@ -45,7 +45,7 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
       setIsPaid(transaction.is_paid);
       setPaymentMethod(transaction.payment_method || 'Cash');
       setNotes(transaction.notes || '');
-      setAmountReceived(transaction.is_paid ? (groupTotal || transaction.final_price) : 0);
+      setAmountReceived(transaction.amount_received || (transaction.is_paid ? (groupTotal || transaction.final_price) : 0));
       setUseWallet(false);
       setSurplusAction('deposit');
       
@@ -199,6 +199,7 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
         discount_amount: discAmount,
         discount_percent: discPercent,
         final_price: finalPrice,
+        amount_received: amountReceived,
         due_date: dueDate,
         created_at: new Date(orderDate).toISOString()
       });
