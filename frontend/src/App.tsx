@@ -1,15 +1,39 @@
 import { useState, useEffect } from 'react';
-import { Users, Settings, PlusCircle, List, LogOut, Calculator, Receipt, Archive } from 'lucide-react';
+import { Users, Settings, PlusCircle, List, LogOut, Calculator, Receipt, Archive, Loader2, Calendar } from 'lucide-react';
 import { StockManager } from './components/Stock/StockManager';
 import { motion, AnimatePresence } from 'framer-motion';
 import { api } from './services/api';
 import { OrderInput } from './components/Transaction/OrderInput';
 import { TransactionList } from './components/Transaction/TransactionList';
 import { CustomerCRM } from './components/CRM/CustomerCRM';
+import { CustomerRetention } from './components/CRM/CustomerRetention';
 import { AdminDashboard } from './components/Admin/AdminDashboard';
 import { WalletManagement } from './components/Admin/WalletManagement';
 import { ExpenseManager } from './components/Expense/ExpenseManager';
 import { Login } from './components/Auth/Login';
+
+const CustomerRetentionMenu = () => {
+    const [customers, setCustomers] = useState([]);
+    const [transactions, setTransactions] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetch = async () => {
+            try {
+                const [c, t] = await Promise.all([api.getCustomers(), api.getTransactions()]);
+                setCustomers(c || []);
+                setTransactions(t || []);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetch();
+    }, []);
+
+    if (loading) return <div style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}><Loader2 className="animate-spin" size={32} color="var(--primary)" /></div>;
+
+    return <CustomerRetention customers={customers} transactions={transactions} />;
+};
 
 function App() {
   const [user, setUser] = useState<any>(() => {
@@ -18,7 +42,7 @@ function App() {
   });
   const [activeMenu, setActiveMenu] = useState<'transaksi' | 'biaya' | 'pelanggan' | 'admin' | 'stok'>('transaksi');
   const [activeTab, setActiveTab] = useState<'input' | 'list'>('input');
-  const [activeTabPelanggan, setActiveTabPelanggan] = useState<'list' | 'saldo'>('list');
+  const [activeTabPelanggan, setActiveTabPelanggan] = useState<'list' | 'saldo' | 'retensi'>('list');
   const [settings, setSettings] = useState<any>({
     name: 'DN Laundry',
     address: 'Jl. Dewi Sartika A8/4, Jatiasih, Kota Bekasi. (Gmaps: DN Office)',
@@ -194,6 +218,13 @@ function App() {
                 <div className="tab-icon"><Receipt size={18} /></div>
                 <span className="tab-label">Saldo</span>
               </button>
+              <button 
+                className={`tab-btn ${activeTabPelanggan === 'retensi' ? 'active' : ''}`}
+                onClick={() => setActiveTabPelanggan('retensi')}
+              >
+                <div className="tab-icon"><Calendar size={18} /></div>
+                <span className="tab-label">Retensi</span>
+              </button>
             </div>
 
             <AnimatePresence mode="wait">
@@ -208,8 +239,10 @@ function App() {
                   <div className="glass-card">
                     <CustomerCRM currentUser={user} />
                   </div>
-                ) : (
+                ) : activeTabPelanggan === 'saldo' ? (
                   <WalletManagement />
+                ) : (
+                  <CustomerRetentionMenu />
                 )}
               </motion.div>
             </AnimatePresence>
