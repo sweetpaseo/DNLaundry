@@ -1,5 +1,6 @@
-
-import { Printer, X, MapPin, Instagram } from 'lucide-react';
+import { Printer, X, MapPin, Instagram, Download } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { toJpeg } from 'html-to-image';
 import type { Transaction } from '../../types';
 import { WhatsAppIcon } from '../Icons';
 import { getWhatsAppUrl } from '../../utils/whatsapp';
@@ -11,12 +12,37 @@ interface ReceiptModalProps {
   settings: any;
   customers?: any[];
 }
-
 export const ReceiptModal = ({ isOpen, onClose, transaction, settings, customers = [] }: ReceiptModalProps) => {
+  const receiptRef = useRef<HTMLDivElement>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
+
   if (!isOpen) return null;
 
   const handlePrint = () => {
     window.print();
+  };
+
+  const handleDownloadImage = async () => {
+    if (!receiptRef.current) return;
+    
+    try {
+      setIsDownloading(true);
+      const dataUrl = await toJpeg(receiptRef.current, {
+        quality: 0.95,
+        backgroundColor: '#ffffff',
+        cacheBust: true,
+      });
+      
+      const link = document.createElement('a');
+      link.download = `Nota-${receiptId}.jpg`;
+      link.href = dataUrl;
+      link.click();
+    } catch (error) {
+      console.error('Failed to download image:', error);
+      alert('Gagal mendownload nota. Silakan coba lagi.');
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   const items = Array.isArray(transaction) ? transaction : [transaction];
@@ -56,7 +82,7 @@ export const ReceiptModal = ({ isOpen, onClose, transaction, settings, customers
       message += `- ${item.service_name} (${item.weight} ${item.unit || 'kg'}) : Rp ${item.final_price.toLocaleString('id-ID')}\n`;
     });
     message += `\n*TOTAL: Rp ${totalPrice.toLocaleString('id-ID')}*\n`;
-    message += `Status Pembayaran: ${allPaid ? 'LUNAS' : 'BELUM BAYAR'}\n`;
+    message += `Status Pembayaran: ${allPaid ? 'LUNAS' : 'BELUM LUNAS'}\n`;
     if (!allPaid && (settings?.bank_name || settings?.qris_whatsapp_url || settings?.qris_url)) {
       message += `\n*Informasi Pembayaran (Transfer):*\n`;
       if (settings.bank_name) {
@@ -104,7 +130,7 @@ export const ReceiptModal = ({ isOpen, onClose, transaction, settings, customers
         </div>
 
         <div style={{ flex: 1, overflowY: 'auto', padding: '0.5rem' }}>
-          <div id="receipt-content" style={{ 
+          <div id="receipt-content" ref={receiptRef} style={{ 
             padding: '1.5rem', 
             background: 'white', 
             color: 'black', 
@@ -166,7 +192,7 @@ export const ReceiptModal = ({ isOpen, onClose, transaction, settings, customers
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.75rem', borderTop: '2px solid #000', paddingTop: '0.4rem' }}>
                 <div>
                   <span style={{ fontSize: '0.75rem', fontWeight: 800, border: '1px solid #000', padding: '0.1rem 0.3rem' }}>
-                    {allPaid ? 'LUNAS' : 'BELUM BAYAR'}
+                    {allPaid ? 'LUNAS' : 'BELUM LUNAS'}
                   </span>
                   {allPaid && items[0].payment_method && (
                     <div style={{ fontSize: '0.6rem', marginTop: '0.2rem', fontWeight: 600 }}>
@@ -212,6 +238,16 @@ export const ReceiptModal = ({ isOpen, onClose, transaction, settings, customers
             style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', height: '3rem', fontSize: '0.85rem' }}
           >
             <Printer size={18} /> Cetak Nota
+          </button>
+          
+          <button 
+            onClick={handleDownloadImage}
+            disabled={isDownloading}
+            className="btn-secondary"
+            style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', height: '3rem', fontSize: '0.85rem' }}
+          >
+            {isDownloading ? <span className="animate-spin">⌛</span> : <Download size={18} />} 
+            {isDownloading ? 'Memproses...' : 'Download Nota'}
           </button>
           
           <button 
