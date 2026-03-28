@@ -199,7 +199,7 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
         discount_amount: discAmount,
         discount_percent: discPercent,
         final_price: finalPrice,
-        amount_received: amountReceived,
+        ...(amountReceived !== undefined ? { amount_received: amountReceived } : {}),
         due_date: dueDate,
         created_at: new Date(orderDate).toISOString()
       });
