@@ -369,6 +369,40 @@ export const EditTransactionModal = ({ isOpen, onClose, onSave, transaction, gro
 
           <div style={{ margin: '0.25rem 0', height: '1px', background: 'var(--glass-border)' }}></div>
 
+          {/* Total Summary (Always Visible) */}
+          <div style={{ 
+            padding: '1rem 1.25rem', 
+            borderRadius: '16px', 
+            background: 'linear-gradient(135deg, rgba(255, 0, 132, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%)',
+            border: '1px solid rgba(255, 0, 132, 0.2)',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            boxShadow: '0 4px 15px rgba(0,0,0,0.1)'
+          }}>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <span style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Total Tagihan {groupTotal ? '(Nota)' : ''}
+              </span>
+              <span style={{ fontSize: '1.35rem', fontWeight: 900, color: 'var(--primary)', lineHeight: 1.2 }}>
+                Rp {displayTotal.toLocaleString('id-ID')}
+              </span>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>Status Saat Ini</p>
+              <span style={{ 
+                fontSize: '0.75rem', 
+                fontWeight: 700, 
+                padding: '0.25rem 0.6rem', 
+                borderRadius: '6px', 
+                background: isPaid ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                color: isPaid ? '#22c55e' : '#ef4444'
+              }}>
+                {isPaid ? 'LUNAS' : 'BELUM LUNAS'}
+              </span>
+            </div>
+          </div>
+
           {/* Payment Section */}
           <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1.25rem', borderRadius: '16px', border: '1px solid var(--glass-border)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
