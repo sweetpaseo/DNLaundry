@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react';
-import { Search, Wallet, Plus, ArrowUpRight, User, Phone, Info, Clock, AlertTriangle } from 'lucide-react';
+import { Search, Wallet, Plus, ArrowUpRight, User, Phone, Info, Clock, AlertTriangle, Edit2 } from 'lucide-react';
 import { api } from '../../services/api';
 import type { Customer, Transaction } from '../../types';
+import { WalletModal } from './WalletModal';
 
 export const WalletManagement = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [search, setSearch] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -29,23 +32,22 @@ export const WalletManagement = () => {
     fetchData();
   }, []);
 
-  const handleManualTopUp = async (customer: Customer) => {
-    const amountStr = window.prompt(`Masukkan nominal tambahan saldo untuk ${customer.name}:`, '0');
-    if (amountStr === null) return;
-    
-    const amount = Number(amountStr);
-    if (isNaN(amount) || amount <= 0) {
-      alert('Nominal tidak valid!');
-      return;
-    }
+  const handleOpenModal = (customer: Customer) => {
+    setSelectedCustomer(customer);
+    setIsModalOpen(true);
+  };
+
+  const handleSaveBalance = async (amount: number, isCorrection: boolean) => {
+    if (!selectedCustomer) return;
 
     try {
-      const newBalance = (customer.wallet_balance || 0) + amount;
-      await api.updateCustomerBalance(customer.id, newBalance);
-      alert(`Berhasil menambah Rp ${amount.toLocaleString()} ke saldo ${customer.name}`);
+      const newBalance = isCorrection ? amount : (selectedCustomer.wallet_balance || 0) + amount;
+      await api.updateCustomerBalance(selectedCustomer.id, newBalance);
+      alert(`Berhasil memperbarui saldo ${selectedCustomer.name} menjadi Rp ${newBalance.toLocaleString()}`);
+      setIsModalOpen(false);
       fetchData();
     } catch (error) {
-      alert('Gagal menambah saldo');
+      alert('Gagal memperbarui saldo');
     }
   };
 
@@ -161,6 +163,13 @@ export const WalletManagement = () => {
                   <td style={{ padding: '1rem' }}>
                     <div style={{ fontWeight: 800, color: (customer.wallet_balance || 0) > 0 ? '#22c55e' : 'var(--text-muted)', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                       <Wallet size={14} /> Rp {(customer.wallet_balance || 0).toLocaleString()}
+                      <button 
+                        onClick={() => handleOpenModal(customer)}
+                        style={{ border: 'none', background: 'transparent', padding: '4px', cursor: 'pointer', color: 'var(--text-muted)', opacity: 0.5 }}
+                        title="Edit Saldo"
+                      >
+                        <Edit2 size={12} />
+                      </button>
                     </div>
                   </td>
                   <td style={{ padding: '1rem' }}>
@@ -185,11 +194,11 @@ export const WalletManagement = () => {
                   </td>
                   <td style={{ padding: '1rem', textAlign: 'right' }}>
                     <button 
-                      onClick={() => handleManualTopUp(customer)}
+                      onClick={() => handleOpenModal(customer)}
                       className="btn-primary"
                       style={{ padding: '0.4rem 0.8rem', fontSize: '0.75rem', borderRadius: '8px', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
                     >
-                      <Plus size={14} /> Top Up / Bayar
+                      <Plus size={14} /> Top Up / Koreksi
                     </button>
                   </td>
                 </tr>
@@ -206,6 +215,13 @@ export const WalletManagement = () => {
           <b>Saldo Gantung:</b> Tagihan yang belum dibayar oleh pelanggan. Segera konfirmasi pembayaran jika ada tagihan belum lunas.
         </p>
       </div>
+
+      <WalletModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        customer={selectedCustomer}
+        onSave={handleSaveBalance}
+      />
     </div>
   );
 };
