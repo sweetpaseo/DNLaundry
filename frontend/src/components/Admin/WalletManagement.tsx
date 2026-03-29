@@ -139,6 +139,7 @@ export const WalletManagement = () => {
                 <th style={{ padding: '1rem' }}>Pelanggan</th>
                 <th style={{ padding: '1rem' }}>Saldo (Titipan)</th>
                 <th style={{ padding: '1rem' }}>Saldo Gantung</th>
+                <th style={{ padding: '1rem' }}>Sisa Saldo</th>
                 <th style={{ padding: '1rem' }}>Status</th>
                 <th style={{ padding: '1rem', textAlign: 'right' }}>Aksi</th>
               </tr>
@@ -146,13 +147,16 @@ export const WalletManagement = () => {
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={5} style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>Loading...</td>
+                  <td colSpan={6} style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>Loading...</td>
                 </tr>
               ) : filteredCustomers.length === 0 ? (
                 <tr>
-                  <td colSpan={5} style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>Tidak ada data pelanggan ditemukan.</td>
+                  <td colSpan={6} style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>Tidak ada data pelanggan ditemukan.</td>
                 </tr>
-              ) : filteredCustomers.map(customer => (
+              ) : filteredCustomers.map(customer => {
+                const sisaSaldo = (customer.wallet_balance || 0) - (customer.total_debt || 0);
+                
+                return (
                 <tr key={customer.id} style={{ borderBottom: '1px solid var(--glass-border)', transition: 'background 0.2s' }} className="hover-row">
                   <td style={{ padding: '1rem' }}>
                     <div style={{ fontWeight: 600, fontSize: '0.95rem' }}>{customer.name}</div>
@@ -178,13 +182,18 @@ export const WalletManagement = () => {
                     </div>
                   </td>
                   <td style={{ padding: '1rem' }}>
-                    {customer.total_debt > (customer.wallet_balance || 0) ? (
+                    <div style={{ fontWeight: 800, color: sisaSaldo > 0 ? '#22c55e' : sisaSaldo < 0 ? '#ef4444' : 'var(--text-muted)', fontSize: '1rem' }}>
+                      Rp {sisaSaldo.toLocaleString()}
+                    </div>
+                  </td>
+                  <td style={{ padding: '1rem' }}>
+                    {sisaSaldo < 0 ? (
                       <span style={{ fontSize: '0.65rem', padding: '2px 8px', borderRadius: '4px', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', textTransform: 'uppercase', fontWeight: 800 }}>
-                        Perlu Tagih
+                        Perlu Tambah Saldo
                       </span>
-                    ) : (customer.wallet_balance || 0) > 0 ? (
+                    ) : sisaSaldo > 0 ? (
                       <span style={{ fontSize: '0.65rem', padding: '2px 8px', borderRadius: '4px', background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e', textTransform: 'uppercase', fontWeight: 800 }}>
-                        Saldo Aman
+                        Bisa Dipakai Transaksi
                       </span>
                     ) : (
                       <span style={{ fontSize: '0.65rem', padding: '2px 8px', borderRadius: '4px', background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>
@@ -202,7 +211,8 @@ export const WalletManagement = () => {
                     </button>
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>
