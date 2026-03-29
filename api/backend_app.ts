@@ -503,6 +503,26 @@ users.post('/', async (c) => {
   if (error) return c.json({ error: error.message }, 500)
   return c.json(data[0], 201)
 })
+users.put('/:id', async (c) => {
+  const id = c.req.param('id')
+  const body = await c.req.json()
+  const supabase = getSupabase(c)
+  
+  if (body.password) {
+    body.password = await hashPassword(body.password)
+  }
+  
+  const { data, error } = await supabase.from('laundry_users').update(body).eq('id', id).select('id, username, name, role')
+  if (error) return c.json({ error: error.message }, 500)
+  return c.json(data[0])
+})
+users.delete('/:id', async (c) => {
+  const id = c.req.param('id')
+  const supabase = getSupabase(c)
+  const { error } = await supabase.from('laundry_users').delete().eq('id', id)
+  if (error) return c.json({ error: error.message }, 500)
+  return c.json({ success: true })
+})
 
 // Settings
 const settings = new Hono<{ Bindings: Bindings }>()
