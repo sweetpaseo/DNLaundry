@@ -36,3 +36,4 @@ logs
 !.dev.vars.example
 .env*
 !.env.example
+.vercel

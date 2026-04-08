@@ -5,6 +5,7 @@
     "build": "cd frontend && npm install && npm run build && cd .. && mkdir -p public && cp -r frontend/dist/* public/"
   },
   "dependencies": {
+    "@hono/node-server": "^1.19.13",
     "@supabase/supabase-js": "^2.99.2",
     "hono": "^4.0.0"
   }
