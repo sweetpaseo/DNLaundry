@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
 import { 
   DollarSign, TrendingUp, Settings, Users, Plus, Trash2, Power, 
-  Briefcase, Calculator, History, Phone, Wallet, Receipt, Edit, Store, Tag
+  Briefcase, Calculator, History, Phone, Wallet, Receipt, Edit, Store, Tag,
+  Filter, Calendar
 } from 'lucide-react';
 import type { Service, MemberType, Employee, Incentive, Transaction, Expense, ExpenseCategory } from '../../types';
 import { ServiceModal } from './ServiceModal';
@@ -60,6 +60,11 @@ export const AdminDashboard = () => {
   const [editingUser, setEditingUser] = useState<any>(null);
   const [users, setUsers] = useState<any[]>([]);
   const [customers, setCustomers] = useState<any[]>([]);
+
+  // Expense specific filter states
+  const [expenseDateFilter, setExpenseDateFilter] = useState<'all' | 'daily' | 'weekly' | 'monthly' | 'custom'>('all');
+  const [expenseDateRange, setExpenseDateRange] = useState({ start: '', end: '' });
+  const [expenseSelectedCategory, setExpenseSelectedCategory] = useState<string>('all');
 
   // Filter States
   const [filterType, setFilterType] = useState<'monthly' | 'weekly' | 'range'>('monthly');
@@ -1081,7 +1086,56 @@ export const AdminDashboard = () => {
               </button>
             </div>
             {expenseSubTab === 'history' ? (
-              <div style={{ display: 'flex', gap: '0.8125rem', alignItems: 'center' }}>
+              <div style={{ display: 'flex', gap: '0.8125rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                {/* Category Filter */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.05)', padding: '0.4rem 0.8rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
+                  <Filter size={16} color="var(--primary)" />
+                  <select 
+                    value={expenseSelectedCategory}
+                    onChange={(e) => setExpenseSelectedCategory(e.target.value)}
+                    style={{ background: 'transparent', color: 'white', border: 'none', outline: 'none', cursor: 'pointer', fontSize: '0.8rem' }}
+                  >
+                    <option value="all" style={{ background: '#1e1e2e' }}>Semua Kategori</option>
+                    {expenseCategories.map(cat => (
+                      <option key={cat.id} value={cat.id} style={{ background: '#1e1e2e' }}>{cat.name}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Date Filter */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.05)', padding: '0.4rem 0.8rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
+                  <Calendar size={16} color="var(--primary)" />
+                  <select 
+                    value={expenseDateFilter}
+                    onChange={(e) => setExpenseDateFilter(e.target.value as any)}
+                    style={{ background: 'transparent', color: 'white', border: 'none', outline: 'none', cursor: 'pointer', fontSize: '0.8rem' }}
+                  >
+                    <option value="all" style={{ background: '#1e1e2e' }}>Semua Waktu</option>
+                    <option value="daily" style={{ background: '#1e1e2e' }}>Hari Ini</option>
+                    <option value="weekly" style={{ background: '#1e1e2e' }}>7 Hari Terakhir</option>
+                    <option value="monthly" style={{ background: '#1e1e2e' }}>Bulan Ini</option>
+                    <option value="custom" style={{ background: '#1e1e2e' }}>Custom Tanggal</option>
+                  </select>
+                </div>
+
+                {expenseDateFilter === 'custom' && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <input 
+                      type="date" 
+                      value={expenseDateRange.start} 
+                      onChange={(e) => setExpenseDateRange(prev => ({ ...prev, start: e.target.value }))}
+                      style={{ padding: '0.4rem', fontSize: '0.8rem', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', borderRadius: '4px' }}
+                    />
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>sd</span>
+                    <input 
+                      type="date" 
+                      value={expenseDateRange.end} 
+                      onChange={(e) => setExpenseDateRange(prev => ({ ...prev, end: e.target.value }))}
+                      style={{ padding: '0.4rem', fontSize: '0.8rem', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', borderRadius: '4px' }}
+                    />
+                  </div>
+                )}
+
                 <select 
                   value={expenseCashFilter} 
                   onChange={(e) => setExpenseCashFilter(e.target.value as any)}
@@ -1117,7 +1171,46 @@ export const AdminDashboard = () => {
                   <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>Belum ada catatan pengeluaran.</div>
                 ) : (
                   expenses
-                    .filter(ex => (expenseCashFilter === 'all' || ex.cash_type === expenseCashFilter) && stats.isWithinFilter(ex.date))
+                    .filter(ex => {
+                      // 1. Cash Type Filter
+                      if (expenseCashFilter !== 'all' && ex.cash_type !== expenseCashFilter) return false;
+
+                      // 2. Category Filter
+                      if (expenseSelectedCategory !== 'all' && ex.category_id !== expenseSelectedCategory) return false;
+
+                      // 3. Date Filter (using the same logic as ExpenseManager)
+                      const expenseDate = new Date(ex.date);
+                      expenseDate.setHours(0, 0, 0, 0);
+                      const now = new Date();
+                      now.setHours(0, 0, 0, 0);
+
+                      if (expenseDateFilter === 'daily') {
+                        if (expenseDate.getTime() !== now.getTime()) return false;
+                      } else if (expenseDateFilter === 'weekly') {
+                        const lastWeek = new Date(now);
+                        lastWeek.setDate(now.getDate() - 7);
+                        if (expenseDate < lastWeek) return false;
+                      } else if (expenseDateFilter === 'monthly') {
+                        if (expenseDate.getMonth() !== now.getMonth() || expenseDate.getFullYear() !== now.getFullYear()) return false;
+                      } else if (expenseDateFilter === 'custom') {
+                        if (expenseDateRange.start) {
+                          const start = new Date(expenseDateRange.start);
+                          start.setHours(0, 0, 0, 0);
+                          if (expenseDate < start) return false;
+                        }
+                        if (expenseDateRange.end) {
+                          const end = new Date(expenseDateRange.end);
+                          end.setHours(0, 0, 0, 0);
+                          if (expenseDate > end) return false;
+                        }
+                      } else {
+                        // fallback to the default stats.isWithinFilter which handles the monthly/range filters from the top bar
+                        // but only if expenseDateFilter is 'all'
+                        if (!stats.isWithinFilter(ex.date)) return false;
+                      }
+
+                      return true;
+                    })
                     .map(ex => (
                       <div key={ex.id} className="glass-card" style={{ padding: '1.25rem', background: 'rgba(255,255,255,0.02)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
                         <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', minWidth: 'min(100%, 250px)', flex: 1 }}>
