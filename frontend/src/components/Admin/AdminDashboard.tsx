@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { 
   DollarSign, TrendingUp, Settings, Users, Plus, Trash2, Power, 
   Briefcase, Calculator, History, Phone, Wallet, Receipt, Edit, Store, Tag,
