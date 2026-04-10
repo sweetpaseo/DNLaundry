@@ -375,7 +375,7 @@ export const AdminDashboard = () => {
     const headerLabels = Object.values(headers);
     
     const csvContent = [
-      '\ufeff' + headerLabels.join(','),
+      headerLabels.join(','),
       ...data.map(row => headerKeys.map(key => {
         let val = row[key];
         if (val === null || val === undefined) val = '';
@@ -383,20 +383,25 @@ export const AdminDashboard = () => {
       }).join(','))
     ].join('\n');
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
+    const finalFilename = filename.endsWith('.csv') ? filename : `${filename}.csv`;
+    // Gunakan array untuk Blob agar BOM dan konten terpisah dengan benar
+    const blob = new Blob(['\ufeff', csvContent], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(blob);
+    
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', filename.endsWith('.csv') ? filename : `${filename}.csv`);
+    link.download = finalFilename;
     link.style.display = 'none';
+    
+    // Tambahkan ke DOM sebelum klik (penting untuk beberapa browser)
     document.body.appendChild(link);
     link.click();
     
-    // Memberikan sedikit jeda sebelum menghapus agar browser sempat memulai proses download
+    // Bersihkan setelah jeda singkat
     setTimeout(() => {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-    }, 100);
+    }, 200);
   };
 
   const exportPriceListCSV = () => {
