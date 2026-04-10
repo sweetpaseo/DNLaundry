@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { 
   DollarSign, TrendingUp, Settings, Users, Plus, Trash2, Power, 
   Briefcase, Calculator, History, Phone, Wallet, Receipt, Edit, Store, Tag,
-  Filter, Calendar
+  Filter, Calendar, Search, Download
 } from 'lucide-react';
 import type { Service, MemberType, Employee, Incentive, Transaction, Expense, ExpenseCategory } from '../../types';
 import { ServiceModal } from './ServiceModal';
@@ -66,6 +66,9 @@ export const AdminDashboard = () => {
   const [expenseDateFilter, setExpenseDateFilter] = useState<'all' | 'daily' | 'weekly' | 'monthly' | 'custom'>('all');
   const [expenseDateRange, setExpenseDateRange] = useState({ start: '', end: '' });
   const [expenseSelectedCategory, setExpenseSelectedCategory] = useState<string>('all');
+  const [managementView, setManagementView] = useState<'edit' | 'price-list'>('edit');
+  const [serviceSearch, setServiceSearch] = useState('');
+  const [expenseSearch, setExpenseSearch] = useState('');
 
   // Filter States
   const [filterType, setFilterType] = useState<'monthly' | 'weekly' | 'range'>('monthly');
@@ -366,6 +369,76 @@ export const AdminDashboard = () => {
         alert('Gagal menghapus user');
       }
     }
+  };
+  const downloadCSV = (data: any[], headers: Record<string, string>, filename: string) => {
+    const headerKeys = Object.keys(headers);
+    const headerLabels = Object.values(headers);
+    
+    const csvContent = [
+      headerLabels.join(','),
+      ...data.map(row => headerKeys.map(key => {
+        let val = row[key];
+        if (val === null || val === undefined) val = '';
+        return `"${val.toString().replace(/"/g, '""')}"`;
+      }).join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${filename}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const exportPriceListCSV = () => {
+    const headers = {
+      name: 'Nama Layanan/Produk',
+      category: 'Kategori',
+      price_normal: 'Harga Normal',
+      price_member: 'Harga Member',
+      price_express: 'Harga Express',
+      price_special: 'Harga Spesial',
+      processing_days: 'Hari Proses',
+      is_active: 'Status Aktif'
+    };
+    
+    const data = services.map(s => ({
+      ...s,
+      is_active: s.is_active ? 'Ya' : 'Tidak'
+    }));
+    
+    downloadCSV(data, headers, `Daftar_Harga_Laundry_${new Date().toISOString().split('T')[0]}`);
+  };
+
+  const exportExpensesCSV = () => {
+    const headers = {
+      date: 'Tanggal',
+      description: 'Deskripsi',
+      amount: 'Jumlah',
+      cash_type: 'Tipe Kas',
+      category_name: 'Kategori'
+    };
+
+    const filteredExpenses = expenses
+      .filter(ex => {
+        if (expenseCashFilter !== 'all' && ex.cash_type !== expenseCashFilter) return false;
+        if (expenseSelectedCategory !== 'all' && ex.category_id !== expenseSelectedCategory) return false;
+        if (expenseSearch && !ex.description.toLowerCase().includes(expenseSearch.toLowerCase())) return false;
+        if (!stats.isWithinFilter(ex.date)) return false;
+        return true;
+      })
+      .map(ex => ({
+        ...ex,
+        date: new Date(ex.date).toLocaleDateString('id-ID'),
+        category_name: ex.expense_category?.name || 'Lainnya',
+        cash_type: ex.cash_type === 'main' ? 'Kas Utama' : 'Kas Kecil'
+      }));
+
+    downloadCSV(filteredExpenses, headers, `Pengeluaran_Laundry_${new Date().toISOString().split('T')[0]}`);
   };
 
   return (
@@ -779,19 +852,54 @@ export const AdminDashboard = () => {
         <div className="responsive-grid">
           {/* Price Management */}
           <div className="glass-card">
-            <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Settings size={18} color="var(--primary)" /> Manajemen Layanan & Harga
-              </h4>
-              <button
-                className="btn-primary"
-                style={{ padding: '0.4rem 1rem', fontSize: '0.8125rem' }}
-                onClick={() => { setEditingService(null); setIsServiceModalOpen(true); }}
-              >
-                <Plus size={14} /> Layanan Baru
-              </button>
+            <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Settings size={18} color="var(--primary)" /> Manajemen Layanan & Harga
+                </h4>
+                <div style={{ display: 'flex', gap: '0.5rem', background: 'rgba(255,255,255,0.02)', padding: '0.3rem', borderRadius: '10px', border: '1px solid var(--glass-border)', width: 'fit-content' }}>
+                  <button 
+                    onClick={() => setManagementView('edit')}
+                    style={{ padding: '0.4rem 0.8rem', fontSize: '0.75rem', background: managementView === 'edit' ? 'var(--primary-gradient)' : 'transparent', color: managementView === 'edit' ? 'white' : 'var(--text-muted)', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}
+                  >Kelola</button>
+                  <button 
+                    onClick={() => setManagementView('price-list')}
+                    style={{ padding: '0.4rem 0.8rem', fontSize: '0.75rem', background: managementView === 'price-list' ? 'var(--primary-gradient)' : 'transparent', color: managementView === 'price-list' ? 'white' : 'var(--text-muted)', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}
+                  >Daftar Harga</button>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.05)', padding: '0.4rem 0.8rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
+                  <Search size={14} color="var(--text-muted)" />
+                  <input 
+                    type="text" 
+                    placeholder="Cari layanan..."
+                    value={serviceSearch}
+                    onChange={(e) => setServiceSearch(e.target.value)}
+                    style={{ background: 'transparent', border: 'none', color: 'white', fontSize: '0.8rem', outline: 'none', width: '150px' }}
+                  />
+                </div>
+                {managementView === 'price-list' && (
+                  <button
+                    onClick={exportPriceListCSV}
+                    style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.4rem 0.8rem', borderRadius: '8px', background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.2)', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600 }}
+                  >
+                    <Download size={14} /> CSV
+                  </button>
+                )}
+                <button
+                  className="btn-primary"
+                  style={{ padding: '0.4rem 1rem', fontSize: '0.8125rem' }}
+                  onClick={() => { setEditingService(null); setIsServiceModalOpen(true); }}
+                >
+                  <Plus size={14} /> Layanan Baru
+                </button>
+              </div>
             </div>
-            <table className="responsive-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+
+            {managementView === 'edit' ? (
+              <table className="responsive-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid var(--glass-border)', color: 'var(--text-muted)', fontSize: '0.8125rem', textAlign: 'left' }}>
                   <th style={{ padding: '0.75rem' }}>Layanan</th>
@@ -802,7 +910,9 @@ export const AdminDashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {services.map(service => (
+                {services
+                  .filter(s => s.name.toLowerCase().includes(serviceSearch.toLowerCase()))
+                  .map(service => (
                   <tr key={service.id} style={{ borderBottom: '1px solid var(--glass-border)', opacity: service.is_active ? 1 : 0.5 }}>
                     <td style={{ padding: '1rem' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
@@ -879,6 +989,39 @@ export const AdminDashboard = () => {
                 ))}
               </tbody>
             </table>
+            ) : (
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
+                  <thead>
+                    <tr style={{ borderBottom: '2px solid var(--glass-border)', color: 'var(--text-muted)', textAlign: 'left' }}>
+                      <th style={{ padding: '1rem 0.75rem' }}>Nama Layanan</th>
+                      <th style={{ padding: '1rem 0.75rem', textAlign: 'right' }}>Normal</th>
+                      <th style={{ padding: '1rem 0.75rem', textAlign: 'right' }}>Member</th>
+                      <th style={{ padding: '1rem 0.75rem', textAlign: 'right' }}>Express</th>
+                      <th style={{ padding: '1rem 0.75rem', textAlign: 'right' }}>Spesial</th>
+                      <th style={{ padding: '1rem 0.75rem', textAlign: 'center' }}>Proses</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {services
+                      .filter(s => s.name.toLowerCase().includes(serviceSearch.toLowerCase()))
+                      .map(s => (
+                        <tr key={s.id} style={{ borderBottom: '1px solid var(--glass-border)', opacity: s.is_active ? 1 : 0.5 }}>
+                          <td style={{ padding: '1rem 0.75rem' }}>
+                            <div style={{ fontWeight: 600 }}>{s.name}</div>
+                            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{s.category === 'product' ? 'Produk' : 'Jasa'}</div>
+                          </td>
+                          <td style={{ padding: '1rem 0.75rem', textAlign: 'right' }}>Rp {s.price_normal?.toLocaleString()}</td>
+                          <td style={{ padding: '1rem 0.75rem', textAlign: 'right', color: 'var(--primary)', fontWeight: 600 }}>Rp {s.price_member?.toLocaleString()}</td>
+                          <td style={{ padding: '1rem 0.75rem', textAlign: 'right', color: 'var(--accent)' }}>Rp {s.price_express?.toLocaleString()}</td>
+                          <td style={{ padding: '1rem 0.75rem', textAlign: 'right', color: '#fbbf24' }}>Rp {s.price_special?.toLocaleString()}</td>
+                          <td style={{ padding: '1rem 0.75rem', textAlign: 'center' }}>{s.processing_days || 0} Hari</td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
@@ -1146,6 +1289,22 @@ export const AdminDashboard = () => {
                   <option value="petty">Kas Kecil (Staff)</option>
                   <option value="main">Kas Utama (Owner)</option>
                 </select>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.05)', padding: '0.4rem 0.8rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
+                  <Search size={14} color="var(--text-muted)" />
+                  <input 
+                    type="text" 
+                    placeholder="Cari deskripsi..."
+                    value={expenseSearch}
+                    onChange={(e) => setExpenseSearch(e.target.value)}
+                    style={{ background: 'transparent', border: 'none', color: 'white', fontSize: '0.8rem', outline: 'none', width: '150px' }}
+                  />
+                </div>
+                <button
+                  onClick={exportExpensesCSV}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.4rem 0.8rem', borderRadius: '8px', background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.2)', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}
+                >
+                  <Download size={16} /> Export
+                </button>
                 <button 
                   onClick={() => { setEditingExpense(null); setIsExpenseModalOpen(true); }}
                   className="btn-primary" 
