@@ -375,7 +375,7 @@ export const AdminDashboard = () => {
     const headerLabels = Object.values(headers);
     
     const csvContent = [
-      headerLabels.join(','),
+      '\ufeff' + headerLabels.join(','),
       ...data.map(row => headerKeys.map(key => {
         let val = row[key];
         if (val === null || val === undefined) val = '';
@@ -383,15 +383,15 @@ export const AdminDashboard = () => {
       }).join(','))
     ].join('\n');
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', `${filename}.csv`);
-    link.style.visibility = 'hidden';
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename.endsWith('.csv') ? filename : `${filename}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   const exportPriceListCSV = () => {
@@ -411,7 +411,7 @@ export const AdminDashboard = () => {
       is_active: s.is_active ? 'Ya' : 'Tidak'
     }));
     
-    downloadCSV(data, headers, `Daftar_Harga_Laundry_${new Date().toISOString().split('T')[0]}`);
+    downloadCSV(data, headers, `Layanan_${new Date().toLocaleDateString('id-ID').replace(/\//g, '-')}`);
   };
 
   const exportExpensesCSV = () => {
@@ -438,7 +438,7 @@ export const AdminDashboard = () => {
         cash_type: ex.cash_type === 'main' ? 'Kas Utama' : 'Kas Kecil'
       }));
 
-    downloadCSV(filteredExpenses, headers, `Pengeluaran_Laundry_${new Date().toISOString().split('T')[0]}`);
+    downloadCSV(filteredExpenses, headers, `Pengeluaran_${new Date().toLocaleDateString('id-ID').replace(/\//g, '-')}`);
   };
 
   return (
