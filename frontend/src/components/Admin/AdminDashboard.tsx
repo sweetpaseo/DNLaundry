@@ -387,11 +387,16 @@ export const AdminDashboard = () => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = filename.endsWith('.csv') ? filename : `${filename}.csv`;
+    link.setAttribute('download', filename.endsWith('.csv') ? filename : `${filename}.csv`);
+    link.style.display = 'none';
     document.body.appendChild(link);
     link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    
+    // Memberikan sedikit jeda sebelum menghapus agar browser sempat memulai proses download
+    setTimeout(() => {
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }, 100);
   };
 
   const exportPriceListCSV = () => {
