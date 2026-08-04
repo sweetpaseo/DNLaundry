@@ -128,27 +128,21 @@ export const ExpenseManager = ({ userRole = 'staff' }: ExpenseManagerProps) => {
   };
 
   return (
-    <div className="expense-manager" style={{ padding: '1rem' }}>
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
+    <div className="expense-manager" style={{ padding: '0.5rem 0' }}>
+      <div className="sub-nav">
         <button 
           onClick={() => setActiveTab('input')}
-          style={{ 
-            display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.5rem', borderRadius: '12px',
-            background: activeTab === 'input' ? 'var(--primary-gradient)' : 'rgba(255,255,255,0.05)',
-            color: 'white', border: 'none', cursor: 'pointer', transition: 'all 0.3s'
-          }}
+          className={`tab-btn ${activeTab === 'input' ? 'active' : ''}`}
+          style={{ padding: '0.65rem 1.25rem', fontSize: '0.875rem', fontWeight: 800, borderRadius: '16px' }}
         >
-          <PlusCircle size={20} /> Catat Biaya
+          <PlusCircle size={18} /> Catat Biaya
         </button>
         <button 
           onClick={() => setActiveTab('recap')}
-          style={{ 
-            display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1.5rem', borderRadius: '12px',
-            background: activeTab === 'recap' ? 'var(--primary-gradient)' : 'rgba(255,255,255,0.05)',
-            color: 'white', border: 'none', cursor: 'pointer', transition: 'all 0.3s'
-          }}
+          className={`tab-btn ${activeTab === 'recap' ? 'active' : ''}`}
+          style={{ padding: '0.65rem 1.25rem', fontSize: '0.875rem', fontWeight: 800, borderRadius: '16px' }}
         >
-          <History size={20} /> Rekap Biaya
+          <History size={18} /> Rekap Biaya
         </button>
       </div>
 

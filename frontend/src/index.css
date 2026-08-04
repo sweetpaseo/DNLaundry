@@ -164,6 +164,12 @@ input:-webkit-autofill:active {
   gap: 0.65rem;
 }
 
+.tier-buttons-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+
 .clay-app-layout {
   display: grid;
   grid-template-columns: 270px 1fr;
@@ -208,6 +214,11 @@ input:-webkit-autofill:active {
     height: 44px !important;
     font-size: 0.825rem !important;
     padding: 0 0.5rem !important;
+  }
+
+  .tier-buttons-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
   }
   .zomo-top-header {
     flex-direction: column !important;
@@ -359,31 +370,54 @@ input:-webkit-autofill:active {
   }
 
   .sub-nav {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
+    display: flex !important;
+    gap: 0.5rem !important;
+    flex-wrap: wrap !important;
+    margin-bottom: 1.25rem !important;
+    width: 100% !important;
+  }
+
+  .sub-nav .tab-btn {
+    flex: 1 1 calc(50% - 0.5rem) !important;
+    min-width: 120px !important;
+    height: 48px !important;
+    border-radius: 16px !important;
+    font-size: 0.825rem !important;
+    font-weight: 800 !important;
+    padding: 0 0.75rem !important;
+    justify-content: center !important;
+    box-shadow: 0 4px 12px rgba(126, 34, 206, 0.08);
+  }
+
+  .glass-card, .clay-card {
+    padding: 1.25rem 1rem !important;
+    border-radius: 24px !important;
+  }
+
+  .crm-header-responsive {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 1rem !important;
     margin-bottom: 1.5rem !important;
   }
 
-  .sub-nav button:last-child {
-    grid-column: span 1;
+  .crm-search {
+    position: relative;
+    width: 100% !important;
   }
 
-  .tab-btn {
-    padding: 0.6rem 0.5rem;
-    font-size: 0.85rem;
-    white-space: nowrap;
-    justify-content: center;
-    width: 100%;
-  }
-
-  .glass-card {
-    padding: 1.25rem 1rem;
+  .crm-add {
+    width: 100% !important;
+    height: 48px !important;
+    border-radius: 18px !important;
+    justify-content: center !important;
+    font-weight: 800 !important;
   }
 
   .mobile-grid-stack {
     grid-template-columns: 1fr !important;
-    gap: 1.25rem !important;
+    gap: 1rem !important;
   }
 
   .mobile-flex-stack {

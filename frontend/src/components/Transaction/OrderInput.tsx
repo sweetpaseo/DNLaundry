@@ -371,7 +371,7 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
 
           <div className="form-group" style={{ marginTop: '1.25rem' }}>
             <label style={{ display: 'block', marginBottom: '0.8rem', color: 'var(--text-muted)', fontSize: '0.875rem' }}>Tier Harga Layanan</label>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 75px), 1fr))', gap: '0.5rem' }}>
+            <div className="tier-buttons-grid">
               {(['normal', 'member', 'express', 'reseller'] as const).map(tier => {
                 return (
                   <button
