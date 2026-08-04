@@ -455,10 +455,9 @@ export const AdminDashboard = () => {
   return (
     <div className="admin-dashboard">
       <div style={{ marginBottom: '2rem' }}>
-        <h3 style={{ fontSize: '1.25rem', fontWeight: 600 }}>Panel Admin Laundry</h3>
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Manajemen bisnis & payroll karyawan</p>
+        <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)' }}>Panel Admin Laundry</h3>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Manajemen bisnis & payroll karyawan</p>
       </div>
-
 
       {/* Tab Navigation (Moved Below Cards) */}
       <div style={{ 
@@ -472,65 +471,64 @@ export const AdminDashboard = () => {
         <button
           onClick={() => setActiveTab('report')}
           style={{
-            display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 0', background: 'transparent', border: 'none', borderBottom: activeTab === 'report' ? '2px solid var(--primary)' : '2px solid transparent', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600,
-            color: activeTab === 'report' ? 'white' : 'var(--text-muted)', transition: 'all 0.2s', flexShrink: 0
+            display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 0', background: 'transparent', border: 'none', borderBottom: activeTab === 'report' ? '2px solid var(--primary)' : '2px solid transparent', cursor: 'pointer', fontSize: '0.9rem', fontWeight: activeTab === 'report' ? 800 : 600,
+            color: activeTab === 'report' ? 'var(--primary)' : 'var(--text-secondary)', transition: 'all 0.2s', flexShrink: 0
           }}
         >
-          <TrendingUp size={16} color={activeTab === 'report' ? 'var(--primary)' : 'var(--text-muted)'} /> Report
+          <TrendingUp size={16} color={activeTab === 'report' ? 'var(--primary)' : 'var(--text-secondary)'} /> Report
         </button>
         <button
           onClick={() => setActiveTab('management')}
           style={{
-            display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 0', background: 'transparent', border: 'none', borderBottom: activeTab === 'management' ? '2px solid var(--primary)' : '2px solid transparent', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600,
-            color: activeTab === 'management' ? 'white' : 'var(--text-muted)', transition: 'all 0.2s'
+            display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 0', background: 'transparent', border: 'none', borderBottom: activeTab === 'management' ? '2px solid var(--primary)' : '2px solid transparent', cursor: 'pointer', fontSize: '0.9rem', fontWeight: activeTab === 'management' ? 800 : 600,
+            color: activeTab === 'management' ? 'var(--primary)' : 'var(--text-secondary)', transition: 'all 0.2s'
           }}
         >
-          <Settings size={16} color={activeTab === 'management' ? 'var(--primary)' : 'var(--text-muted)'} /> Layanan & Karyawan
+          <Settings size={16} color={activeTab === 'management' ? 'var(--primary)' : 'var(--text-secondary)'} /> Layanan & Karyawan
         </button>
         <button
           onClick={() => setActiveTab('payroll')}
           style={{
-            display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 0', background: 'transparent', border: 'none', borderBottom: activeTab === 'payroll' ? '2px solid var(--primary)' : '2px solid transparent', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600,
-            color: activeTab === 'payroll' ? 'white' : 'var(--text-muted)', transition: 'all 0.2s'
+            display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 0', background: 'transparent', border: 'none', borderBottom: activeTab === 'payroll' ? '2px solid var(--primary)' : '2px solid transparent', cursor: 'pointer', fontSize: '0.9rem', fontWeight: activeTab === 'payroll' ? 800 : 600,
+            color: activeTab === 'payroll' ? 'var(--primary)' : 'var(--text-secondary)', transition: 'all 0.2s'
           }}
         >
-          <Calculator size={16} color={activeTab === 'payroll' ? 'var(--primary)' : 'var(--text-muted)'} /> Rangkuman Gaji
+          <Calculator size={16} color={activeTab === 'payroll' ? 'var(--primary)' : 'var(--text-secondary)'} /> Rangkuman Gaji
         </button>
         <button
           onClick={() => setActiveTab('expenses')}
           style={{
-            display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 0', background: 'transparent', border: 'none', borderBottom: activeTab === 'expenses' ? '2px solid var(--primary)' : '2px solid transparent', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600,
-            color: activeTab === 'expenses' ? 'white' : 'var(--text-muted)', transition: 'all 0.2s'
+            display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 0', background: 'transparent', border: 'none', borderBottom: activeTab === 'expenses' ? '2px solid var(--primary)' : '2px solid transparent', cursor: 'pointer', fontSize: '0.9rem', fontWeight: activeTab === 'expenses' ? 800 : 600,
+            color: activeTab === 'expenses' ? 'var(--primary)' : 'var(--text-secondary)', transition: 'all 0.2s'
           }}
         >
-          <Receipt size={16} color={activeTab === 'expenses' ? 'var(--primary)' : 'var(--text-muted)'} /> Pengeluaran
+          <Receipt size={16} color={activeTab === 'expenses' ? 'var(--primary)' : 'var(--text-secondary)'} /> Pengeluaran
         </button>
         <button
           onClick={() => setActiveTab('users')}
           style={{
-            display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 0', background: 'transparent', border: 'none', borderBottom: activeTab === 'users' ? '2px solid var(--primary)' : '2px solid transparent', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600,
-            color: activeTab === 'users' ? 'white' : 'var(--text-muted)', transition: 'all 0.2s'
+            display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 0', background: 'transparent', border: 'none', borderBottom: activeTab === 'users' ? '2px solid var(--primary)' : '2px solid transparent', cursor: 'pointer', fontSize: '0.9rem', fontWeight: activeTab === 'users' ? 800 : 600,
+            color: activeTab === 'users' ? 'var(--primary)' : 'var(--text-secondary)', transition: 'all 0.2s'
           }}
         >
-          <Users size={16} color={activeTab === 'users' ? 'var(--primary)' : 'var(--text-muted)'} /> Manajemen User
+          <Users size={16} color={activeTab === 'users' ? 'var(--primary)' : 'var(--text-secondary)'} /> Manajemen User
         </button>
         <button
           onClick={() => setActiveTab('identity')}
           style={{
-            display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 0', background: 'transparent', border: 'none', borderBottom: activeTab === 'identity' ? '2px solid var(--primary)' : '2px solid transparent', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600,
-            color: activeTab === 'identity' ? 'white' : 'var(--text-muted)', transition: 'all 0.2s', flexShrink: 0
+            display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 0', background: 'transparent', border: 'none', borderBottom: activeTab === 'identity' ? '2px solid var(--primary)' : '2px solid transparent', cursor: 'pointer', fontSize: '0.9rem', fontWeight: activeTab === 'identity' ? 800 : 600,
+            color: activeTab === 'identity' ? 'var(--primary)' : 'var(--text-secondary)', transition: 'all 0.2s', flexShrink: 0
           }}
         >
-          <Store size={16} color={activeTab === 'identity' ? 'var(--primary)' : 'var(--text-muted)'} /> Identitas Usaha
+          <Store size={16} color={activeTab === 'identity' ? 'var(--primary)' : 'var(--text-secondary)'} /> Identitas Usaha
         </button>
       </div>
  
       {activeTab === 'report' ? (
         <>
           {/* Report Filter Bar */}
-          {/* New Advanced Filter Bar */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem' }}>
-            <div style={{ display: 'flex', gap: '0.5rem', background: 'rgba(255,255,255,0.02)', padding: '0.4rem', borderRadius: '12px', border: '1px solid var(--glass-border)', width: 'fit-content', alignSelf: 'flex-end' }}>
+            <div style={{ display: 'flex', gap: '0.5rem', background: '#F8FAFC', padding: '0.4rem', borderRadius: '12px', border: '1px solid var(--border)', width: 'fit-content', alignSelf: 'flex-end' }}>
               {[
                 { id: 'monthly', label: 'Bulanan' },
                 { id: 'weekly', label: 'Mingguan' },
@@ -542,9 +540,9 @@ export const AdminDashboard = () => {
                   style={{ 
                     padding: '0.5rem 1.2rem', 
                     fontSize: '0.8rem', 
-                    background: filterType === m.id ? 'var(--primary-gradient)' : 'transparent',
-                    color: filterType === m.id ? 'white' : 'var(--text-muted)',
-                    border: 'none',
+                    background: filterType === m.id ? 'var(--primary)' : 'transparent',
+                    color: filterType === m.id ? '#ffffff' : 'var(--text-secondary)',
+                    border: filterType === m.id ? '1px solid var(--primary)' : '1px solid transparent',
                     borderRadius: '8px',
                     cursor: 'pointer',
                     fontWeight: 700,
@@ -562,21 +560,21 @@ export const AdminDashboard = () => {
                   <select 
                     value={filterDay} 
                     onChange={(e) => setFilterDay(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-                    style={{ padding: '0.5rem 0.8rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', fontSize: '0.8rem' }}
+                    style={{ padding: '0.5rem 0.8rem', borderRadius: '10px', background: '#F8FAFC', border: '1.5px solid var(--border)', color: 'var(--text-primary)', fontSize: '0.8rem', fontWeight: 600 }}
                   >
-                    <option value="all">Semua Tanggal</option>
+                    <option value="all" style={{ background: '#FFFFFF', color: '#0F172A' }}>Semua Tanggal</option>
                     {Array.from({ length: 31 }, (_, i) => i + 1).map(d => (
-                      <option key={d} value={d}>Tgl {d}</option>
+                      <option key={d} value={d} style={{ background: '#FFFFFF', color: '#0F172A' }}>Tgl {d}</option>
                     ))}
                   </select>
                   <select 
                     value={filterMonth} 
                     onChange={(e) => setFilterMonth(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-                    style={{ padding: '0.5rem 0.8rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', fontSize: '0.8rem' }}
+                    style={{ padding: '0.5rem 0.8rem', borderRadius: '10px', background: '#F8FAFC', border: '1.5px solid var(--border)', color: 'var(--text-primary)', fontSize: '0.8rem', fontWeight: 600 }}
                   >
-                    <option value="all">Semua Bulan</option>
+                    <option value="all" style={{ background: '#FFFFFF', color: '#0F172A' }}>Semua Bulan</option>
                     {months.map((m, i) => (
-                      <option key={m} value={i}>{m}</option>
+                      <option key={m} value={i} style={{ background: '#FFFFFF', color: '#0F172A' }}>{m}</option>
                     ))}
                   </select>
                 </>
@@ -587,22 +585,22 @@ export const AdminDashboard = () => {
                   <select 
                     value={filterWeek} 
                     onChange={(e) => setFilterWeek(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-                    style={{ padding: '0.5rem 0.8rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', fontSize: '0.8rem' }}
+                    style={{ padding: '0.5rem 0.8rem', borderRadius: '10px', background: '#F8FAFC', border: '1.5px solid var(--border)', color: 'var(--text-primary)', fontSize: '0.8rem', fontWeight: 600 }}
                   >
-                    <option value="all">Semua Minggu</option>
-                    <option value={1}>Minggu 1 (1-7)</option>
-                    <option value={2}>Minggu 2 (8-14)</option>
-                    <option value={3}>Minggu 3 (15-21)</option>
-                    <option value={4}>Minggu 4 (22+)</option>
+                    <option value="all" style={{ background: '#FFFFFF', color: '#0F172A' }}>Semua Minggu</option>
+                    <option value={1} style={{ background: '#FFFFFF', color: '#0F172A' }}>Minggu 1 (1-7)</option>
+                    <option value={2} style={{ background: '#FFFFFF', color: '#0F172A' }}>Minggu 2 (8-14)</option>
+                    <option value={3} style={{ background: '#FFFFFF', color: '#0F172A' }}>Minggu 3 (15-21)</option>
+                    <option value={4} style={{ background: '#FFFFFF', color: '#0F172A' }}>Minggu 4 (22+)</option>
                   </select>
                   <select 
                     value={filterMonth} 
                     onChange={(e) => setFilterMonth(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-                    style={{ padding: '0.5rem 0.8rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', fontSize: '0.8rem' }}
+                    style={{ padding: '0.5rem 0.8rem', borderRadius: '10px', background: '#F8FAFC', border: '1.5px solid var(--border)', color: 'var(--text-primary)', fontSize: '0.8rem', fontWeight: 600 }}
                   >
-                    <option value="all">Semua Bulan</option>
+                    <option value="all" style={{ background: '#FFFFFF', color: '#0F172A' }}>Semua Bulan</option>
                     {months.map((m, i) => (
-                      <option key={m} value={i}>{m}</option>
+                      <option key={m} value={i} style={{ background: '#FFFFFF', color: '#0F172A' }}>{m}</option>
                     ))}
                   </select>
                 </>
@@ -614,14 +612,14 @@ export const AdminDashboard = () => {
                     type="date" 
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    style={{ padding: '0.4rem 0.8rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', fontSize: '0.8rem' }}
+                    style={{ padding: '0.4rem 0.8rem', borderRadius: '10px', background: '#F8FAFC', border: '1.5px solid var(--border)', color: 'var(--text-primary)', fontSize: '0.8rem', fontWeight: 600 }}
                   />
-                  <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>sd</span>
+                  <span style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', fontWeight: 600 }}>sd</span>
                   <input 
                     type="date" 
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
-                    style={{ padding: '0.4rem 0.8rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', fontSize: '0.8rem' }}
+                    style={{ padding: '0.4rem 0.8rem', borderRadius: '10px', background: '#F8FAFC', border: '1.5px solid var(--border)', color: 'var(--text-primary)', fontSize: '0.8rem', fontWeight: 600 }}
                   />
                 </div>
               )}
@@ -630,11 +628,11 @@ export const AdminDashboard = () => {
                 <select 
                   value={filterYear} 
                   onChange={(e) => setFilterYear(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-                  style={{ padding: '0.5rem 0.8rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', fontSize: '0.8rem' }}
+                  style={{ padding: '0.5rem 0.8rem', borderRadius: '10px', background: '#F8FAFC', border: '1.5px solid var(--border)', color: 'var(--text-primary)', fontSize: '0.8rem', fontWeight: 600 }}
                 >
-                  <option value="all">Semua Tahun</option>
+                  <option value="all" style={{ background: '#FFFFFF', color: '#0F172A' }}>Semua Tahun</option>
                   {years.map(y => (
-                    <option key={y} value={y}>{y}</option>
+                    <option key={y} value={y} style={{ background: '#FFFFFF', color: '#0F172A' }}>{y}</option>
                   ))}
                 </select>
               )}
@@ -647,21 +645,21 @@ export const AdminDashboard = () => {
               const totalEx = filteredEx.reduce((acc, ex) => acc + ex.amount, 0);
               const totalIncome = stats.omzetTotal;
               const netProfit = totalIncome - totalEx;
-              const profitColor = netProfit >= 0 ? '#10b981' : '#f43f5e';
+              const profitColor = netProfit >= 0 ? '#059669' : '#dc2626';
 
               return [
-                { label: 'Total Pendapatan', value: `Rp ${totalIncome.toLocaleString()}`, icon: <TrendingUp size={20} />, color: '#3B82F6' },
-                { label: 'Total Pengeluaran', value: `Rp ${totalEx.toLocaleString()}`, icon: <DollarSign size={20} />, color: '#D3D3D3' },
+                { label: 'Total Pendapatan', value: `Rp ${totalIncome.toLocaleString()}`, icon: <TrendingUp size={20} />, color: '#2563eb' },
+                { label: 'Total Pengeluaran', value: `Rp ${totalEx.toLocaleString()}`, icon: <DollarSign size={20} />, color: '#dc2626' },
                 { label: 'Laba / Rugi Bersih', value: `Rp ${netProfit.toLocaleString()}`, icon: <Calculator size={20} />, color: profitColor },
                 { label: 'Margin Keuntungan', value: totalIncome > 0 ? `${((netProfit / totalIncome) * 100).toFixed(1)}%` : '0%', icon: <TrendingUp size={20} />, color: profitColor },
               ].map(stat => (
                 <div key={stat.label} className="glass-card" style={{ padding: '1.25rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                  <div style={{ padding: '0.75rem', borderRadius: '10px', background: `${stat.color}22`, color: stat.color }}>
+                  <div style={{ padding: '0.75rem', borderRadius: '10px', background: `${stat.color}15`, color: stat.color }}>
                     {stat.icon}
                   </div>
                   <div>
-                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{stat.label}</p>
-                    <h4 style={{ fontSize: '1.1rem', fontWeight: 700 }}>{stat.value}</h4>
+                    <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 600 }}>{stat.label}</p>
+                    <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)' }}>{stat.value}</h4>
                   </div>
                 </div>
               ));

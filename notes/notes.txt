@@ -2,3 +2,11 @@ Rule:
 1. Prinsip tampilan adalah mobile first application, terbagi menjadi 3 yaitu mobile, tablet dan desktop. 
 2. Gunakan clean code dan clean architecture untuk menulis coding webapp.
 3. Maksimalkan tampilan di semua device.
+
+GitHub
+Remote origin: https://github.com/sweetpaseo/DNLaundry.git (fetch & push)
+Branch aktif: main
+
+Vercel
+Project name: laundry
+Project ID: prj_hnf8lgDSoAD0Fmh6thCpgt1yNJ3v, di bawah org/team team_l3piAs0jcXywhcc2GsXqZlfv

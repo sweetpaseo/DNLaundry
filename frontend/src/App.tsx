@@ -113,7 +113,7 @@ function App() {
         {/* Claymorphic 3D Purple Sidebar */}
         <aside className="clay-sidebar" style={{ position: 'sticky', top: '1.5rem' }}>
           {/* User Profile Avatar Section */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', paddingBottom: '1rem', borderBottom: '1px solid rgba(255, 255, 255, 0.2)' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', paddingBottom: '1rem', borderBottom: '1px solid var(--border)' }}>
             <div style={{ 
               width: 72, 
               height: 72, 
@@ -123,7 +123,7 @@ function App() {
               alignItems: 'center', 
               justifyContent: 'center', 
               marginBottom: '0.75rem',
-              boxShadow: '0 8px 20px rgba(0, 0, 0, 0.15), inset 0 2px 4px rgba(255, 255, 255, 1)',
+              boxShadow: '0 4px 14px rgba(15, 23, 42, 0.08)',
               padding: '0.3rem',
               overflow: 'hidden'
             }}>
@@ -135,10 +135,10 @@ function App() {
                 </div>
               )}
             </div>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 900, color: 'white', marginBottom: '0.15rem' }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 900, color: 'var(--text-primary)', marginBottom: '0.15rem' }}>
               Hi, {user.name}! 👋
             </h3>
-            <span style={{ fontSize: '0.72rem', background: 'rgba(255, 255, 255, 0.2)', padding: '0.15rem 0.6rem', borderRadius: '999px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+            <span style={{ fontSize: '0.72rem', background: '#F1F5F9', color: 'var(--primary)', border: '1px solid var(--border)', padding: '0.15rem 0.6rem', borderRadius: '999px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
               {user.role}
             </span>
           </div>
@@ -160,16 +160,15 @@ function App() {
           {/* Bottom Upgrade/Status Card */}
           <div style={{ 
             marginTop: 'auto', 
-            background: 'rgba(255, 255, 255, 0.18)', 
+            background: '#F8FAFC', 
             borderRadius: '22px', 
             padding: '1rem', 
             textAlign: 'center',
-            backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(255, 255, 255, 0.3)'
+            border: '1px solid var(--border)'
           }}>
             <div style={{ fontSize: '1.25rem', marginBottom: '0.2rem' }}>🧺✨</div>
-            <div style={{ fontSize: '0.825rem', fontWeight: 800, color: 'white' }}>DN Laundry POS</div>
-            <div style={{ fontSize: '0.68rem', color: 'rgba(255, 255, 255, 0.8)' }}>Sistem Operasional Pro</div>
+            <div style={{ fontSize: '0.825rem', fontWeight: 800, color: 'var(--text-primary)' }}>DN Laundry POS</div>
+            <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)' }}>Sistem Operasional Pro</div>
           </div>
         </aside>
 
