@@ -123,17 +123,24 @@ function App() {
       }}>
         <div className="brand" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <div style={{
-            width: 44,
-            height: 44,
+            height: 48,
+            minWidth: 48,
             borderRadius: '14px',
-            background: 'linear-gradient(135deg, #FF0084, #c40062)',
+            background: 'rgba(255, 255, 255, 0.03)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: 'white',
-            boxShadow: '0 6px 18px rgba(255, 0, 132, 0.4)'
+            padding: '0.4rem',
+            boxShadow: '0 6px 18px rgba(0, 0, 0, 0.3)'
           }}>
-            <Sparkles size={22} />
+            {settings?.logo_url ? (
+              <img src={settings.logo_url} alt="DN Laundry Logo" style={{ height: '100%', maxWidth: '140px', objectFit: 'contain' }} />
+            ) : (
+              <div style={{ width: 34, height: 34, borderRadius: '10px', background: 'linear-gradient(135deg, #FF0084, #c40062)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', boxShadow: '0 4px 12px rgba(255,0,132,0.4)' }}>
+                <Sparkles size={18} />
+              </div>
+            )}
           </div>
           <div>
             <h1 style={{ 
