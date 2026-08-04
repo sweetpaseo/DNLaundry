@@ -650,7 +650,7 @@ export const AdminDashboard = () => {
               const profitColor = netProfit >= 0 ? '#10b981' : '#f43f5e';
 
               return [
-                { label: 'Total Pendapatan', value: `Rp ${totalIncome.toLocaleString()}`, icon: <TrendingUp size={20} />, color: '#FF0084' },
+                { label: 'Total Pendapatan', value: `Rp ${totalIncome.toLocaleString()}`, icon: <TrendingUp size={20} />, color: '#3B82F6' },
                 { label: 'Total Pengeluaran', value: `Rp ${totalEx.toLocaleString()}`, icon: <DollarSign size={20} />, color: '#D3D3D3' },
                 { label: 'Laba / Rugi Bersih', value: `Rp ${netProfit.toLocaleString()}`, icon: <Calculator size={20} />, color: profitColor },
                 { label: 'Margin Keuntungan', value: totalIncome > 0 ? `${((netProfit / totalIncome) * 100).toFixed(1)}%` : '0%', icon: <TrendingUp size={20} />, color: profitColor },
@@ -859,7 +859,7 @@ export const AdminDashboard = () => {
                 <div style={{ 
                   marginTop: '1.75rem', 
                   paddingTop: '1.25rem', 
-                  borderTop: '2px solid #e9d5ff', 
+                  borderTop: '2px solid var(--border)', 
                   display: 'flex', 
                   justifyContent: 'space-between', 
                   alignItems: 'center', 
@@ -870,7 +870,7 @@ export const AdminDashboard = () => {
                   borderRadius: '16px'
                 }}>
                   <div>
-                    <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#1e1b4b' }}>LABA BERSIH (NET PROFIT): </span>
+                    <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-primary)' }}>LABA BERSIH (NET PROFIT): </span>
                     <span style={{ fontSize: '1.2rem', fontWeight: 900, color: netProfit >= 0 ? '#059669' : '#dc2626' }}>
                       Rp {netProfit.toLocaleString()}
                     </span>
@@ -960,7 +960,7 @@ export const AdminDashboard = () => {
                     <td style={{ padding: '1rem' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
                         <span style={{ fontWeight: 600 }}>{service.name}</span>
-                        <span style={{ fontSize: '0.65rem', padding: '2px 6px', borderRadius: '4px', background: service.category === 'product' ? 'rgba(59, 130, 246, 0.1)' : 'rgba(168, 85, 247, 0.1)', color: service.category === 'product' ? '#3b82f6' : '#a855f7' }}>
+                        <span style={{ fontSize: '0.65rem', padding: '2px 6px', borderRadius: '4px', background: service.category === 'product' ? 'rgba(59, 130, 246, 0.1)' : 'rgba(6, 182, 212, 0.1)', color: service.category === 'product' ? '#3b82f6' : '#06B6D4' }}>
                           {service.category === 'product' ? 'Product' : 'Service'}
                         </span>
                       </div>
@@ -968,7 +968,7 @@ export const AdminDashboard = () => {
                         <div style={{ padding: '2px 6px', background: 'rgba(255,255,255,0.03)', borderRadius: '4px' }}>
                           <span style={{ color: 'var(--text-muted)' }}>N:</span> Rp {service.price_normal?.toLocaleString()}
                         </div>
-                        <div style={{ padding: '2px 6px', background: 'rgba(255, 0, 132, 0.05)', borderRadius: '4px', color: 'var(--primary)', fontWeight: 600 }}>
+                        <div style={{ padding: '2px 6px', background: 'rgba(59, 130, 246, 0.05)', borderRadius: '4px', color: 'var(--primary)', fontWeight: 600 }}>
                           <span>M:</span> Rp {service.price_member?.toLocaleString()}
                         </div>
                         <div style={{ padding: '2px 6px', background: 'rgba(0, 212, 255, 0.05)', borderRadius: '4px', color: 'var(--accent)' }}>
@@ -1417,7 +1417,7 @@ export const AdminDashboard = () => {
                     .map(ex => (
                       <div key={ex.id} className="glass-card" style={{ padding: '1.25rem', background: 'rgba(255,255,255,0.02)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
                         <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', minWidth: 'min(100%, 250px)', flex: 1 }}>
-                          <div style={{ padding: '0.75rem', borderRadius: '12px', background: ex.cash_type === 'main' ? 'rgba(255, 0, 132, 0.1)' : 'rgba(244, 63, 94, 0.1)', color: ex.cash_type === 'main' ? 'var(--primary)' : '#f43f5e', flexShrink: 0 }}>
+                          <div style={{ padding: '0.75rem', borderRadius: '12px', background: ex.cash_type === 'main' ? 'rgba(59, 130, 246, 0.1)' : 'rgba(244, 63, 94, 0.1)', color: ex.cash_type === 'main' ? 'var(--primary)' : '#f43f5e', flexShrink: 0 }}>
                             <Wallet size={20} />
                           </div>
                           <div>

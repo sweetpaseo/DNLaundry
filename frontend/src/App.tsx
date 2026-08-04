@@ -130,7 +130,7 @@ function App() {
               {settings?.logo_url ? (
                 <img src={settings.logo_url} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
               ) : (
-                <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: 'linear-gradient(135deg, #a78bfa, #7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800 }}>
+                <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: 'linear-gradient(135deg, #60A5FA, #3B82F6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800 }}>
                   {user.name?.charAt(0).toUpperCase()}
                 </div>
               )}
@@ -179,10 +179,10 @@ function App() {
           {/* Top Header & Greeting Bar */}
           <div className="clay-card zomo-top-header">
             <div className="zomo-header-title-box">
-              <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#2d1b4e' }}>
+              <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: 'var(--text-primary)' }}>
                 {settings?.name || 'DN Laundry'} POS ☀️
               </h2>
-              <p style={{ fontSize: '0.825rem', color: '#7c6a99', fontWeight: 500 }}>
+              <p style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
                 Selamat bekerja! Kelola cucian & transaksi hari ini dengan mudah.
               </p>
             </div>
@@ -193,7 +193,7 @@ function App() {
                 padding: '0.45rem 0.9rem', 
                 borderRadius: '999px',
                 background: '#ffffff',
-                border: '2px solid #e9e3f5',
+                border: '2px solid var(--border)',
                 display: 'flex', 
                 alignItems: 'center', 
                 gap: '0.55rem',
@@ -211,8 +211,8 @@ function App() {
                 style={{ 
                   padding: '0.6rem 1rem', 
                   borderRadius: '16px',
-                  background: '#ffe4e6',
-                  color: '#fb7185',
+                  background: '#FEE2E2',
+                  color: '#EF4444',
                   fontWeight: 800,
                   fontSize: '0.825rem',
                   display: 'flex', 
@@ -356,10 +356,10 @@ function App() {
           </motion.div>
         </AnimatePresence>
 
-        <footer style={{ marginTop: '2.5rem', marginBottom: '1.5rem', textAlign: 'center', color: '#7c6a99', fontSize: '0.75rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
+        <footer style={{ marginTop: '2.5rem', marginBottom: '1.5rem', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '0.75rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
           <span>{settings?.name || 'DN Laundry'}</span>
           <span>•</span>
-          <span style={{ background: 'rgba(167, 139, 250, 0.15)', color: '#7c3aed', border: '1px solid rgba(167, 139, 250, 0.3)', padding: '0.2rem 0.6rem', borderRadius: '999px', fontWeight: 800, letterSpacing: '0.05em' }}>
+          <span style={{ background: 'rgba(59, 130, 246, 0.1)', color: 'var(--primary)', border: '1px solid rgba(59, 130, 246, 0.25)', padding: '0.2rem 0.6rem', borderRadius: '999px', fontWeight: 800, letterSpacing: '0.05em' }}>
             v1.0.0 Pro
           </span>
         </footer>
