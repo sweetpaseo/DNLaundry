@@ -296,7 +296,7 @@ function App() {
           <span>{settings?.name || 'DN Laundry'}</span>
           <span>•</span>
           <span style={{ background: 'rgba(255, 0, 132, 0.15)', color: '#FF0084', border: '1px solid rgba(255, 0, 132, 0.3)', padding: '0.2rem 0.6rem', borderRadius: '999px', fontWeight: 700, letterSpacing: '0.05em' }}>
-            v2.1.0 (TasteSkill UI)
+            v1.0.0
           </span>
         </footer>
       </main>
