@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Search, Plus, UserPlus, Calendar } from 'lucide-react';
+import { motion } from 'framer-motion';
 import type { Service, Employee, Customer, MemberType } from '../../types';
 import { AddCustomerModal } from '../CRM/AddCustomerModal';
 import { api } from '../../services/api';
@@ -593,21 +594,28 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
             </p>
           </div>
           
-          <button type="submit" className="btn-primary" style={{ 
-            width: '100%', 
-            padding: '1.25rem', 
-            fontSize: '1.25rem', 
-            fontWeight: 800, 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center', 
-            gap: '0.75rem',
-            boxShadow: '0 4px 15px rgba(255, 0, 132, 0.4)',
-            opacity: orderItems.length > 0 ? 1 : 0.5,
-            cursor: orderItems.length > 0 ? 'pointer' : 'not-allowed'
-          }} disabled={orderItems.length === 0}>
+          <motion.button 
+            type="submit" 
+            whileHover={orderItems.length > 0 ? { scale: 1.02 } : {}}
+            whileTap={orderItems.length > 0 ? { scale: 0.98 } : {}}
+            className="btn-primary pulse-glow" 
+            style={{ 
+              width: '100%', 
+              padding: '1.25rem', 
+              fontSize: '1.25rem', 
+              fontWeight: 800, 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              gap: '0.75rem',
+              boxShadow: '0 4px 20px rgba(255, 0, 132, 0.5)',
+              opacity: orderItems.length > 0 ? 1 : 0.5,
+              cursor: orderItems.length > 0 ? 'pointer' : 'not-allowed'
+            }} 
+            disabled={orderItems.length === 0}
+          >
             <Plus size={24} /> BUAT ORDER SEKARANG
-          </button>
+          </motion.button>
         </div>
       </form>
 

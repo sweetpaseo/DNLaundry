@@ -125,9 +125,11 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
             </div>
           </div>
 
-          <button 
+          <motion.button 
             type="submit" 
             disabled={loading}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             className="btn-primary" 
             style={{ 
               marginTop: '1rem', 
@@ -143,7 +145,7 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
           >
             {loading ? <Loader2 size={20} className="animate-spin" /> : <LogIn size={20} />}
             {loading ? 'Memproses...' : 'Masuk Sekarang'}
-          </button>
+          </motion.button>
         </form>
 
         <div style={{ marginTop: '2rem', textAlign: 'center' }}>

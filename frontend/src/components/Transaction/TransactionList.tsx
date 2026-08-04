@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Printer, Trash2, CheckCircle, Clock, Search, Loader2, Edit3, Wallet, Eye, EyeOff } from 'lucide-react';
+import { motion } from 'framer-motion';
 import type { Transaction, TransactionStatus, Customer } from '../../types';
 import { api } from '../../services/api';
 import { ReceiptModal } from './ReceiptModal';
@@ -490,14 +491,22 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
                 const totalDebt = unpaidTransactions.reduce((sum, tr) => sum + tr.final_price, 0);
                 
                 return (
-                  <div key={groupId} className="glass-card animate-fade-in" style={{ 
-                    padding: '1.25rem', 
-                    display: 'flex', 
-                    flexDirection: 'column', 
-                    gap: '1rem',
-                    border: isOverdue ? '2px solid #ef4444' : '1px solid var(--glass-border)',
-                    boxShadow: isOverdue ? '0 0 15px rgba(239, 68, 68, 0.2)' : 'none'
-                  }}>
+                  <motion.div 
+                    key={groupId} 
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    whileHover={{ y: -3 }}
+                    transition={{ duration: 0.2 }}
+                    className="glass-card hover-glow" 
+                    style={{ 
+                      padding: '1.25rem', 
+                      display: 'flex', 
+                      flexDirection: 'column', 
+                      gap: '1rem',
+                      border: isOverdue ? '2px solid #ef4444' : '1px solid var(--glass-border)',
+                      boxShadow: isOverdue ? '0 0 15px rgba(239, 68, 68, 0.2)' : 'none'
+                    }}
+                  >
                     {/* Responsive Header */}
                     <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.75rem' }}>
                       <div style={{ flex: 1, minWidth: '150px' }}>
@@ -650,7 +659,7 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
                         </button>
                       )}
                     </div>
-                  </div>
+                  </motion.div>
                 );
                 })}
             

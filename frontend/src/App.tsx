@@ -147,113 +147,150 @@ function App() {
         </div>
       </header>
 
-      <nav className="tab-nav">
+      <nav className="tab-nav desktop-tab-nav">
         {menuItems.map((item) => (
-          <button
+          <motion.button
             key={item.id}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
             className={`tab-btn ${activeMenu === item.id ? 'active' : ''}`}
             onClick={() => setActiveMenu(item.id as any)}
           >
             <div className="tab-icon">{item.icon}</div>
             <span className="tab-label">{item.label}</span>
+          </motion.button>
+        ))}
+      </nav>
+
+      {/* Mobile Bottom Navigation Bar */}
+      <nav className="mobile-bottom-nav">
+        {menuItems.map((item) => (
+          <button
+            key={item.id}
+            className={`mobile-nav-item ${activeMenu === item.id ? 'active' : ''}`}
+            onClick={() => setActiveMenu(item.id as any)}
+          >
+            {item.icon}
+            <span>{item.label}</span>
           </button>
         ))}
       </nav>
 
       <main>
-        {activeMenu === 'transaksi' && (
-          <div>
-            <div className="sub-nav">
-              <button 
-                className={`tab-btn ${activeTab === 'input' ? 'active' : ''}`}
-                onClick={() => setActiveTab('input')}
-              >
-                <div className="tab-icon"><PlusCircle size={18} /></div>
-                <span className="tab-label">Input Order</span>
-              </button>
-              <button 
-                className={`tab-btn ${activeTab === 'list' ? 'active' : ''}`}
-                onClick={() => setActiveTab('list')}
-              >
-                <div className="tab-icon"><List size={18} /></div>
-                <span className="tab-label">Daftar Transaksi</span>
-              </button>
-            </div>
-            
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTab}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.2 }}
-              >
-                <div className="glass-card">
-                   {activeTab === 'input' ? <OrderInput currentUser={user} /> : <TransactionList currentUser={user} />}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeMenu}
+            initial={{ opacity: 0, y: 12, scale: 0.99 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -12, scale: 0.99 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+          >
+            {activeMenu === 'transaksi' && (
+              <div>
+                <div className="sub-nav">
+                  <motion.button 
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.97 }}
+                    className={`tab-btn ${activeTab === 'input' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('input')}
+                  >
+                    <div className="tab-icon"><PlusCircle size={18} /></div>
+                    <span className="tab-label">Input Order</span>
+                  </motion.button>
+                  <motion.button 
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.97 }}
+                    className={`tab-btn ${activeTab === 'list' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('list')}
+                  >
+                    <div className="tab-icon"><List size={18} /></div>
+                    <span className="tab-label">Daftar Transaksi</span>
+                  </motion.button>
                 </div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        )}
+                
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeTab}
+                    initial={{ opacity: 0, x: activeTab === 'input' ? -15 : 15 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: activeTab === 'input' ? 15 : -15 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div className="glass-card hover-glow">
+                       {activeTab === 'input' ? <OrderInput currentUser={user} /> : <TransactionList currentUser={user} />}
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            )}
 
-        {activeMenu === 'biaya' && (
-          <ExpenseManager userRole={user.role} />
-        )}
+            {activeMenu === 'biaya' && (
+              <ExpenseManager userRole={user.role} />
+            )}
 
-        {activeMenu === 'stok' && <StockManager user={user} />}
-        {activeMenu === 'pelanggan' && (
-          <div>
-            <div className="sub-nav">
-              <button 
-                className={`tab-btn ${activeTabPelanggan === 'list' ? 'active' : ''}`}
-                onClick={() => setActiveTabPelanggan('list')}
-              >
-                <div className="tab-icon"><Users size={18} /></div>
-                <span className="tab-label">Daftar Pelanggan</span>
-              </button>
-              <button 
-                className={`tab-btn ${activeTabPelanggan === 'saldo' ? 'active' : ''}`}
-                onClick={() => setActiveTabPelanggan('saldo')}
-              >
-                <div className="tab-icon"><Receipt size={18} /></div>
-                <span className="tab-label">Saldo</span>
-              </button>
-              <button 
-                className={`tab-btn ${activeTabPelanggan === 'retensi' ? 'active' : ''}`}
-                onClick={() => setActiveTabPelanggan('retensi')}
-              >
-                <div className="tab-icon"><Calendar size={18} /></div>
-                <span className="tab-label">Retensi</span>
-              </button>
-            </div>
+            {activeMenu === 'stok' && <StockManager user={user} />}
 
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTabPelanggan}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.2 }}
-              >
-                {activeTabPelanggan === 'list' ? (
-                  <div className="glass-card">
-                    <CustomerCRM currentUser={user} />
-                  </div>
-                ) : activeTabPelanggan === 'saldo' ? (
-                  <WalletManagement />
-                ) : (
-                  <CustomerRetentionMenu />
-                )}
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        )}
+            {activeMenu === 'pelanggan' && (
+              <div>
+                <div className="sub-nav">
+                  <motion.button 
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.97 }}
+                    className={`tab-btn ${activeTabPelanggan === 'list' ? 'active' : ''}`}
+                    onClick={() => setActiveTabPelanggan('list')}
+                  >
+                    <div className="tab-icon"><Users size={18} /></div>
+                    <span className="tab-label">Daftar Pelanggan</span>
+                  </motion.button>
+                  <motion.button 
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.97 }}
+                    className={`tab-btn ${activeTabPelanggan === 'saldo' ? 'active' : ''}`}
+                    onClick={() => setActiveTabPelanggan('saldo')}
+                  >
+                    <div className="tab-icon"><Receipt size={18} /></div>
+                    <span className="tab-label">Saldo</span>
+                  </motion.button>
+                  <motion.button 
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.97 }}
+                    className={`tab-btn ${activeTabPelanggan === 'retensi' ? 'active' : ''}`}
+                    onClick={() => setActiveTabPelanggan('retensi')}
+                  >
+                    <div className="tab-icon"><Calendar size={18} /></div>
+                    <span className="tab-label">Retensi</span>
+                  </motion.button>
+                </div>
 
-        {activeMenu === 'admin' && (
-          <div className="glass-card animate-fade-in">
-            <AdminDashboard />
-          </div>
-        )}
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeTabPelanggan}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    {activeTabPelanggan === 'list' ? (
+                      <div className="glass-card hover-glow">
+                        <CustomerCRM currentUser={user} />
+                      </div>
+                    ) : activeTabPelanggan === 'saldo' ? (
+                      <WalletManagement />
+                    ) : (
+                      <CustomerRetentionMenu />
+                    )}
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            )}
+
+            {activeMenu === 'admin' && (
+              <div className="glass-card hover-glow">
+                <AdminDashboard />
+              </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
       </main>
     </div>
   );

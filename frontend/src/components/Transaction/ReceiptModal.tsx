@@ -1,6 +1,7 @@
 import { Printer, X, MapPin, Instagram, Download } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { toJpeg } from 'html-to-image';
+import { motion } from 'framer-motion';
 import type { Transaction } from '../../types';
 import { WhatsAppIcon } from '../Icons';
 import { getWhatsAppUrl } from '../../utils/whatsapp';
@@ -106,22 +107,33 @@ export const ReceiptModal = ({ isOpen, onClose, transaction, settings, customers
 
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
-      <div 
-        style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(4px)' }} 
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(8px)' }} 
         onClick={onClose} 
       />
       
-      <div className="glass-card" style={{ 
-        position: 'relative', 
-        width: '95%', 
-        maxWidth: '400px', 
-        maxHeight: '90vh',
-        padding: '0', 
-        overflow: 'hidden', 
-        display: 'flex', 
-        flexDirection: 'column',
-        boxShadow: '0 20px 50px rgba(0,0,0,0.5)'
-      }}>
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.92, y: 15 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.92, y: 15 }}
+        transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+        className="glass-card hover-glow" 
+        style={{ 
+          position: 'relative', 
+          width: '95%', 
+          maxWidth: '400px', 
+          maxHeight: '90vh',
+          padding: '0', 
+          overflow: 'hidden', 
+          display: 'flex', 
+          flexDirection: 'column',
+          boxShadow: '0 25px 60px rgba(0,0,0,0.7)',
+          border: '1px solid rgba(255, 255, 255, 0.15)'
+        }}
+      >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 1.25rem', borderBottom: '1px solid var(--glass-border)', flexShrink: 0 }}>
           <h4 style={{ fontWeight: 700 }}>Nota Transaksi</h4>
           <button onClick={onClose} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
@@ -271,7 +283,7 @@ export const ReceiptModal = ({ isOpen, onClose, transaction, settings, customers
             <WhatsAppIcon size={16} color="#25D366" /> WA
           </button>
         </div>
-      </div>
+      </motion.div>
 
       <style>
         {`

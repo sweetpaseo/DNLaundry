@@ -616,3 +616,108 @@ body.modal-open {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* TasteSkill v2 Enhancements & Mobile Bottom Nav */
+.mobile-bottom-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 75px !important; /* Reserve space for mobile bottom bar */
+  }
+
+  .mobile-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 65px;
+    background: rgba(15, 15, 18, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    z-index: 999;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 0.5rem;
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.6);
+  }
+
+  .mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 6px 10px;
+    border-radius: 12px;
+    width: 20%;
+    transition: all 0.2s ease;
+  }
+
+  .mobile-nav-item.active {
+    color: var(--primary);
+    font-weight: 700;
+    background: rgba(255, 0, 132, 0.12);
+  }
+
+  .mobile-nav-item.active svg {
+    transform: translateY(-2px);
+    filter: drop-shadow(0 2px 8px rgba(255, 0, 132, 0.5));
+  }
+
+  .desktop-tab-nav {
+    display: none !important;
+  }
+
+  .mobile-sticky-action-bar {
+    position: fixed;
+    bottom: 65px;
+    left: 0;
+    right: 0;
+    padding: 0.75rem 1rem;
+    background: rgba(20, 20, 25, 0.95);
+    backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 998;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* Glass & Pulse Utility Animation */
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(255, 0, 132, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(255, 0, 132, 0.5);
+  }
+}
+
+.pulse-glow {
+  animation: pulseGlow 2.5s infinite ease-in-out;
+}
+
+.hover-glow {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hover-glow:hover {
+  border-color: rgba(255, 0, 132, 0.4);
+  box-shadow: 0 8px 30px rgba(255, 0, 132, 0.15);
+}
+
+.number-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
+
