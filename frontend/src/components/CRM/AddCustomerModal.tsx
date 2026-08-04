@@ -125,7 +125,8 @@ export const AddCustomerModal = ({ isOpen, onClose, onSave, initialData, memberT
                       background: isOwner ? 'var(--glass-bg)' : 'rgba(255,255,255,0.05)',
                       border: isOwner ? '1px solid var(--glass-border)' : '1px solid transparent',
                       cursor: isOwner ? 'text' : 'not-allowed',
-                      color: isOwner ? 'white' : 'var(--text-muted)'
+                      color: 'var(--text-dark)',
+                      fontWeight: 700
                     }} 
                     value={formData.customer_id}
                     onChange={(e) => setFormData({...formData, customer_id: e.target.value.toUpperCase()})}

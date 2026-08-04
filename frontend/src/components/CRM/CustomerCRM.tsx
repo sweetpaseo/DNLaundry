@@ -101,9 +101,9 @@ export const CustomerCRM = ({ currentUser }: Props) => {
             <div key={customer.id} className="glass-card animate-fade-in" style={{ padding: '1.5rem', position: 'relative' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
                 <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.4rem' }}>
-                    <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>{customer.name}</h3>
-                    <span style={{ fontSize: '0.7rem', fontWeight: 700, opacity: 0.5, background: 'rgba(255,255,255,0.1)', padding: '0.1rem 0.4rem', borderRadius: '4px', letterSpacing: '0.05em' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.4rem', flexWrap: 'wrap' }}>
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-dark)' }}>{customer.name}</h3>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--primary)', background: 'rgba(126, 34, 206, 0.1)', padding: '0.15rem 0.5rem', borderRadius: '6px', border: '1px solid rgba(126, 34, 206, 0.2)', letterSpacing: '0.05em' }}>
                       {formatDisplayId(getDisplayId(customer))}
                     </span>
                   </div>
@@ -120,9 +120,9 @@ export const CustomerCRM = ({ currentUser }: Props) => {
                       );
                     })()}
                     <span style={{ 
-                      fontSize: '0.65rem', padding: '2px 8px', borderRadius: '4px', 
+                      fontSize: '0.65rem', fontWeight: 700, padding: '2px 8px', borderRadius: '6px', 
                       background: customer.default_delivery_type === 'Delivery' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(16, 185, 129, 0.15)',
-                      color: customer.default_delivery_type === 'Delivery' ? '#60a5fa' : '#34d399',
+                      color: customer.default_delivery_type === 'Delivery' ? '#2563eb' : '#059669',
                       border: `1px solid ${customer.default_delivery_type === 'Delivery' ? 'rgba(59, 130, 246, 0.3)' : 'rgba(16, 185, 129, 0.3)'}`,
                       display: 'flex', alignItems: 'center', gap: '4px'
                     }}>
@@ -134,17 +134,17 @@ export const CustomerCRM = ({ currentUser }: Props) => {
                   <button 
                     onClick={() => { setEditingCustomer(customer); setIsModalOpen(true); }} 
                     style={{ 
-                      background: 'rgba(255,255,255,0.05)', color: 'white', padding: '0.4rem', borderRadius: '8px', border: '1px solid var(--glass-border)', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                      background: 'rgba(126, 34, 206, 0.1)', color: 'var(--primary)', padding: '0.5rem', borderRadius: '10px', border: '1px solid rgba(126, 34, 206, 0.2)', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center'
                     }}
-                    onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
-                    onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
+                    onMouseOver={(e) => { e.currentTarget.style.background = 'var(--primary)'; e.currentTarget.style.color = 'white'; }}
+                    onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(126, 34, 206, 0.1)'; e.currentTarget.style.color = 'var(--primary)'; }}
                   >
                     <Edit size={16} />
                   </button>
                   <button 
                     onClick={() => handleDelete(customer.id)} 
                     style={{ 
-                      background: 'rgba(244, 63, 94, 0.1)', color: '#f43f5e', padding: '0.4rem', borderRadius: '8px', border: '1px solid rgba(244, 63, 94, 0.2)', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                      background: 'rgba(244, 63, 94, 0.1)', color: '#f43f5e', padding: '0.5rem', borderRadius: '10px', border: '1px solid rgba(244, 63, 94, 0.2)', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center'
                     }}
                     onMouseOver={(e) => { e.currentTarget.style.background = '#f43f5e'; e.currentTarget.style.color = 'white'; }}
                     onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(244, 63, 94, 0.1)'; e.currentTarget.style.color = '#f43f5e'; }}
@@ -155,11 +155,11 @@ export const CustomerCRM = ({ currentUser }: Props) => {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.5rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-                  <Phone size={14} /> {customer.phone}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem', color: '#4b5563', fontWeight: 600 }}>
+                  <Phone size={14} color="var(--primary)" /> {customer.phone}
                 </div>
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-                  <MapPin size={14} style={{ marginTop: '0.25rem' }} /> {customer.address}
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem', fontSize: '0.9rem', color: '#4b5563', fontWeight: 600 }}>
+                  <MapPin size={14} color="var(--primary)" style={{ marginTop: '0.25rem' }} /> {customer.address}
                 </div>
               </div>
 
@@ -168,12 +168,13 @@ export const CustomerCRM = ({ currentUser }: Props) => {
                 target="_blank" rel="noreferrer"
                 style={{ 
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', 
-                  width: '100%', padding: '0.75rem', borderRadius: '10px', 
-                  background: 'rgba(255, 255, 255, 0.03)', border: '1px solid var(--glass-border)',
-                  color: 'white', textDecoration: 'none', fontWeight: 600, fontSize: '0.875rem'
+                  width: '100%', padding: '0.75rem', borderRadius: '14px', 
+                  background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)',
+                  color: '#ffffff', textDecoration: 'none', fontWeight: 800, fontSize: '0.875rem',
+                  boxShadow: '0 6px 16px rgba(37, 211, 102, 0.35)'
                 }}
               >
-                <MessageSquare size={18} color="#25D366" /> Chat WhatsApp
+                <MessageSquare size={18} color="white" /> Chat WhatsApp
               </a>
             </div>
           ))}
