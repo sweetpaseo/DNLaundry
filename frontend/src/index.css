@@ -1,17 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --primary: #9d4edd;
-  --primary-gradient: linear-gradient(180deg, #a78bfa 0%, #8b5cf6 100%);
-  --pastel-purple: #a78bfa;
-  --pastel-purple-dark: #7c3aed;
-  --pastel-pink: #f472b6;
-  --pastel-yellow: #fcd34d;
-  --pastel-blue: #38bdf8;
-  --pastel-mint: #34d399;
-  --bg-clay: #f4f0fa;
-  --text-clay-dark: #2d1b4e;
-  --text-clay-muted: #7c6a99;
+  --primary: #7e22ce;
+  --primary-gradient: linear-gradient(135deg, #a855f7 0%, #7e22ce 60%, #581c87 100%);
+  --mint-gradient: linear-gradient(135deg, #2dd4bf 0%, #10b981 100%);
+  --pastel-purple: #a855f7;
+  --pastel-purple-dark: #7e22ce;
+  --pastel-pink: #ec4899;
+  --pastel-orange: #f97316;
+  --pastel-cyan: #06b6d4;
+  --pastel-mint: #10b981;
+  --bg-zomo: #f3eef9;
+  --text-dark: #1e1b4b;
+  --text-muted: #6b7280;
   --radius: 28px;
   --transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
@@ -24,9 +25,9 @@
 
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background: var(--bg-clay);
+  background: var(--bg-zomo);
   background-attachment: fixed;
-  color: var(--text-clay-dark);
+  color: var(--text-dark);
   min-height: 100dvh;
   -webkit-font-smoothing: antialiased;
 }
@@ -41,10 +42,10 @@ button {
 input, select, textarea {
   font-family: inherit;
   background: #ffffff;
-  border: 2px solid #e9e3f5;
-  color: var(--text-clay-dark);
+  border: 2px solid #e9d5ff;
+  color: var(--text-dark);
   padding: 0.85rem 1.2rem;
-  border-radius: 20px;
+  border-radius: 22px;
   outline: none;
   transition: var(--transition);
   font-weight: 600;
@@ -53,41 +54,41 @@ input, select, textarea {
 
 select option {
   background: #ffffff;
-  color: var(--text-clay-dark);
+  color: var(--text-dark);
   padding: 0.6rem;
 }
 
 input:focus, select:focus {
-  border-color: #a78bfa;
-  box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.2), 0 6px 16px rgba(167, 139, 250, 0.15);
+  border-color: #a855f7;
+  box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.2), 0 6px 16px rgba(168, 85, 247, 0.15);
 }
 
-/* Fix browser autofill for clay theme */
+/* Fix browser autofill for zomo theme */
 input:-webkit-autofill,
 input:-webkit-autofill:hover, 
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
   -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
-  -webkit-text-fill-color: var(--text-clay-dark) !important;
+  -webkit-text-fill-color: var(--text-dark) !important;
   transition: background-color 5000s ease-in-out 0s;
-  caret-color: var(--text-clay-dark);
+  caret-color: var(--text-dark);
 }
 
-/* Claymorphic 3D Card */
+/* Zomo 3D Card */
 .glass-card, .clay-card {
   background: #ffffff;
-  border: 2.5px solid rgba(255, 255, 255, 0.9);
+  border: 2.5px solid rgba(255, 255, 255, 0.95);
   border-radius: 28px;
   padding: 1.75rem;
-  box-shadow: 0 18px 40px -8px rgba(175, 145, 218, 0.22), inset 0 3px 6px #ffffff, inset 0 -3px 6px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 18px 45px -8px rgba(126, 34, 206, 0.15), inset 0 3px 6px #ffffff;
 }
 
-/* Clay 3D Purple Sidebar */
+/* Zomo Electric Purple Sidebar */
 .clay-sidebar {
-  background: linear-gradient(180deg, #a78bfa 0%, #8b5cf6 100%);
+  background: linear-gradient(180deg, #a855f7 0%, #7e22ce 60%, #581c87 100%);
   border-radius: 32px;
   padding: 2rem 1.25rem;
-  box-shadow: 0 20px 45px rgba(139, 92, 246, 0.35), inset 0 3px 8px rgba(255, 255, 255, 0.6), inset 0 -3px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 20px 45px rgba(126, 34, 206, 0.35), inset 0 3px 8px rgba(255, 255, 255, 0.4), inset 0 -3px 8px rgba(0, 0, 0, 0.2);
   color: white;
   display: flex;
   flex-direction: column;
@@ -108,15 +109,15 @@ input:-webkit-autofill:active {
 }
 
 .clay-nav-item:hover {
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.2);
   color: white;
   transform: translateX(4px);
 }
 
 .clay-nav-item.active {
   background: #ffffff;
-  color: #7c3aed;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12), inset 0 2px 4px rgba(255, 255, 255, 1);
+  color: #7e22ce;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15), inset 0 2px 4px rgba(255, 255, 255, 1);
   transform: translateX(4px);
 }
 
