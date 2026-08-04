@@ -890,9 +890,9 @@ export const AdminDashboard = () => {
           </div>
         </>
       ) : activeTab === 'management' ? (
-        <div className="responsive-grid">
-          {/* Price Management */}
-          <div className="glass-card">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          {/* Price Management (Full Width Top Section) */}
+          <div className="glass-card" style={{ width: '100%', overflow: 'hidden' }}>
             <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)' }}>
@@ -918,7 +918,7 @@ export const AdminDashboard = () => {
                     placeholder="Cari layanan..."
                     value={serviceSearch}
                     onChange={(e) => setServiceSearch(e.target.value)}
-                    style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)', fontSize: '0.85rem', fontWeight: 600, outline: 'none', width: '150px' }}
+                    style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)', fontSize: '0.85rem', fontWeight: 600, outline: 'none', width: '160px' }}
                   />
                 </div>
                 {managementView === 'price-list' && (
@@ -940,112 +940,114 @@ export const AdminDashboard = () => {
             </div>
 
             {managementView === 'edit' ? (
-              <table className="responsive-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr style={{ borderBottom: '2px solid var(--border)', color: 'var(--text-secondary)', fontSize: '0.8125rem', textAlign: 'left', fontWeight: 700 }}>
-                  <th style={{ padding: '0.85rem 0.75rem' }}>Layanan</th>
-                  <th style={{ padding: '0.85rem 0.75rem' }}>Waktu</th>
-                  <th style={{ padding: '0.85rem 0.75rem' }}>Komisi</th>
-                  <th style={{ padding: '0.85rem 0.75rem' }}>Status</th>
-                  <th style={{ padding: '0.85rem 0.75rem', textAlign: 'right' }}>Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                {services
-                  .filter(s => s.name.toLowerCase().includes(serviceSearch.toLowerCase()))
-                  .map(service => (
-                  <tr key={service.id} style={{ borderBottom: '1px solid var(--border)', opacity: service.is_active ? 1 : 0.6 }}>
-                    <td style={{ padding: '1rem 0.75rem' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.6rem' }}>
-                        <span style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--text-primary)' }}>{service.name}</span>
-                        <span style={{ 
-                          fontSize: '0.68rem', 
-                          padding: '3px 8px', 
-                          borderRadius: '999px', 
-                          fontWeight: 700,
-                          background: service.category === 'product' ? '#EFF6FF' : '#ECFEFF', 
-                          color: service.category === 'product' ? '#2563EB' : '#0891B2',
-                          border: `1px solid ${service.category === 'product' ? '#BFDBFE' : '#A5F3FC'}`
-                        }}>
-                          {service.category === 'product' ? 'Produk' : 'Jasa'}
-                        </span>
-                      </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.45rem', fontSize: '0.75rem' }}>
-                        <div style={{ padding: '4px 8px', background: '#F1F5F9', borderRadius: '6px', border: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', color: '#334155' }}>
-                          <span style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>Normal:</span>
-                          <span style={{ fontWeight: 700 }}>Rp {service.price_normal?.toLocaleString()}</span>
-                        </div>
-                        <div style={{ padding: '4px 8px', background: '#EFF6FF', borderRadius: '6px', border: '1px solid #BFDBFE', display: 'flex', justifyContent: 'space-between', color: '#1D4ED8' }}>
-                          <span style={{ fontWeight: 600 }}>Member:</span>
-                          <span style={{ fontWeight: 800 }}>Rp {service.price_member?.toLocaleString()}</span>
-                        </div>
-                        <div style={{ padding: '4px 8px', background: '#F3E8FF', borderRadius: '6px', border: '1px solid #E9D5FF', display: 'flex', justifyContent: 'space-between', color: '#7E22CE' }}>
-                          <span style={{ fontWeight: 600 }}>Express:</span>
-                          <span style={{ fontWeight: 700 }}>Rp {service.price_express?.toLocaleString()}</span>
-                        </div>
-                        <div style={{ padding: '4px 8px', background: '#FEF3C7', borderRadius: '6px', border: '1px solid #FDE68A', display: 'flex', justifyContent: 'space-between', color: '#B45309' }}>
-                          <span style={{ fontWeight: 600 }}>Spesial:</span>
-                          <span style={{ fontWeight: 700 }}>Rp {service.price_special?.toLocaleString()}</span>
-                        </div>
-                      </div>
-                    </td>
-                    <td style={{ padding: '1rem 0.75rem' }}>
-                      <div style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-                        {service.processing_days || 0} Hari
-                      </div>
-                      <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', fontWeight: 500 }}>Estimasi Selesai</div>
-                    </td>
-                    <td style={{ padding: '1rem 0.75rem' }}>
-                      {service.commission_value ? (
-                        <span style={{ fontSize: '0.85rem', color: '#2563EB', fontWeight: 800, background: '#EFF6FF', padding: '0.25rem 0.6rem', borderRadius: '6px', border: '1px solid #BFDBFE' }}>
-                          {service.commission_type === 'percentage' ? `${service.commission_value}%` : `Rp ${service.commission_value.toLocaleString()}`}
-                        </span>
-                      ) : (
-                        <span style={{ color: 'var(--text-secondary)' }}>-</span>
-                      )}
-                    </td>
-                    <td style={{ padding: '1rem 0.75rem' }}>
-                      <button
-                        onClick={() => toggleService(service.id)}
-                        style={{
-                          display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.35rem 0.8rem', borderRadius: '999px', fontSize: '0.75rem', cursor: 'pointer', fontWeight: 800,
-                          background: service.is_active ? '#ECFDF5' : '#FEF2F2',
-                          color: service.is_active ? '#059669' : '#DC2626',
-                          border: `1px solid ${service.is_active ? '#A7F3D0' : '#FECDD3'}`
-                        }}
-                      >
-                        <Power size={13} /> {service.is_active ? 'Aktif' : 'Nonaktif'}
-                      </button>
-                    </td>
-                    <td style={{ padding: '1rem 0.75rem' }}>
-                      <div style={{ display: 'flex', gap: '0.4rem', justifyContent: 'flex-end' }}>
-                        <button 
-                          style={{ 
-                            padding: '0.45rem', borderRadius: '8px', background: '#EFF6FF', color: '#2563EB', border: '1px solid #BFDBFE', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s'
-                          }} 
-                          onClick={() => { setEditingService(service); setIsServiceModalOpen(true); }}
-                          title="Edit Layanan"
-                        >
-                          <Settings size={15} />
-                        </button>
-                        <button 
-                          style={{ 
-                            padding: '0.45rem', borderRadius: '8px', background: '#FEF2F2', color: '#EF4444', border: '1px solid #FECDD3', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s'
-                          }}
-                          onClick={() => deleteService(service.id)}
-                          title="Hapus Layanan"
-                        >
-                          <Trash2 size={15} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+              <div style={{ overflowX: 'auto', width: '100%' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '780px' }}>
+                  <thead>
+                    <tr style={{ borderBottom: '2px solid var(--border)', color: 'var(--text-secondary)', fontSize: '0.8125rem', textAlign: 'left', fontWeight: 700 }}>
+                      <th style={{ padding: '0.85rem 0.75rem', width: '42%' }}>Layanan & Tier Harga</th>
+                      <th style={{ padding: '0.85rem 0.75rem', width: '15%' }}>Waktu Proses</th>
+                      <th style={{ padding: '0.85rem 0.75rem', width: '15%' }}>Komisi</th>
+                      <th style={{ padding: '0.85rem 0.75rem', width: '14%' }}>Status</th>
+                      <th style={{ padding: '0.85rem 0.75rem', width: '14%', textAlign: 'right' }}>Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {services
+                      .filter(s => s.name.toLowerCase().includes(serviceSearch.toLowerCase()))
+                      .map(service => (
+                      <tr key={service.id} style={{ borderBottom: '1px solid var(--border)', opacity: service.is_active ? 1 : 0.6 }}>
+                        <td style={{ padding: '1rem 0.75rem' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.6rem' }}>
+                            <span style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--text-primary)' }}>{service.name}</span>
+                            <span style={{ 
+                              fontSize: '0.68rem', 
+                              padding: '3px 8px', 
+                              borderRadius: '999px', 
+                              fontWeight: 700,
+                              background: service.category === 'product' ? '#EFF6FF' : '#ECFEFF', 
+                              color: service.category === 'product' ? '#2563EB' : '#0891B2',
+                              border: `1px solid ${service.category === 'product' ? '#BFDBFE' : '#A5F3FC'}`
+                            }}>
+                              {service.category === 'product' ? 'Produk' : 'Jasa'}
+                            </span>
+                          </div>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.45rem', fontSize: '0.75rem' }}>
+                            <div style={{ padding: '4px 8px', background: '#F1F5F9', borderRadius: '6px', border: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#334155', whiteSpace: 'nowrap' }}>
+                              <span style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>Normal:</span>
+                              <span style={{ fontWeight: 700, marginLeft: '0.4rem' }}>Rp {service.price_normal?.toLocaleString()}</span>
+                            </div>
+                            <div style={{ padding: '4px 8px', background: '#EFF6FF', borderRadius: '6px', border: '1px solid #BFDBFE', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#1D4ED8', whiteSpace: 'nowrap' }}>
+                              <span style={{ fontWeight: 600 }}>Member:</span>
+                              <span style={{ fontWeight: 800, marginLeft: '0.4rem' }}>Rp {service.price_member?.toLocaleString()}</span>
+                            </div>
+                            <div style={{ padding: '4px 8px', background: '#F3E8FF', borderRadius: '6px', border: '1px solid #E9D5FF', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#7E22CE', whiteSpace: 'nowrap' }}>
+                              <span style={{ fontWeight: 600 }}>Express:</span>
+                              <span style={{ fontWeight: 700, marginLeft: '0.4rem' }}>Rp {service.price_express?.toLocaleString()}</span>
+                            </div>
+                            <div style={{ padding: '4px 8px', background: '#FEF3C7', borderRadius: '6px', border: '1px solid #FDE68A', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#B45309', whiteSpace: 'nowrap' }}>
+                              <span style={{ fontWeight: 600 }}>Spesial:</span>
+                              <span style={{ fontWeight: 700, marginLeft: '0.4rem' }}>Rp {service.price_special?.toLocaleString()}</span>
+                            </div>
+                          </div>
+                        </td>
+                        <td style={{ padding: '1rem 0.75rem' }}>
+                          <div style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>
+                            {service.processing_days || 0} Hari
+                          </div>
+                          <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', fontWeight: 500, whiteSpace: 'nowrap' }}>Estimasi Selesai</div>
+                        </td>
+                        <td style={{ padding: '1rem 0.75rem' }}>
+                          {service.commission_value ? (
+                            <span style={{ fontSize: '0.85rem', color: '#2563EB', fontWeight: 800, background: '#EFF6FF', padding: '0.25rem 0.6rem', borderRadius: '6px', border: '1px solid #BFDBFE', whiteSpace: 'nowrap' }}>
+                              {service.commission_type === 'percentage' ? `${service.commission_value}%` : `Rp ${service.commission_value.toLocaleString()}`}
+                            </span>
+                          ) : (
+                            <span style={{ color: 'var(--text-secondary)' }}>-</span>
+                          )}
+                        </td>
+                        <td style={{ padding: '1rem 0.75rem' }}>
+                          <button
+                            onClick={() => toggleService(service.id)}
+                            style={{
+                              display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.35rem 0.8rem', borderRadius: '999px', fontSize: '0.75rem', cursor: 'pointer', fontWeight: 800, whiteSpace: 'nowrap',
+                              background: service.is_active ? '#ECFDF5' : '#FEF2F2',
+                              color: service.is_active ? '#059669' : '#DC2626',
+                              border: `1px solid ${service.is_active ? '#A7F3D0' : '#FECDD3'}`
+                            }}
+                          >
+                            <Power size={13} /> {service.is_active ? 'Aktif' : 'Nonaktif'}
+                          </button>
+                        </td>
+                        <td style={{ padding: '1rem 0.75rem' }}>
+                          <div style={{ display: 'flex', gap: '0.4rem', justifyContent: 'flex-end' }}>
+                            <button 
+                              style={{ 
+                                padding: '0.45rem', borderRadius: '8px', background: '#EFF6FF', color: '#2563EB', border: '1px solid #BFDBFE', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s'
+                              }} 
+                              onClick={() => { setEditingService(service); setIsServiceModalOpen(true); }}
+                              title="Edit Layanan"
+                            >
+                              <Settings size={15} />
+                            </button>
+                            <button 
+                              style={{ 
+                                padding: '0.45rem', borderRadius: '8px', background: '#FEF2F2', color: '#EF4444', border: '1px solid #FECDD3', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s'
+                              }}
+                              onClick={() => deleteService(service.id)}
+                              title="Hapus Layanan"
+                            >
+                              <Trash2 size={15} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             ) : (
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
+              <div style={{ overflowX: 'auto', width: '100%' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem', minWidth: '600px' }}>
                   <thead>
                     <tr style={{ borderBottom: '2px solid var(--border)', color: 'var(--text-secondary)', textAlign: 'left', fontWeight: 700 }}>
                       <th style={{ padding: '1rem 0.75rem' }}>Nama Layanan</th>
@@ -1078,7 +1080,8 @@ export const AdminDashboard = () => {
             )}
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+          {/* Bottom Grid for Employee & Membership Management */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))', gap: '1.5rem' }}>
             {/* Employee Management */}
             <div className="glass-card">
               <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
