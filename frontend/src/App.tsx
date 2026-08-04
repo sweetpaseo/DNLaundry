@@ -108,7 +108,7 @@ function App() {
 
   return (
     <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '1.5rem 1rem' }}>
-      <div style={{ display: 'grid', gridTemplateColumns: '270px 1fr', gap: '1.75rem', alignItems: 'start' }}>
+      <div className="clay-app-layout">
         
         {/* Claymorphic 3D Purple Sidebar */}
         <aside className="clay-sidebar" style={{ position: 'sticky', top: '1.5rem' }}>
