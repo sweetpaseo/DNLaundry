@@ -114,30 +114,30 @@ function App() {
         alignItems: 'center', 
         marginBottom: '2rem',
         padding: '1rem 1.5rem',
-        background: 'rgba(18, 20, 29, 0.65)',
-        backdropFilter: 'blur(28px)',
-        WebkitBackdropFilter: 'blur(28px)',
+        background: 'rgba(255, 255, 255, 0.82)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
         borderRadius: '24px',
-        border: '1px solid rgba(255, 255, 255, 0.12)',
-        boxShadow: '0 20px 50px -10px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.15)'
+        border: '1.5px solid rgba(255, 255, 255, 0.95)',
+        boxShadow: '0 15px 40px -10px rgba(215, 188, 160, 0.35)'
       }}>
         <div className="brand" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <div style={{
             height: 48,
             minWidth: 48,
             borderRadius: '14px',
-            background: 'rgba(255, 255, 255, 0.03)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
+            background: '#ffffff',
+            border: '1px solid #e5dccf',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             padding: '0.4rem',
-            boxShadow: '0 6px 18px rgba(0, 0, 0, 0.3)'
+            boxShadow: '0 4px 12px rgba(215, 188, 160, 0.2)'
           }}>
             {settings?.logo_url ? (
               <img src={settings.logo_url} alt="DN Laundry Logo" style={{ height: '100%', maxWidth: '140px', objectFit: 'contain' }} />
             ) : (
-              <div style={{ width: 34, height: 34, borderRadius: '10px', background: 'linear-gradient(135deg, #FF0084, #c40062)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', boxShadow: '0 4px 12px rgba(255,0,132,0.4)' }}>
+              <div style={{ width: 34, height: 34, borderRadius: '10px', background: 'linear-gradient(135deg, #ff6584, #ff4767)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', boxShadow: '0 4px 12px rgba(255,101,132,0.4)' }}>
                 <Sparkles size={18} />
               </div>
             )}
@@ -147,13 +147,11 @@ function App() {
               fontWeight: 900, 
               fontSize: '1.5rem', 
               letterSpacing: '-0.03em',
-              background: 'linear-gradient(to right, #ffffff, rgba(255, 255, 255, 0.7))', 
-              WebkitBackgroundClip: 'text', 
-              WebkitTextFillColor: 'transparent' 
+              color: '#2b2d42'
             }}>
               {settings?.name || 'DN Laundry'}
             </h1>
-            <p style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '0.78rem', fontWeight: 500 }}>
+            <p style={{ color: '#64748b', fontSize: '0.78rem', fontWeight: 500 }}>
               Sistem Kasir & Operasional POS
             </p>
           </div>
@@ -164,23 +162,24 @@ function App() {
           <div style={{ 
             padding: '0.45rem 0.9rem', 
             borderRadius: '999px',
-            background: 'rgba(255, 255, 255, 0.04)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
+            background: '#ffffff',
+            border: '1px solid #e5dccf',
             display: 'flex', 
             alignItems: 'center', 
-            gap: '0.55rem' 
+            gap: '0.55rem',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.03)'
           }}>
             <div 
               style={{ 
                 width: 8, 
                 height: 8, 
                 borderRadius: '50%', 
-                background: isOnline ? '#10b981' : '#f43f5e',
-                boxShadow: isOnline ? '0 0 10px #10b981' : '0 0 10px #f43f5e',
+                background: isOnline ? '#10b981' : '#ff5252',
+                boxShadow: isOnline ? '0 0 8px #10b981' : '0 0 8px #ff5252',
                 transition: 'all 0.3s ease'
               }} 
             />
-            <span style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.05em', color: isOnline ? '#34d399' : '#f87171' }}>
+            <span style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.05em', color: isOnline ? '#059669' : '#dc2626' }}>
               {isOnline ? 'ONLINE' : 'OFFLINE'}
             </span>
           </div>
@@ -189,25 +188,26 @@ function App() {
           <div style={{ 
             padding: '0.4rem 0.9rem', 
             borderRadius: '999px',
-            background: 'rgba(255, 255, 255, 0.04)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
+            background: '#ffffff',
+            border: '1px solid #e5dccf',
             display: 'flex', 
             alignItems: 'center', 
-            gap: '0.6rem' 
+            gap: '0.6rem',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.03)'
           }}>
             <div style={{ 
               fontSize: '0.62rem', 
               fontWeight: 800, 
               padding: '0.15rem 0.45rem', 
               borderRadius: '6px', 
-              background: user.role === 'owner' ? 'rgba(255, 0, 132, 0.2)' : 'rgba(16, 185, 129, 0.2)',
-              color: user.role === 'owner' ? '#FF0084' : '#34d399',
+              background: user.role === 'owner' ? 'rgba(255, 101, 132, 0.15)' : 'rgba(16, 185, 129, 0.15)',
+              color: user.role === 'owner' ? '#ff6584' : '#059669',
               textTransform: 'uppercase',
               letterSpacing: '0.04em'
             }}>
               {user.role}
             </div>
-            <span style={{ fontSize: '0.825rem', fontWeight: 600, color: 'white' }}>{user.name}</span>
+            <span style={{ fontSize: '0.825rem', fontWeight: 700, color: '#2b2d42' }}>{user.name}</span>
           </div>
 
           {/* Logout Button */}
@@ -216,9 +216,9 @@ function App() {
             whileTap={{ scale: 0.95 }}
             style={{ 
               padding: '0.55rem', 
-              borderRadius: '12px',
-              background: 'rgba(244, 63, 94, 0.12)',
-              border: '1px solid rgba(244, 63, 94, 0.25)',
+              borderRadius: '14px',
+              background: 'rgba(255, 82, 82, 0.1)',
+              border: '1px solid rgba(255, 82, 82, 0.25)',
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center',
@@ -227,7 +227,7 @@ function App() {
             onClick={handleLogout}
             title="Keluar dari sistem"
           >
-            <LogOut size={16} color="#f87171" />
+            <LogOut size={16} color="#ff5252" />
           </motion.button>
         </div>
       </header>

@@ -46,7 +46,7 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
       display: 'flex', 
       alignItems: 'center', 
       justifyContent: 'center', 
-      background: 'radial-gradient(ellipse at 50% 0%, #170d1e 0%, #08090e 75%)',
+      background: 'radial-gradient(circle at 50% 0%, #fffdf9 0%, #f6efe7 55%, #ede2d3 100%)',
       position: 'relative',
       overflow: 'hidden',
       padding: '1.5rem 1rem'
@@ -55,16 +55,16 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
       <div style={{
         position: 'absolute',
         inset: 0,
-        backgroundImage: `radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px)`,
-        backgroundSize: '24px 24px',
-        opacity: 0.3,
+        backgroundImage: `radial-gradient(rgba(215, 188, 160, 0.25) 1.5px, transparent 1.5px)`,
+        backgroundSize: '28px 28px',
+        opacity: 0.5,
         pointerEvents: 'none'
       }} />
 
-      {/* Floating Magenta Light Orb */}
+      {/* Floating Strawberry Pink Light Orb */}
       <motion.div 
         animate={{ 
-          scale: [1, 1.25, 1],
+          scale: [1, 1.2, 1],
           x: [0, 20, 0],
           opacity: [0.35, 0.55, 0.35]
         }}
@@ -72,34 +72,34 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
         style={{
           position: 'absolute',
           top: '10%',
-          left: '35%',
-          width: '400px',
-          height: '400px',
-          background: 'radial-gradient(circle, rgba(255, 0, 132, 0.28) 0%, rgba(0,0,0,0) 70%)',
+          left: '30%',
+          width: '420px',
+          height: '420px',
+          background: 'radial-gradient(circle, rgba(255, 101, 132, 0.25) 0%, rgba(255,255,255,0) 70%)',
           pointerEvents: 'none',
           borderRadius: '50%',
-          filter: 'blur(60px)'
+          filter: 'blur(65px)'
         }}
       />
 
-      {/* Floating Cyan Light Orb */}
+      {/* Floating Mint Light Orb */}
       <motion.div 
         animate={{ 
           scale: [1.2, 1, 1.2],
           x: [0, -25, 0],
-          opacity: [0.25, 0.45, 0.25]
+          opacity: [0.3, 0.5, 0.3]
         }}
         transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
         style={{
           position: 'absolute',
           bottom: '10%',
-          right: '35%',
-          width: '350px',
-          height: '350px',
-          background: 'radial-gradient(circle, rgba(56, 189, 248, 0.2) 0%, rgba(0,0,0,0) 70%)',
+          right: '30%',
+          width: '380px',
+          height: '380px',
+          background: 'radial-gradient(circle, rgba(82, 183, 136, 0.22) 0%, rgba(255,255,255,0) 70%)',
           pointerEvents: 'none',
           borderRadius: '50%',
-          filter: 'blur(55px)'
+          filter: 'blur(60px)'
         }}
       />
 
@@ -111,12 +111,12 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
           maxWidth: '430px', 
           width: '100%', 
           padding: '2.75rem 2.25rem', 
-          background: 'rgba(18, 20, 29, 0.65)',
-          backdropFilter: 'blur(30px)',
-          WebkitBackdropFilter: 'blur(30px)',
+          background: 'rgba(255, 255, 255, 0.88)',
+          backdropFilter: 'blur(28px)',
+          WebkitBackdropFilter: 'blur(28px)',
           borderRadius: '28px',
-          border: '1px solid rgba(255, 255, 255, 0.14)',
-          boxShadow: '0 40px 100px -20px rgba(0, 0, 0, 0.95), inset 0 1px 0 0 rgba(255, 255, 255, 0.2), inset 0 -1px 0 0 rgba(0, 0, 0, 0.5)',
+          border: '1.5px solid rgba(255, 255, 255, 0.95)',
+          boxShadow: '0 20px 50px -10px rgba(215, 188, 160, 0.4), 0 4px 15px rgba(0,0,0,0.03)',
           position: 'relative',
           zIndex: 10
         }}
@@ -127,15 +127,16 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
             display: 'inline-flex',
             alignItems: 'center',
             gap: '0.45rem',
-            padding: '0.3rem 0.85rem',
-            background: 'rgba(255, 255, 255, 0.04)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
+            padding: '0.35rem 0.9rem',
+            background: '#ffffff',
+            border: '1px solid #e5dccf',
             borderRadius: '999px',
             fontSize: '0.68rem',
-            fontWeight: 700,
-            color: 'rgba(255, 255, 255, 0.8)',
+            fontWeight: 800,
+            color: '#2b2d42',
             letterSpacing: '0.08em',
-            textTransform: 'uppercase'
+            textTransform: 'uppercase',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.03)'
           }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#10b981', boxShadow: '0 0 8px #10b981' }} />
             <span>POS SYSTEM READY</span>
@@ -151,26 +152,26 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
             alignItems: 'center', 
             justifyContent: 'center', 
             margin: '0 auto 1.25rem',
-            borderRadius: '22px',
-            background: 'linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.01))',
-            border: '1px solid rgba(255, 255, 255, 0.12)',
-            boxShadow: '0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
+            borderRadius: '24px',
+            background: '#ffffff',
+            border: '1px solid #e5dccf',
+            boxShadow: '0 10px 25px rgba(215, 188, 160, 0.3)',
             padding: '0.8rem',
             position: 'relative'
           }}>
             {logoUrl ? (
-              <img src={logoUrl} alt="DN Laundry Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.5))' }} />
+              <img src={logoUrl} alt="DN Laundry Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
             ) : (
-              <div style={{ width: 68, height: 68, borderRadius: '18px', background: 'linear-gradient(135deg, #FF0084, #9d0052)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', boxShadow: '0 10px 25px rgba(255,0,132,0.5)' }}>
+              <div style={{ width: 68, height: 68, borderRadius: '20px', background: 'linear-gradient(135deg, #ff6584, #ff4767)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', boxShadow: '0 8px 20px rgba(255,101,132,0.4)' }}>
                 <Sparkles size={34} />
               </div>
             )}
           </div>
           
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'white', letterSpacing: '-0.025em', marginBottom: '0.3rem' }}>
+          <h2 style={{ fontSize: '1.55rem', fontWeight: 900, color: '#2b2d42', letterSpacing: '-0.025em', marginBottom: '0.3rem' }}>
             {settings?.name || 'DN Laundry'}
           </h2>
-          <p style={{ fontSize: '0.825rem', color: 'rgba(255, 255, 255, 0.55)', fontWeight: 400 }}>
+          <p style={{ fontSize: '0.825rem', color: '#64748b', fontWeight: 500 }}>
             Sistem Kasir & Operasional Laundry Profesional
           </p>
         </div>
@@ -182,21 +183,21 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
             animate={{ opacity: 1, y: 0 }}
             style={{ 
               padding: '0.85rem 1rem', 
-              background: 'rgba(244, 63, 94, 0.14)', 
-              color: '#f87171', 
+              background: 'rgba(255, 82, 82, 0.1)', 
+              color: '#ff5252', 
               borderRadius: '14px', 
               fontSize: '0.825rem', 
               marginBottom: '1.5rem',
               textAlign: 'center',
-              border: '1px solid rgba(244, 63, 94, 0.3)',
+              border: '1px solid rgba(255, 82, 82, 0.25)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               gap: '0.5rem',
-              fontWeight: 500
+              fontWeight: 600
             }}
           >
-            <ShieldCheck size={16} color="#f87171" />
+            <ShieldCheck size={16} color="#ff5252" />
             <span>{error}</span>
           </motion.div>
         )}
@@ -205,21 +206,21 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
           <div className="form-group">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.45rem' }}>
-              <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'rgba(255, 255, 255, 0.75)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              <label style={{ fontSize: '0.75rem', fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                 Username
               </label>
               <div style={{ display: 'flex', gap: '0.3rem' }}>
                 <button
                   type="button"
                   onClick={() => handleQuickFill('kasir')}
-                  style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.6)', padding: '0.15rem 0.45rem', borderRadius: '6px', fontSize: '0.65rem', fontWeight: 600 }}
+                  style={{ background: 'rgba(255, 101, 132, 0.1)', border: '1px solid rgba(255, 101, 132, 0.25)', color: '#ff6584', padding: '0.18rem 0.5rem', borderRadius: '8px', fontSize: '0.68rem', fontWeight: 700 }}
                 >
                   + Kasir
                 </button>
                 <button
                   type="button"
                   onClick={() => handleQuickFill('owner')}
-                  style={{ background: 'rgba(255,0,132,0.15)', border: '1px solid rgba(255,0,132,0.3)', color: '#FF0084', padding: '0.15rem 0.45rem', borderRadius: '6px', fontSize: '0.65rem', fontWeight: 700 }}
+                  style={{ background: 'rgba(155, 81, 224, 0.1)', border: '1px solid rgba(155, 81, 224, 0.25)', color: '#9b51e0', padding: '0.18rem 0.5rem', borderRadius: '8px', fontSize: '0.68rem', fontWeight: 700 }}
                 >
                   + Owner
                 </button>
@@ -234,7 +235,7 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
                   left: '14px', 
                   top: '50%', 
                   transform: 'translateY(-50%)', 
-                  color: focusedInput === 'username' ? '#FF0084' : 'rgba(255, 255, 255, 0.35)',
+                  color: focusedInput === 'username' ? '#ff6584' : '#94a3b8',
                   transition: 'color 0.2s ease'
                 }} 
               />
@@ -250,13 +251,14 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
                   width: '100%', 
                   paddingLeft: '2.75rem',
                   paddingRight: '1rem',
-                  height: '48px',
-                  borderRadius: '14px',
-                  background: 'rgba(255, 255, 255, 0.035)',
-                  border: focusedInput === 'username' ? '1px solid #FF0084' : '1px solid rgba(255, 255, 255, 0.1)',
-                  boxShadow: focusedInput === 'username' ? '0 0 15px rgba(255, 0, 132, 0.3)' : 'none',
-                  color: 'white',
+                  height: '50px',
+                  borderRadius: '16px',
+                  background: '#ffffff',
+                  border: focusedInput === 'username' ? '2px solid #ff6584' : '1.5px solid #e5dccf',
+                  boxShadow: focusedInput === 'username' ? '0 0 0 4px rgba(255, 101, 132, 0.15)' : 'none',
+                  color: '#2b2d42',
                   fontSize: '0.925rem',
+                  fontWeight: 600,
                   outline: 'none',
                   transition: 'all 0.2s ease'
                 }}
@@ -266,7 +268,7 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
           </div>
 
           <div className="form-group">
-            <label style={{ display: 'block', marginBottom: '0.45rem', fontSize: '0.75rem', fontWeight: 700, color: 'rgba(255, 255, 255, 0.75)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+            <label style={{ display: 'block', marginBottom: '0.45rem', fontSize: '0.75rem', fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
               Password
             </label>
             <div style={{ position: 'relative' }}>
@@ -277,7 +279,7 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
                   left: '14px', 
                   top: '50%', 
                   transform: 'translateY(-50%)', 
-                  color: focusedInput === 'password' ? '#FF0084' : 'rgba(255, 255, 255, 0.35)',
+                  color: focusedInput === 'password' ? '#ff6584' : '#94a3b8',
                   transition: 'color 0.2s ease'
                 }} 
               />
@@ -293,13 +295,14 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
                   width: '100%', 
                   paddingLeft: '2.75rem',
                   paddingRight: '2.75rem',
-                  height: '48px',
-                  borderRadius: '14px',
-                  background: 'rgba(255, 255, 255, 0.035)',
-                  border: focusedInput === 'password' ? '1px solid #FF0084' : '1px solid rgba(255, 255, 255, 0.1)',
-                  boxShadow: focusedInput === 'password' ? '0 0 15px rgba(255, 0, 132, 0.3)' : 'none',
-                  color: 'white',
+                  height: '50px',
+                  borderRadius: '16px',
+                  background: '#ffffff',
+                  border: focusedInput === 'password' ? '2px solid #ff6584' : '1.5px solid #e5dccf',
+                  boxShadow: focusedInput === 'password' ? '0 0 0 4px rgba(255, 101, 132, 0.15)' : 'none',
+                  color: '#2b2d42',
                   fontSize: '0.925rem',
+                  fontWeight: 600,
                   outline: 'none',
                   transition: 'all 0.2s ease'
                 }}
@@ -317,7 +320,7 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
                   transform: 'translateY(-50%)',
                   background: 'transparent',
                   border: 'none',
-                  color: 'rgba(255, 255, 255, 0.4)',
+                  color: '#94a3b8',
                   cursor: 'pointer',
                   padding: '4px',
                   display: 'flex',
@@ -340,7 +343,7 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
               width: '100%', 
               height: '52px',
               borderRadius: '16px',
-              background: 'linear-gradient(135deg, #FF0084 0%, #c40062 100%)',
+              background: 'linear-gradient(135deg, #ff6584 0%, #ff4767 100%)',
               color: 'white',
               border: 'none',
               display: 'flex', 
@@ -350,7 +353,7 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
               fontSize: '1rem',
               fontWeight: 800,
               letterSpacing: '0.02em',
-              boxShadow: '0 10px 30px -5px rgba(255, 0, 132, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
+              boxShadow: '0 10px 25px rgba(255, 101, 132, 0.4)',
               cursor: loading ? 'not-allowed' : 'pointer',
               opacity: loading ? 0.7 : 1,
               position: 'relative',
@@ -364,21 +367,22 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
 
         {/* Security Info & Footer */}
         <div style={{ marginTop: '2.25rem', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.65rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'rgba(255, 255, 255, 0.45)', fontSize: '0.725rem' }}>
-            <CheckCircle2 size={13} color="#10b981" />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#64748b', fontSize: '0.75rem', fontWeight: 600 }}>
+            <CheckCircle2 size={14} color="#10b981" />
             <span>Sistem Terenkripsi & Aman</span>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <span style={{ 
-              background: 'rgba(255, 255, 255, 0.05)', 
-              color: 'rgba(255, 255, 255, 0.5)', 
-              border: '1px solid rgba(255, 255, 255, 0.08)', 
-              padding: '0.15rem 0.55rem', 
+              background: '#ffffff', 
+              color: '#64748b', 
+              border: '1px solid #e5dccf', 
+              padding: '0.2rem 0.65rem', 
               borderRadius: '999px', 
-              fontSize: '0.66rem', 
+              fontSize: '0.68rem', 
               fontWeight: 700,
-              letterSpacing: '0.04em'
+              letterSpacing: '0.04em',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.03)'
             }}>
               v1.0.0
             </span>
