@@ -694,32 +694,33 @@ body.modal-open {
   }
 }
 
-/* TasteSkill v2 Enhancements & Mobile Bottom Nav */
+/* Zomo Purple & Mint Mobile Bottom Navigation Bar */
 .mobile-bottom-nav {
   display: none;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   body {
-    padding-bottom: 75px !important; /* Reserve space for mobile bottom bar */
+    padding-bottom: 95px !important; /* Reserve space so bottom buttons are 100% visible */
   }
 
   .mobile-bottom-nav {
-    display: flex;
+    display: flex !important;
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 65px;
-    background: rgba(15, 15, 18, 0.92);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
-    z-index: 999;
+    bottom: 0.75rem;
+    left: 0.75rem;
+    right: 0.75rem;
+    height: 68px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 2.5px solid rgba(255, 255, 255, 0.95);
+    border-radius: 28px;
+    z-index: 9999;
     justify-content: space-around;
     align-items: center;
-    padding: 0 0.5rem;
-    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.6);
+    padding: 0.35rem 0.5rem;
+    box-shadow: 0 16px 40px rgba(126, 34, 206, 0.22);
   }
 
   .mobile-nav-item {
@@ -729,41 +730,29 @@ body.modal-open {
     justify-content: center;
     gap: 3px;
     background: transparent;
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 0.7rem;
-    font-weight: 500;
-    padding: 6px 10px;
-    border-radius: 12px;
-    width: 20%;
-    transition: all 0.2s ease;
+    color: #6b7280;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 6px 8px;
+    border-radius: 18px;
+    flex: 1;
+    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: none;
   }
 
   .mobile-nav-item.active {
-    color: var(--primary);
-    font-weight: 700;
-    background: rgba(255, 0, 132, 0.12);
+    color: #ffffff !important;
+    font-weight: 800;
+    background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%) !important;
+    box-shadow: 0 8px 20px rgba(126, 34, 206, 0.35);
   }
 
   .mobile-nav-item.active svg {
-    transform: translateY(-2px);
-    filter: drop-shadow(0 2px 8px rgba(255, 0, 132, 0.5));
+    color: white !important;
   }
 
   .desktop-tab-nav {
     display: none !important;
-  }
-
-  .mobile-sticky-action-bar {
-    position: fixed;
-    bottom: 65px;
-    left: 0;
-    right: 0;
-    padding: 0.75rem 1rem;
-    background: rgba(20, 20, 25, 0.95);
-    backdrop-filter: blur(16px);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    z-index: 998;
-    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.4);
   }
 }
 
