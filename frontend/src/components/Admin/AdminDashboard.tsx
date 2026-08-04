@@ -861,7 +861,7 @@ export const AdminDashboard = () => {
                   paddingTop: '1.25rem', 
                   borderTop: '2px solid #e9d5ff', 
                   display: 'flex', 
-                  justify: 'space-between', 
+                  justifyContent: 'space-between', 
                   alignItems: 'center', 
                   flexWrap: 'wrap', 
                   gap: '1rem',
