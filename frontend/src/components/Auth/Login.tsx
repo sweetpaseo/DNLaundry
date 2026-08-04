@@ -46,60 +46,69 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
       display: 'flex', 
       alignItems: 'center', 
       justifyContent: 'center', 
-      background: 'radial-gradient(circle at 50% 0%, #fffdf9 0%, #f6efe7 55%, #ede2d3 100%)',
+      background: 'radial-gradient(circle at 10% 20%, #fff0f3 0%, #f0fdf4 35%, #f0f9ff 70%, #faf5ff 100%)',
       position: 'relative',
       overflow: 'hidden',
       padding: '1.5rem 1rem'
     }}>
-      {/* Background Grid Lines Overlay */}
+      {/* Background Dot Pattern */}
       <div style={{
         position: 'absolute',
         inset: 0,
-        backgroundImage: `radial-gradient(rgba(215, 188, 160, 0.25) 1.5px, transparent 1.5px)`,
-        backgroundSize: '28px 28px',
-        opacity: 0.5,
+        backgroundImage: `radial-gradient(rgba(148, 163, 184, 0.2) 1.5px, transparent 1.5px)`,
+        backgroundSize: '24px 24px',
+        opacity: 0.6,
         pointerEvents: 'none'
       }} />
 
-      {/* Floating Strawberry Pink Light Orb */}
+      {/* Floating Strawberry Pink Orb */}
       <motion.div 
-        animate={{ 
-          scale: [1, 1.2, 1],
-          x: [0, 20, 0],
-          opacity: [0.35, 0.55, 0.35]
-        }}
+        animate={{ scale: [1, 1.25, 1], x: [0, 30, 0], y: [0, -20, 0] }}
         transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
         style={{
           position: 'absolute',
-          top: '10%',
-          left: '30%',
-          width: '420px',
-          height: '420px',
-          background: 'radial-gradient(circle, rgba(255, 101, 132, 0.25) 0%, rgba(255,255,255,0) 70%)',
+          top: '5%',
+          left: '20%',
+          width: '380px',
+          height: '380px',
+          background: 'radial-gradient(circle, rgba(255, 101, 132, 0.35) 0%, rgba(255,255,255,0) 70%)',
           pointerEvents: 'none',
           borderRadius: '50%',
-          filter: 'blur(65px)'
+          filter: 'blur(55px)'
         }}
       />
 
-      {/* Floating Mint Light Orb */}
+      {/* Floating Cyan Sky Orb */}
       <motion.div 
-        animate={{ 
-          scale: [1.2, 1, 1.2],
-          x: [0, -25, 0],
-          opacity: [0.3, 0.5, 0.3]
-        }}
+        animate={{ scale: [1.2, 1, 1.2], x: [0, -35, 0], y: [0, 25, 0] }}
         transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
         style={{
           position: 'absolute',
-          bottom: '10%',
-          right: '30%',
-          width: '380px',
-          height: '380px',
-          background: 'radial-gradient(circle, rgba(82, 183, 136, 0.22) 0%, rgba(255,255,255,0) 70%)',
+          bottom: '5%',
+          right: '20%',
+          width: '400px',
+          height: '400px',
+          background: 'radial-gradient(circle, rgba(56, 189, 248, 0.3) 0%, rgba(255,255,255,0) 70%)',
           pointerEvents: 'none',
           borderRadius: '50%',
           filter: 'blur(60px)'
+        }}
+      />
+
+      {/* Floating Lavender Purple Orb */}
+      <motion.div 
+        animate={{ scale: [1, 1.15, 1], y: [0, 30, 0] }}
+        transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
+        style={{
+          position: 'absolute',
+          top: '40%',
+          right: '10%',
+          width: '320px',
+          height: '320px',
+          background: 'radial-gradient(circle, rgba(167, 139, 250, 0.28) 0%, rgba(255,255,255,0) 70%)',
+          pointerEvents: 'none',
+          borderRadius: '50%',
+          filter: 'blur(50px)'
         }}
       />
 
