@@ -138,6 +138,32 @@ input:-webkit-autofill:active {
   align-items: center;
 }
 
+/* Stock Manager Layout */
+.stock-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.stock-subnav {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.stock-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.stock-action-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+}
+
 .clay-app-layout {
   display: grid;
   grid-template-columns: 270px 1fr;
@@ -150,6 +176,39 @@ input:-webkit-autofill:active {
 }
 
 @media (max-width: 900px) {
+  .stock-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 1rem !important;
+  }
+
+  .stock-subnav {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+  }
+
+  .stock-subnav .btn-new-item {
+    grid-column: span 2 !important;
+    width: 100% !important;
+  }
+
+  .stock-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  .stock-action-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.5rem !important;
+  }
+
+  .stock-action-btn {
+    height: 44px !important;
+    font-size: 0.825rem !important;
+    padding: 0 0.5rem !important;
+  }
   .zomo-top-header {
     flex-direction: column !important;
     align-items: stretch !important;

@@ -69,33 +69,33 @@ export function StockManager({ user }: StockManagerProps) {
 
   return (
     <div className="stock-manager">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+      <div className="stock-header">
         <div>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 800 }}>Manajemen Stok</h2>
-          <p style={{ color: 'var(--text-muted)' }}>Kontrol pemakaian bahan dan perlengkapan laundry</p>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#1e1b4b' }}>Manajemen Stok</h2>
+          <p style={{ color: '#6b7280', fontSize: '0.85rem' }}>Kontrol pemakaian bahan & perlengkapan laundry</p>
         </div>
-        <div style={{ display: 'flex', gap: '0.75rem' }}>
+        <div className="stock-subnav">
           <button 
             className={`tab-btn ${activeTab === 'inventory' ? 'active' : ''}`}
             onClick={() => setActiveTab('inventory')}
-            style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}
+            style={{ padding: '0.6rem 1rem', fontSize: '0.825rem', fontWeight: 700, borderRadius: '16px' }}
           >
             <Package size={16} /> Daftar Barang
           </button>
           <button 
             className={`tab-btn ${activeTab === 'history' ? 'active' : ''}`}
             onClick={() => { setActiveTab('history'); fetchData(); }}
-            style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}
+            style={{ padding: '0.6rem 1rem', fontSize: '0.825rem', fontWeight: 700, borderRadius: '16px' }}
           >
             <History size={16} /> Riwayat Mutasi
           </button>
           {user.role === 'owner' && (
             <button 
-              className="btn-primary" 
-              style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}
+              className="btn-primary btn-new-item" 
+              style={{ padding: '0.6rem 1rem', fontSize: '0.825rem', fontWeight: 800, borderRadius: '16px', background: 'linear-gradient(135deg, #a855f7 0%, #7e22ce 100%)', color: 'white', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', boxShadow: '0 8px 20px rgba(126, 34, 206, 0.3)' }}
               onClick={() => { setSelectedStock(null); setIsItemModalOpen(true); }}
             >
-              <Plus size={18} /> Barang Baru
+              <Plus size={16} /> Barang Baru
             </button>
           )}
         </div>
@@ -104,7 +104,7 @@ export function StockManager({ user }: StockManagerProps) {
       {loading ? (
         <div style={{ textAlign: 'center', padding: '5rem' }}>Loading data stok...</div>
       ) : activeTab === 'inventory' ? (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.25rem' }}>
+        <div className="stock-grid">
           {stocks.length === 0 ? (
             <div className="glass-card" style={{ gridColumn: '1/-1', padding: '4rem', textAlign: 'center', color: 'var(--text-muted)' }}>
               Belum ada data barang. Klik "Barang Baru" untuk menambahkan.
@@ -118,80 +118,104 @@ export function StockManager({ user }: StockManagerProps) {
                   layout
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="glass-card" 
+                  className="clay-card" 
                   style={{ 
-                    padding: '1.5rem', 
+                    padding: '1.4rem', 
                     position: 'relative',
-                    border: isLow ? '1px solid rgba(244, 63, 94, 0.3)' : '1px solid var(--glass-border)',
-                    background: isLow ? 'linear-gradient(135deg, rgba(244, 63, 94, 0.05) 0%, rgba(255,255,255,0.02) 100%)' : 'rgba(255,255,255,0.02)'
+                    border: isLow ? '2px solid rgba(244, 63, 94, 0.4)' : '2.5px solid rgba(255, 255, 255, 0.95)',
+                    background: isLow ? 'linear-gradient(135deg, #fff5f5 0%, #ffffff 100%)' : '#ffffff'
                   }}
                 >
-                  {isLow && (
-                    <div style={{ 
-                      position: 'absolute', top: '1rem', right: '1rem', 
-                      background: '#f43f5e', color: 'white', 
-                      padding: '0.2rem 0.5rem', borderRadius: '6px', 
-                      fontSize: '0.65rem', fontWeight: 800,
-                      display: 'flex', alignItems: 'center', gap: '0.2rem',
-                      boxShadow: '0 0 10px rgba(244, 63, 94, 0.4)'
-                    }}>
-                      <AlertTriangle size={10} /> LOW STOCK
+                  {/* Card Header: Title & Action Badges */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem', gap: '0.5rem' }}>
+                    <div>
+                      <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#1e1b4b', marginBottom: '0.25rem' }}>{stock.name}</h3>
+                      <span style={{ fontSize: '0.72rem', color: '#6b7280', fontWeight: 600, background: '#f3eef9', padding: '0.2rem 0.6rem', borderRadius: '8px' }}>
+                        Satuan: {stock.unit}
+                      </span>
                     </div>
-                  )}
 
-                  <div style={{ marginBottom: '1rem' }}>
-                    <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.25rem' }}>{stock.name}</h3>
-                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Satuan: {stock.unit}</p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      {isLow && (
+                        <div style={{ 
+                          background: '#f43f5e', color: 'white', 
+                          padding: '0.2rem 0.5rem', borderRadius: '8px', 
+                          fontSize: '0.65rem', fontWeight: 800,
+                          display: 'flex', alignItems: 'center', gap: '0.2rem',
+                          boxShadow: '0 4px 10px rgba(244, 63, 94, 0.3)'
+                        }}>
+                          <AlertTriangle size={10} /> LOW
+                        </div>
+                      )}
+
+                      {user.role === 'owner' && (
+                        <div style={{ display: 'flex', gap: '0.25rem' }}>
+                          <button onClick={() => { setSelectedStock(stock); setIsItemModalOpen(true); }} title="Edit Barang" style={{ background: '#f3eef9', border: 'none', color: '#7e22ce', width: 28, height: 28, borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}><Edit size={13} /></button>
+                          <button onClick={() => handleDeleteItem(stock.id)} title="Hapus Barang" style={{ background: '#ffe4e6', border: 'none', color: '#f43f5e', width: 28, height: 28, borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}><Trash2 size={13} /></button>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', marginBottom: '1.5rem' }}>
-                    <span style={{ fontSize: '2.5rem', fontWeight: 800, color: isLow ? '#f43f5e' : 'white' }}>
+                  {/* Quantity Display */}
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem', margin: '1.25rem 0' }}>
+                    <span style={{ fontSize: '2.5rem', fontWeight: 900, color: isLow ? '#f43f5e' : '#7e22ce', lineHeight: 1 }}>
                       {stock.current_stock}
                     </span>
-                    <span style={{ color: 'var(--text-muted)', fontWeight: 600 }}>{stock.unit}</span>
+                    <span style={{ color: '#6b7280', fontWeight: 700, fontSize: '0.9rem' }}>{stock.unit}</span>
                   </div>
 
-                  <div style={{ marginBottom: '1.5rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
-                      <span>Batas Minimum: {stock.min_stock} {stock.unit}</span>
+                  {/* Safety Level Bar */}
+                  <div style={{ marginBottom: '1.25rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: '#6b7280', fontWeight: 600, marginBottom: '0.4rem' }}>
+                      <span>Min: {stock.min_stock} {stock.unit}</span>
                       <span>{Math.round((stock.current_stock / (stock.min_stock * 3)) * 100)}% Aman</span>
                     </div>
-                    <div style={{ height: 6, background: 'rgba(255,255,255,0.05)', borderRadius: 10, overflow: 'hidden' }}>
+                    <div style={{ height: 8, background: '#f3eef9', borderRadius: 10, overflow: 'hidden' }}>
                       <motion.div 
                         initial={{ width: 0 }}
                         animate={{ width: `${Math.min(100, (stock.current_stock / (stock.min_stock * 3)) * 100)}%` }}
                         style={{ 
                           height: '100%', 
-                          background: isLow ? '#f43f5e' : 'var(--primary-gradient)',
-                          boxShadow: isLow ? '0 0 10px rgba(244, 63, 94, 0.5)' : 'none'
+                          background: isLow ? '#f43f5e' : 'linear-gradient(90deg, #2dd4bf 0%, #10b981 100%)',
+                          borderRadius: 10
                         }} 
                       />
                     </div>
                   </div>
 
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  {/* Action Buttons */}
+                  <div className="stock-action-grid">
                     <button 
-                      className="btn-primary" 
-                      style={{ flex: 1, padding: '0.5rem', fontSize: '0.8rem', background: '#f43f5e' }}
+                      className="stock-action-btn"
+                      style={{ 
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem',
+                        height: '46px', borderRadius: '16px',
+                        background: 'linear-gradient(135deg, #f43f5e 0%, #e11d48 100%)',
+                        color: 'white', fontWeight: 800, fontSize: '0.85rem',
+                        border: 'none', cursor: 'pointer',
+                        boxShadow: '0 8px 18px rgba(244, 63, 94, 0.3)'
+                      }}
                       onClick={() => { setSelectedStock(stock); setMovementType('out'); setIsMovementModalOpen(true); }}
                     >
-                      <Minus size={14} /> Gunakan
+                      <Minus size={15} /> Gunakan
                     </button>
+
                     <button 
-                      className="btn-primary" 
-                      style={{ flex: 1, padding: '0.5rem', fontSize: '0.8rem', background: '#10b981' }}
+                      className="stock-action-btn"
+                      style={{ 
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem',
+                        height: '46px', borderRadius: '16px',
+                        background: 'linear-gradient(135deg, #2dd4bf 0%, #10b981 100%)',
+                        color: 'white', fontWeight: 800, fontSize: '0.85rem',
+                        border: 'none', cursor: 'pointer',
+                        boxShadow: '0 8px 18px rgba(16, 185, 129, 0.3)'
+                      }}
                       onClick={() => { setSelectedStock(stock); setMovementType('in'); setIsMovementModalOpen(true); }}
                     >
-                      <Plus size={14} /> Isi Ulang
+                      <Plus size={15} /> Isi Ulang
                     </button>
                   </div>
-
-                  {user.role === 'owner' && (
-                    <div style={{ position: 'absolute', bottom: '1rem', right: '1rem', display: 'flex', gap: '0.5rem', opacity: 0.3 }}>
-                      <button onClick={() => { setSelectedStock(stock); setIsItemModalOpen(true); }} style={{ background: 'transparent', border: 'none', color: 'white', cursor: 'pointer' }}><Edit size={14} /></button>
-                      <button onClick={() => handleDeleteItem(stock.id)} style={{ background: 'transparent', border: 'none', color: '#f43f5e', cursor: 'pointer' }}><Trash2 size={14} /></button>
-                    </div>
-                  )}
                 </motion.div>
               );
             })
