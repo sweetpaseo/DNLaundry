@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Users, Settings, PlusCircle, List, LogOut, Calculator, Receipt, Archive, Loader2, Calendar } from 'lucide-react';
+import { Users, Settings, PlusCircle, List, LogOut, Calculator, Receipt, Archive, Loader2, Calendar, Sparkles } from 'lucide-react';
 import { StockManager } from './components/Stock/StockManager';
 import { motion, AnimatePresence } from 'framer-motion';
 import { api } from './services/api';
@@ -107,52 +107,131 @@ function App() {
   ];
 
   return (
-    <div className="container" style={{ maxWidth: '1200px', margin: '0 auto' }}>
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div className="brand">
-          <h1 style={{ fontWeight: 800, background: 'linear-gradient(to right, #FF0084, #ff5eb3)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-            {settings?.name || 'Antigravity Laundry'}
-          </h1>
-          <p style={{ color: 'var(--text-muted)' }}>Sistem Kasir Laundry Profesional</p>
+    <div className="container" style={{ maxWidth: '1280px', margin: '0 auto', padding: '1.5rem 1rem' }}>
+      <header style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        marginBottom: '2rem',
+        padding: '1rem 1.5rem',
+        background: 'rgba(18, 20, 29, 0.65)',
+        backdropFilter: 'blur(28px)',
+        WebkitBackdropFilter: 'blur(28px)',
+        borderRadius: '24px',
+        border: '1px solid rgba(255, 255, 255, 0.12)',
+        boxShadow: '0 20px 50px -10px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.15)'
+      }}>
+        <div className="brand" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div style={{
+            width: 44,
+            height: 44,
+            borderRadius: '14px',
+            background: 'linear-gradient(135deg, #FF0084, #c40062)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'white',
+            boxShadow: '0 6px 18px rgba(255, 0, 132, 0.4)'
+          }}>
+            <Sparkles size={22} />
+          </div>
+          <div>
+            <h1 style={{ 
+              fontWeight: 900, 
+              fontSize: '1.5rem', 
+              letterSpacing: '-0.03em',
+              background: 'linear-gradient(to right, #ffffff, rgba(255, 255, 255, 0.7))', 
+              WebkitBackgroundClip: 'text', 
+              WebkitTextFillColor: 'transparent' 
+            }}>
+              {settings?.name || 'DN Laundry'}
+            </h1>
+            <p style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '0.78rem', fontWeight: 500 }}>
+              Sistem Kasir & Operasional POS
+            </p>
+          </div>
         </div>
-        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+
+        <div style={{ display: 'flex', gap: '0.85rem', alignItems: 'center' }}>
           {/* Connection Indicator */}
-          <div className="glass-card" style={{ padding: '0.4rem 0.8rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div style={{ 
+            padding: '0.45rem 0.9rem', 
+            borderRadius: '999px',
+            background: 'rgba(255, 255, 255, 0.04)',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '0.55rem' 
+          }}>
             <div 
               style={{ 
-                width: 10, 
-                height: 10, 
+                width: 8, 
+                height: 8, 
                 borderRadius: '50%', 
                 background: isOnline ? '#10b981' : '#f43f5e',
-                boxShadow: isOnline ? '0 0 10px rgba(16, 185, 129, 0.5)' : '0 0 10px rgba(244, 63, 94, 0.5)',
+                boxShadow: isOnline ? '0 0 10px #10b981' : '0 0 10px #f43f5e',
                 transition: 'all 0.3s ease'
               }} 
             />
-            <span style={{ fontSize: '0.7rem', fontWeight: 600, color: isOnline ? '#10b981' : '#f43f5e' }}>
-              {isOnline ? 'DATABASE ONLINE' : 'DATABASE OFFLINE'}
+            <span style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.05em', color: isOnline ? '#34d399' : '#f87171' }}>
+              {isOnline ? 'ONLINE' : 'OFFLINE'}
             </span>
           </div>
 
-          <div className="glass-card" style={{ padding: '0.4rem 0.8rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <div style={{ width: 8, height: 8, borderRadius: '50%', background: user.role === 'owner' ? '#FF0084' : '#10b981' }}></div>
-            <span style={{ fontSize: '0.75rem' }}>{user.name}</span>
+          {/* User Profile Pill */}
+          <div style={{ 
+            padding: '0.4rem 0.9rem', 
+            borderRadius: '999px',
+            background: 'rgba(255, 255, 255, 0.04)',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '0.6rem' 
+          }}>
+            <div style={{ 
+              fontSize: '0.62rem', 
+              fontWeight: 800, 
+              padding: '0.15rem 0.45rem', 
+              borderRadius: '6px', 
+              background: user.role === 'owner' ? 'rgba(255, 0, 132, 0.2)' : 'rgba(16, 185, 129, 0.2)',
+              color: user.role === 'owner' ? '#FF0084' : '#34d399',
+              textTransform: 'uppercase',
+              letterSpacing: '0.04em'
+            }}>
+              {user.role}
+            </div>
+            <span style={{ fontSize: '0.825rem', fontWeight: 600, color: 'white' }}>{user.name}</span>
           </div>
-          <button 
-            className="glass-card" 
-            style={{ padding: '0.4rem', display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+
+          {/* Logout Button */}
+          <motion.button 
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            style={{ 
+              padding: '0.55rem', 
+              borderRadius: '12px',
+              background: 'rgba(244, 63, 94, 0.12)',
+              border: '1px solid rgba(244, 63, 94, 0.25)',
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              cursor: 'pointer' 
+            }}
             onClick={handleLogout}
+            title="Keluar dari sistem"
           >
-            <LogOut size={16} color="#f43f5e" />
-          </button>
+            <LogOut size={16} color="#f87171" />
+          </motion.button>
         </div>
       </header>
 
-      <nav className="tab-nav desktop-tab-nav">
+      {/* Floating Tab Navigation Bar */}
+      <nav className="tab-nav desktop-tab-nav" style={{ margin: '0 auto 2rem', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
         {menuItems.map((item) => (
           <motion.button
             key={item.id}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             className={`tab-btn ${activeMenu === item.id ? 'active' : ''}`}
             onClick={() => setActiveMenu(item.id as any)}
           >
