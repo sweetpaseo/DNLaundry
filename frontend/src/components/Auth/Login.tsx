@@ -222,14 +222,14 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
                 <button
                   type="button"
                   onClick={() => handleQuickFill('kasir')}
-                  style={{ background: 'rgba(255, 101, 132, 0.1)', border: '1px solid rgba(255, 101, 132, 0.25)', color: '#ff6584', padding: '0.18rem 0.5rem', borderRadius: '8px', fontSize: '0.68rem', fontWeight: 700 }}
+                  style={{ background: 'rgba(167, 139, 250, 0.15)', border: '1px solid rgba(167, 139, 250, 0.3)', color: '#7c3aed', padding: '0.18rem 0.5rem', borderRadius: '8px', fontSize: '0.68rem', fontWeight: 800 }}
                 >
                   + Kasir
                 </button>
                 <button
                   type="button"
                   onClick={() => handleQuickFill('owner')}
-                  style={{ background: 'rgba(155, 81, 224, 0.1)', border: '1px solid rgba(155, 81, 224, 0.25)', color: '#9b51e0', padding: '0.18rem 0.5rem', borderRadius: '8px', fontSize: '0.68rem', fontWeight: 700 }}
+                  style={{ background: 'rgba(244, 114, 182, 0.15)', border: '1px solid rgba(244, 114, 182, 0.3)', color: '#db2777', padding: '0.18rem 0.5rem', borderRadius: '8px', fontSize: '0.68rem', fontWeight: 800 }}
                 >
                   + Owner
                 </button>
@@ -244,7 +244,7 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
                   left: '14px', 
                   top: '50%', 
                   transform: 'translateY(-50%)', 
-                  color: focusedInput === 'username' ? '#ff6584' : '#94a3b8',
+                  color: focusedInput === 'username' ? '#8b5cf6' : '#94a3b8',
                   transition: 'color 0.2s ease'
                 }} 
               />
@@ -261,11 +261,11 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
                   paddingLeft: '2.75rem',
                   paddingRight: '1rem',
                   height: '50px',
-                  borderRadius: '16px',
+                  borderRadius: '18px',
                   background: '#ffffff',
-                  border: focusedInput === 'username' ? '2px solid #ff6584' : '1.5px solid #e5dccf',
-                  boxShadow: focusedInput === 'username' ? '0 0 0 4px rgba(255, 101, 132, 0.15)' : 'none',
-                  color: '#2b2d42',
+                  border: focusedInput === 'username' ? '2px solid #8b5cf6' : '2px solid #e9e3f5',
+                  boxShadow: focusedInput === 'username' ? '0 0 0 4px rgba(139, 92, 246, 0.18)' : 'inset 0 2px 4px rgba(0,0,0,0.03)',
+                  color: '#2d1b4e',
                   fontSize: '0.925rem',
                   fontWeight: 600,
                   outline: 'none',
@@ -277,7 +277,7 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
           </div>
 
           <div className="form-group">
-            <label style={{ display: 'block', marginBottom: '0.45rem', fontSize: '0.75rem', fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+            <label style={{ display: 'block', marginBottom: '0.45rem', fontSize: '0.75rem', fontWeight: 800, color: '#5b4a78', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
               Password
             </label>
             <div style={{ position: 'relative' }}>
@@ -288,7 +288,7 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
                   left: '14px', 
                   top: '50%', 
                   transform: 'translateY(-50%)', 
-                  color: focusedInput === 'password' ? '#ff6584' : '#94a3b8',
+                  color: focusedInput === 'password' ? '#8b5cf6' : '#94a3b8',
                   transition: 'color 0.2s ease'
                 }} 
               />
@@ -305,11 +305,11 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
                   paddingLeft: '2.75rem',
                   paddingRight: '2.75rem',
                   height: '50px',
-                  borderRadius: '16px',
+                  borderRadius: '18px',
                   background: '#ffffff',
-                  border: focusedInput === 'password' ? '2px solid #ff6584' : '1.5px solid #e5dccf',
-                  boxShadow: focusedInput === 'password' ? '0 0 0 4px rgba(255, 101, 132, 0.15)' : 'none',
-                  color: '#2b2d42',
+                  border: focusedInput === 'password' ? '2px solid #8b5cf6' : '2px solid #e9e3f5',
+                  boxShadow: focusedInput === 'password' ? '0 0 0 4px rgba(139, 92, 246, 0.18)' : 'inset 0 2px 4px rgba(0,0,0,0.03)',
+                  color: '#2d1b4e',
                   fontSize: '0.925rem',
                   fontWeight: 600,
                   outline: 'none',
@@ -345,24 +345,24 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
           <motion.button 
             type="submit" 
             disabled={loading}
-            whileHover={{ scale: 1.015, translateY: -1 }}
+            whileHover={{ scale: 1.02, translateY: -2 }}
             whileTap={{ scale: 0.98 }}
             style={{ 
               marginTop: '0.6rem', 
               width: '100%', 
-              height: '52px',
-              borderRadius: '16px',
-              background: 'linear-gradient(135deg, #ff6584 0%, #ff4767 100%)',
+              height: '54px',
+              borderRadius: '20px',
+              background: 'linear-gradient(180deg, #a78bfa 0%, #8b5cf6 100%)',
               color: 'white',
               border: 'none',
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center', 
               gap: '0.65rem',
-              fontSize: '1rem',
+              fontSize: '1.05rem',
               fontWeight: 800,
               letterSpacing: '0.02em',
-              boxShadow: '0 10px 25px rgba(255, 101, 132, 0.4)',
+              boxShadow: '0 14px 30px rgba(139, 92, 246, 0.38), inset 0 2px 4px rgba(255, 255, 255, 0.7)',
               cursor: loading ? 'not-allowed' : 'pointer',
               opacity: loading ? 0.7 : 1,
               position: 'relative',

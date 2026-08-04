@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Users, Settings, PlusCircle, List, LogOut, Calculator, Receipt, Archive, Loader2, Calendar, Sparkles } from 'lucide-react';
+import { Users, Settings, PlusCircle, List, LogOut, Calculator, Receipt, Archive, Loader2, Calendar } from 'lucide-react';
 import { StockManager } from './components/Stock/StockManager';
 import { motion, AnimatePresence } from 'framer-motion';
 import { api } from './services/api';
@@ -107,146 +107,125 @@ function App() {
   ];
 
   return (
-    <div className="container" style={{ maxWidth: '1280px', margin: '0 auto', padding: '1.5rem 1rem' }}>
-      <header style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        marginBottom: '2rem',
-        padding: '1rem 1.5rem',
-        background: 'rgba(255, 255, 255, 0.82)',
-        backdropFilter: 'blur(24px)',
-        WebkitBackdropFilter: 'blur(24px)',
-        borderRadius: '24px',
-        border: '1.5px solid rgba(255, 255, 255, 0.95)',
-        boxShadow: '0 15px 40px -10px rgba(215, 188, 160, 0.35)'
-      }}>
-        <div className="brand" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div style={{
-            height: 48,
-            minWidth: 48,
-            borderRadius: '14px',
-            background: '#ffffff',
-            border: '1px solid #e5dccf',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '0.4rem',
-            boxShadow: '0 4px 12px rgba(215, 188, 160, 0.2)'
-          }}>
-            {settings?.logo_url ? (
-              <img src={settings.logo_url} alt="DN Laundry Logo" style={{ height: '100%', maxWidth: '140px', objectFit: 'contain' }} />
-            ) : (
-              <div style={{ width: 34, height: 34, borderRadius: '10px', background: 'linear-gradient(135deg, #ff6584, #ff4767)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', boxShadow: '0 4px 12px rgba(255,101,132,0.4)' }}>
-                <Sparkles size={18} />
-              </div>
-            )}
-          </div>
-          <div>
-            <h1 style={{ 
-              fontWeight: 900, 
-              fontSize: '1.5rem', 
-              letterSpacing: '-0.03em',
-              color: '#2b2d42'
+    <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '1.5rem 1rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '270px 1fr', gap: '1.75rem', alignItems: 'start' }}>
+        
+        {/* Claymorphic 3D Purple Sidebar */}
+        <aside className="clay-sidebar" style={{ position: 'sticky', top: '1.5rem' }}>
+          {/* User Profile Avatar Section */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', paddingBottom: '1rem', borderBottom: '1px solid rgba(255, 255, 255, 0.2)' }}>
+            <div style={{ 
+              width: 72, 
+              height: 72, 
+              borderRadius: '50%', 
+              background: '#ffffff', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              marginBottom: '0.75rem',
+              boxShadow: '0 8px 20px rgba(0, 0, 0, 0.15), inset 0 2px 4px rgba(255, 255, 255, 1)',
+              padding: '0.3rem',
+              overflow: 'hidden'
             }}>
-              {settings?.name || 'DN Laundry'}
-            </h1>
-            <p style={{ color: '#64748b', fontSize: '0.78rem', fontWeight: 500 }}>
-              Sistem Kasir & Operasional POS
-            </p>
-          </div>
-        </div>
-
-        <div style={{ display: 'flex', gap: '0.85rem', alignItems: 'center' }}>
-          {/* Connection Indicator */}
-          <div style={{ 
-            padding: '0.45rem 0.9rem', 
-            borderRadius: '999px',
-            background: '#ffffff',
-            border: '1px solid #e5dccf',
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '0.55rem',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.03)'
-          }}>
-            <div 
-              style={{ 
-                width: 8, 
-                height: 8, 
-                borderRadius: '50%', 
-                background: isOnline ? '#10b981' : '#ff5252',
-                boxShadow: isOnline ? '0 0 8px #10b981' : '0 0 8px #ff5252',
-                transition: 'all 0.3s ease'
-              }} 
-            />
-            <span style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.05em', color: isOnline ? '#059669' : '#dc2626' }}>
-              {isOnline ? 'ONLINE' : 'OFFLINE'}
+              {settings?.logo_url ? (
+                <img src={settings.logo_url} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+              ) : (
+                <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: 'linear-gradient(135deg, #a78bfa, #7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800 }}>
+                  {user.name?.charAt(0).toUpperCase()}
+                </div>
+              )}
+            </div>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 900, color: 'white', marginBottom: '0.15rem' }}>
+              Hi, {user.name}! 👋
+            </h3>
+            <span style={{ fontSize: '0.72rem', background: 'rgba(255, 255, 255, 0.2)', padding: '0.15rem 0.6rem', borderRadius: '999px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              {user.role}
             </span>
           </div>
 
-          {/* User Profile Pill */}
+          {/* Navigation Menu */}
+          <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            {menuItems.map((item) => (
+              <button
+                key={item.id}
+                className={`clay-nav-item ${activeMenu === item.id ? 'active' : ''}`}
+                onClick={() => setActiveMenu(item.id as any)}
+              >
+                <div>{item.icon}</div>
+                <span>{item.label}</span>
+              </button>
+            ))}
+          </nav>
+
+          {/* Bottom Upgrade/Status Card */}
           <div style={{ 
-            padding: '0.4rem 0.9rem', 
-            borderRadius: '999px',
-            background: '#ffffff',
-            border: '1px solid #e5dccf',
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '0.6rem',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.03)'
+            marginTop: 'auto', 
+            background: 'rgba(255, 255, 255, 0.18)', 
+            borderRadius: '22px', 
+            padding: '1rem', 
+            textAlign: 'center',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 255, 255, 0.3)'
           }}>
-            <div style={{ 
-              fontSize: '0.62rem', 
-              fontWeight: 800, 
-              padding: '0.15rem 0.45rem', 
-              borderRadius: '6px', 
-              background: user.role === 'owner' ? 'rgba(255, 101, 132, 0.15)' : 'rgba(16, 185, 129, 0.15)',
-              color: user.role === 'owner' ? '#ff6584' : '#059669',
-              textTransform: 'uppercase',
-              letterSpacing: '0.04em'
-            }}>
-              {user.role}
-            </div>
-            <span style={{ fontSize: '0.825rem', fontWeight: 700, color: '#2b2d42' }}>{user.name}</span>
+            <div style={{ fontSize: '1.25rem', marginBottom: '0.2rem' }}>🧺✨</div>
+            <div style={{ fontSize: '0.825rem', fontWeight: 800, color: 'white' }}>DN Laundry POS</div>
+            <div style={{ fontSize: '0.68rem', color: 'rgba(255, 255, 255, 0.8)' }}>Sistem Operasional Pro</div>
           </div>
+        </aside>
 
-          {/* Logout Button */}
-          <motion.button 
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            style={{ 
-              padding: '0.55rem', 
-              borderRadius: '14px',
-              background: 'rgba(255, 82, 82, 0.1)',
-              border: '1px solid rgba(255, 82, 82, 0.25)',
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center',
-              cursor: 'pointer' 
-            }}
-            onClick={handleLogout}
-            title="Keluar dari sistem"
-          >
-            <LogOut size={16} color="#ff5252" />
-          </motion.button>
-        </div>
-      </header>
+        {/* Main Content Area */}
+        <main style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          
+          {/* Top Header & Greeting Bar */}
+          <div className="clay-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.2rem 1.75rem' }}>
+            <div>
+              <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#2d1b4e' }}>
+                {settings?.name || 'DN Laundry'} POS ☀️
+              </h2>
+              <p style={{ fontSize: '0.825rem', color: '#7c6a99', fontWeight: 500 }}>
+                Selamat bekerja! Kelola cucian & transaksi hari ini dengan mudah.
+              </p>
+            </div>
 
-      {/* Floating Tab Navigation Bar */}
-      <nav className="tab-nav desktop-tab-nav" style={{ margin: '0 auto 2rem', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
-        {menuItems.map((item) => (
-          <motion.button
-            key={item.id}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className={`tab-btn ${activeMenu === item.id ? 'active' : ''}`}
-            onClick={() => setActiveMenu(item.id as any)}
-          >
-            <div className="tab-icon">{item.icon}</div>
-            <span className="tab-label">{item.label}</span>
-          </motion.button>
-        ))}
-      </nav>
+            <div style={{ display: 'flex', gap: '0.85rem', alignItems: 'center' }}>
+              {/* Online Indicator */}
+              <div style={{ 
+                padding: '0.45rem 0.9rem', 
+                borderRadius: '999px',
+                background: '#ffffff',
+                border: '2px solid #e9e3f5',
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '0.55rem',
+                boxShadow: '0 4px 10px rgba(0,0,0,0.03)'
+              }}>
+                <div style={{ width: 8, height: 8, borderRadius: '50%', background: isOnline ? '#10b981' : '#f43f5e', boxShadow: isOnline ? '0 0 8px #10b981' : '0 0 8px #f43f5e' }} />
+                <span style={{ fontSize: '0.72rem', fontWeight: 800, color: isOnline ? '#059669' : '#dc2626' }}>
+                  {isOnline ? 'DATABASE ONLINE' : 'OFFLINE'}
+                </span>
+              </div>
+
+              {/* Logout Button */}
+              <button 
+                onClick={handleLogout}
+                style={{ 
+                  padding: '0.6rem 1rem', 
+                  borderRadius: '16px',
+                  background: '#ffe4e6',
+                  color: '#fb7185',
+                  fontWeight: 800,
+                  fontSize: '0.825rem',
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '0.4rem',
+                  boxShadow: '0 4px 12px rgba(251, 113, 133, 0.2)'
+                }}
+              >
+                <LogOut size={16} />
+                <span>Keluar</span>
+              </button>
+            </div>
+          </div>
 
       {/* Mobile Bottom Navigation Bar */}
       <nav className="mobile-bottom-nav">
@@ -262,7 +241,6 @@ function App() {
         ))}
       </nav>
 
-      <main>
         <AnimatePresence mode="wait">
           <motion.div
             key={activeMenu}
@@ -378,15 +356,16 @@ function App() {
           </motion.div>
         </AnimatePresence>
 
-        <footer style={{ marginTop: '2.5rem', marginBottom: '1.5rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.75rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
+        <footer style={{ marginTop: '2.5rem', marginBottom: '1.5rem', textAlign: 'center', color: '#7c6a99', fontSize: '0.75rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
           <span>{settings?.name || 'DN Laundry'}</span>
           <span>•</span>
-          <span style={{ background: 'rgba(255, 0, 132, 0.15)', color: '#FF0084', border: '1px solid rgba(255, 0, 132, 0.3)', padding: '0.2rem 0.6rem', borderRadius: '999px', fontWeight: 700, letterSpacing: '0.05em' }}>
-            v1.0.0
+          <span style={{ background: 'rgba(167, 139, 250, 0.15)', color: '#7c3aed', border: '1px solid rgba(167, 139, 250, 0.3)', padding: '0.2rem 0.6rem', borderRadius: '999px', fontWeight: 800, letterSpacing: '0.05em' }}>
+            v1.0.0 Pro
           </span>
         </footer>
       </main>
     </div>
+  </div>
   );
 }
 
