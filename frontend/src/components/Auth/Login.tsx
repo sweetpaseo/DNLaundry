@@ -148,7 +148,10 @@ export const Login = ({ onLoginSuccess, settings }: LoginProps) => {
           </motion.button>
         </form>
 
-        <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+        <div style={{ marginTop: '2rem', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+          <span style={{ background: 'rgba(255, 0, 132, 0.15)', color: '#FF0084', border: '1px solid rgba(255, 0, 132, 0.3)', padding: '0.15rem 0.55rem', borderRadius: '999px', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.05em' }}>
+            v2.1.0 (TasteSkill UI)
+          </span>
           <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
             Lupa password? Hubungi Owner
           </p>

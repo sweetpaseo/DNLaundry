@@ -291,6 +291,14 @@ function App() {
             )}
           </motion.div>
         </AnimatePresence>
+
+        <footer style={{ marginTop: '2.5rem', marginBottom: '1.5rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.75rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
+          <span>{settings?.name || 'DN Laundry'}</span>
+          <span>•</span>
+          <span style={{ background: 'rgba(255, 0, 132, 0.15)', color: '#FF0084', border: '1px solid rgba(255, 0, 132, 0.3)', padding: '0.2rem 0.6rem', borderRadius: '999px', fontWeight: 700, letterSpacing: '0.05em' }}>
+            v2.1.0 (TasteSkill UI)
+          </span>
+        </footer>
       </main>
     </div>
   );
