@@ -14,7 +14,7 @@ const getCustomerTheme = (name: string) => {
     { avatarBg: 'linear-gradient(135deg, #ec4899, #be185d)', border: '#fbcfe8', pillBg: '#fdf2f8', pillColor: '#db2777' },
     { avatarBg: 'linear-gradient(135deg, #38bdf8, #0284c7)', border: '#bae6fd', pillBg: '#f0f9ff', pillColor: '#0284c7' },
     { avatarBg: 'linear-gradient(135deg, #34d399, #059669)', border: '#a7f3d0', pillBg: '#f0fdf4', pillColor: '#059669' },
-    { avatarBg: 'linear-gradient(135deg, #a855f7, #7e22ce)', border: '#e9d5ff', pillBg: '#faf5ff', pillColor: '#7e22ce' },
+    { avatarBg: 'linear-gradient(135deg, #60A5FA, #3B82F6)', border: 'var(--border)', pillBg: '#EFF6FF', pillColor: '#3B82F6' },
     { avatarBg: 'linear-gradient(135deg, #fb923c, #ea580c)', border: '#fed7aa', pillBg: '#fff7ed', pillColor: '#ea580c' },
   ];
   let hash = 0;
@@ -184,7 +184,7 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
 
   const getStatusStyle = (status: TransactionStatus) => {
     switch (status) {
-      case 'Baru': return { bg: 'rgba(255, 0, 132, 0.1)', color: '#FF0084' };
+      case 'Baru': return { bg: 'rgba(59, 130, 246, 0.1)', color: '#3B82F6' };
       case 'Proses': return { bg: 'rgba(211, 211, 211, 0.1)', color: '#D3D3D3' };
       case 'Siap Ambil': return { bg: 'rgba(16, 185, 129, 0.1)', color: '#34d399' };
       case 'Siap Kirim': return { bg: 'rgba(59, 130, 246, 0.1)', color: '#60a5fa' };
@@ -455,8 +455,8 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
           justifyContent: 'space-between', 
           alignItems: 'center',
           gap: '0.75rem',
-          background: 'linear-gradient(135deg, rgba(255, 0, 132, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)',
-          border: '1px solid rgba(255, 0, 132, 0.1)'
+background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)',
+                  border: '1px solid rgba(59, 130, 246, 0.1)'
         }}>
           <div style={{ flex: '1 1 120px' }}>
             <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '0.1rem' }}>Total Transaksi Terfilter:</p>
@@ -615,9 +615,9 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: '0.25rem' }}>
                       <div style={{ display: 'flex', gap: '0.4rem' }}>
                         <div style={{ 
-                          background: allPaid ? 'rgba(37, 211, 102, 0.15)' : 'rgba(255, 0, 132, 0.15)',
+                          background: allPaid ? 'rgba(37, 211, 102, 0.15)' : 'rgba(59, 130, 246, 0.15)',
                           color: allPaid ? '#25d366' : 'var(--primary)',
-                          border: `1px solid ${allPaid ? 'rgba(37, 211, 102, 0.3)' : 'rgba(255, 0, 132, 0.3)'}`,
+                          border: `1px solid ${allPaid ? 'rgba(37, 211, 102, 0.3)' : 'rgba(59, 130, 246, 0.3)'}`,
                           padding: '0.35rem 0.65rem',
                           borderRadius: '8px',
                           fontSize: '0.7rem',
