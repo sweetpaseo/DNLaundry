@@ -184,11 +184,11 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
 
   const getStatusStyle = (status: TransactionStatus) => {
     switch (status) {
-      case 'Baru': return { bg: 'rgba(59, 130, 246, 0.1)', color: '#3B82F6' };
-      case 'Proses': return { bg: 'rgba(211, 211, 211, 0.1)', color: '#D3D3D3' };
-      case 'Siap Ambil': return { bg: 'rgba(16, 185, 129, 0.1)', color: '#34d399' };
-      case 'Siap Kirim': return { bg: 'rgba(59, 130, 246, 0.1)', color: '#60a5fa' };
-      case 'Selesai': return { bg: 'rgba(255, 255, 255, 0.05)', color: 'var(--text-muted)' };
+      case 'Baru': return { bg: 'rgba(59, 130, 246, 0.12)', color: '#2563eb' };
+      case 'Proses': return { bg: 'rgba(245, 158, 11, 0.12)', color: '#d97706' };
+      case 'Siap Ambil': return { bg: 'rgba(16, 185, 129, 0.12)', color: '#059669' };
+      case 'Siap Kirim': return { bg: 'rgba(6, 182, 212, 0.12)', color: '#0891b2' };
+      case 'Selesai': return { bg: 'rgba(100, 116, 139, 0.12)', color: '#475569' };
     }
   };
 
@@ -542,19 +542,19 @@ background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(255, 255,
                           justifyContent: 'center',
                           fontWeight: 900,
                           fontSize: '0.9rem',
-                          boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
                           flexShrink: 0
                         }}>
                           {initials}
                         </div>
                         <div>
                           <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', gap: '0.4rem' }}>
-                            <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'white', margin: 0 }}>{t.customer_name}</h4>
+                            <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>{t.customer_name}</h4>
                             <span style={{ fontSize: '0.65rem', fontWeight: 800, color: customerTheme.pillColor, background: customerTheme.pillBg, padding: '0.1rem 0.4rem', borderRadius: '6px', border: `1px solid ${customerTheme.border}` }}>
                               {formatDisplayId(customer ? getDisplayId(customer) : (t.customer?.customer_id || (t.customer_id ? `#DN-${t.customer_id.slice(0, 5).toUpperCase()}` : '#DN-NEW')))}
                             </span>
                           </div>
-                          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.15rem' }}>
+                          <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.15rem' }}>
                             <Clock size={12} color="var(--primary)" /> {new Date(t.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}
                           </div>
                         </div>
@@ -587,25 +587,25 @@ background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(255, 255,
 
                     {customer && (
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', fontSize: '0.7rem', fontWeight: 600 }}>
-                        <div style={{ padding: '0.25rem 0.5rem', borderRadius: '6px', background: 'rgba(37, 211, 102, 0.1)', color: '#25D366', border: '1px solid rgba(37, 211, 102, 0.2)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                        <div style={{ padding: '0.25rem 0.5rem', borderRadius: '6px', background: 'rgba(37, 211, 102, 0.1)', color: '#16a34a', border: '1px solid rgba(37, 211, 102, 0.25)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                           <Wallet size={10} /> Rp {(customer.wallet_balance || 0).toLocaleString()}
                         </div>
                         {totalDebt > 0 && (
-                          <div style={{ padding: '0.25rem 0.5rem', borderRadius: '6px', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                          <div style={{ padding: '0.25rem 0.5rem', borderRadius: '6px', background: 'rgba(239, 68, 68, 0.1)', color: '#dc2626', border: '1px solid rgba(239, 68, 68, 0.25)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                             <Clock size={10} /> Hutang: Rp {totalDebt.toLocaleString()}
                           </div>
                         )}
                       </div>
                     )}
 
-                    <div style={{ padding: '0.75rem 1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '14px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                    <div style={{ padding: '0.75rem 1rem', background: '#F8FAFC', borderRadius: '14px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                       {group.map((item, idx) => (
-                        <div key={item.id} style={{ borderTop: idx === 0 ? 'none' : '1px solid rgba(255,255,255,0.05)', paddingTop: idx === 0 ? '0' : '0.4rem' }}>
+                        <div key={item.id} style={{ borderTop: idx === 0 ? 'none' : '1px solid #E2E8F0', paddingTop: idx === 0 ? '0' : '0.4rem' }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.1rem' }}>
-                            <span style={{ fontWeight: 700, fontSize: '0.875rem', color: 'white' }}>{item.service_name}</span>
-                            <span style={{ fontWeight: 800, fontSize: '0.875rem', color: 'white' }}>Rp {item.final_price.toLocaleString()}</span>
+                            <span style={{ fontWeight: 700, fontSize: '0.875rem', color: 'var(--text-primary)' }}>{item.service_name}</span>
+                            <span style={{ fontWeight: 800, fontSize: '0.875rem', color: 'var(--text-primary)' }}>Rp {item.final_price.toLocaleString()}</span>
                           </div>
-                          <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                          <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>
                             {item.weight} {item.unit || 'kg'} x Rp {((item.total_price / (item.weight || 1))).toLocaleString()}
                           </div>
                         </div>
@@ -615,8 +615,8 @@ background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(255, 255,
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: '0.25rem' }}>
                       <div style={{ display: 'flex', gap: '0.4rem' }}>
                         <div style={{ 
-                          background: allPaid ? 'rgba(37, 211, 102, 0.15)' : 'rgba(59, 130, 246, 0.15)',
-                          color: allPaid ? '#25d366' : 'var(--primary)',
+                          background: allPaid ? 'rgba(37, 211, 102, 0.12)' : 'rgba(59, 130, 246, 0.12)',
+                          color: allPaid ? '#16a34a' : 'var(--primary)',
                           border: `1px solid ${allPaid ? 'rgba(37, 211, 102, 0.3)' : 'rgba(59, 130, 246, 0.3)'}`,
                           padding: '0.35rem 0.65rem',
                           borderRadius: '8px',
@@ -632,8 +632,8 @@ background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(255, 255,
                         {allPaid && t.payment_method && (
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
                             <div style={{ 
-                              background: 'rgba(255, 255, 255, 0.05)',
-                              color: 'var(--text-muted)',
+                              background: '#F1F5F9',
+                              color: 'var(--text-secondary)',
                               border: '1px solid var(--glass-border)',
                               padding: '0.35rem 0.65rem',
                               borderRadius: '8px',
@@ -650,8 +650,8 @@ background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(255, 255,
                         )}
                       </div>
                       <div style={{ textAlign: 'right' }}>
-                        <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '0.1rem' }}>Total Bayar:</p>
-                        <h3 style={{ fontSize: '1.3rem', fontWeight: 900, color: 'white', margin: 0 }}>
+                        <p style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', marginBottom: '0.1rem' }}>Total Bayar:</p>
+                        <h3 style={{ fontSize: '1.3rem', fontWeight: 900, color: 'var(--text-primary)', margin: 0 }}>
                           Rp {totalGroupPrice.toLocaleString('id-ID')}
                         </h3>
                       </div>
@@ -662,7 +662,7 @@ background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(255, 255,
                       <button 
                         onClick={() => { setSelectedTransaction(group as any); setIsReceiptOpen(true); }}
                         className="tx-action-btn btn-nota"
-                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', background: 'rgba(255,255,255,0.06)', borderRadius: '10px', color: 'white', fontSize: '0.8rem', fontWeight: 700, border: '1px solid var(--glass-border)', cursor: 'pointer' }}
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '10px', color: 'var(--primary)', fontSize: '0.8rem', fontWeight: 700, border: '1px solid rgba(59, 130, 246, 0.25)', cursor: 'pointer' }}
                       >
                         <Printer size={15} /> Nota
                       </button>
@@ -670,15 +670,15 @@ background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(255, 255,
                       <button 
                         onClick={() => handleWhatsAppShare(group)}
                         className="tx-action-btn btn-wa"
-                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', background: 'rgba(37, 211, 102, 0.12)', border: '1px solid rgba(37, 211, 102, 0.3)', borderRadius: '10px', color: '#25D366', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer' }}
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', background: 'rgba(37, 211, 102, 0.12)', border: '1px solid rgba(37, 211, 102, 0.3)', borderRadius: '10px', color: '#16a34a', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer' }}
                       >
-                        <WhatsAppIcon size={16} color="#25D366" /> WA
+                        <WhatsAppIcon size={16} color="#16a34a" /> WA
                       </button>
 
                       <button 
                         onClick={() => { setEditingTransaction(group[0]); setIsEditOpen(true); }}
                         className="tx-action-btn btn-edit"
-                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', background: 'rgba(255, 193, 7, 0.12)', border: '1px solid rgba(255, 193, 7, 0.3)', color: '#FFC107', borderRadius: '10px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer' }}
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', background: 'rgba(245, 158, 11, 0.12)', border: '1px solid rgba(245, 158, 11, 0.3)', color: '#d97706', borderRadius: '10px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer' }}
                       >
                         <Edit3 size={15} /> Edit
                       </button>
@@ -687,7 +687,7 @@ background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(255, 255,
                         <button 
                           onClick={() => handleDelete(groupId)}
                           className="tx-action-btn btn-delete"
-                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', background: 'rgba(244, 63, 94, 0.12)', borderRadius: '10px', color: '#f43f5e', border: '1px solid rgba(244, 63, 94, 0.3)', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer' }}
+                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', background: 'rgba(244, 63, 94, 0.12)', borderRadius: '10px', color: '#e11d48', border: '1px solid rgba(244, 63, 94, 0.3)', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer' }}
                         >
                           <Trash2 size={15} /> Hapus
                         </button>
