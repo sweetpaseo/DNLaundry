@@ -486,7 +486,7 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
                       <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{item.amount} {services.find(s => s.id === item.service_id)?.unit} x Rp {item.price.toLocaleString()}</div>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <div style={{ fontWeight: 700, color: 'white' }}>Rp {item.subtotal.toLocaleString()}</div>
+                      <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>Rp {item.subtotal.toLocaleString()}</div>
                       <button 
                         type="button"
                         onClick={() => removeItem(item.id)}
@@ -549,35 +549,35 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
         <div style={{ 
           marginTop: '1rem', 
           padding: 'min(1.5rem, 4vw)', 
-          background: 'var(--bg-gradient)', 
+          background: 'linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%)', 
           borderRadius: 'var(--radius)', 
           border: '2px solid var(--primary)', 
           display: 'flex', 
           flexDirection: 'column',
           gap: '1rem',
-          boxShadow: '0 10px 30px rgba(255, 0, 132, 0.2)',
+          boxShadow: '0 10px 30px rgba(59, 130, 246, 0.15)',
           maxWidth: '100%',
           boxSizing: 'border-box'
         }}>
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-              <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Total ({orderItems.length} Layanan):</p>
-              <p style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-muted)' }}>Rp {grandTotal.toLocaleString('id-ID')}</p>
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Total ({orderItems.length} Layanan):</p>
+              <p style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)' }}>Rp {grandTotal.toLocaleString('id-ID')}</p>
             </div>
             
             {Number(discountValue) > 0 && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem', borderTop: '1px dashed var(--glass-border)', paddingTop: '0.5rem' }}>
-                <p style={{ fontSize: '0.9rem', color: 'var(--accent)', fontWeight: 600 }}>Diskon ({discountType === 'percentage' ? `${discountValue}%` : 'Rp'}):</p>
-                <p style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--accent)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem', borderTop: '1px dashed var(--border)', paddingTop: '0.5rem' }}>
+                <p style={{ fontSize: '0.9rem', color: '#dc2626', fontWeight: 600 }}>Diskon ({discountType === 'percentage' ? `${discountValue}%` : 'Rp'}):</p>
+                <p style={{ fontSize: '1rem', fontWeight: 600, color: '#dc2626' }}>
                   - Rp {(discountType === 'percentage' ? (grandTotal * Number(discountValue) / 100) : Number(discountValue)).toLocaleString('id-ID')}
                 </p>
               </div>
             )}
 
-            <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Total Pembayaran Akhir:</p>
+            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Total Pembayaran Akhir:</p>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', flexWrap: 'wrap' }}>
               <span style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--primary)' }}>Rp</span>
-              <h2 style={{ fontSize: 'clamp(1.8rem, 10vw, 2.5rem)', fontWeight: 900, color: 'white', letterSpacing: '-1px', lineHeight: 1, wordBreak: 'break-all' }}>
+              <h2 style={{ fontSize: 'clamp(1.8rem, 10vw, 2.5rem)', fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '-1px', lineHeight: 1, wordBreak: 'break-all' }}>
                 {(roundingEnabled 
                   ? roundUpTo500(Math.max(0, grandTotal - (discountType === 'percentage' ? (grandTotal * Number(discountValue) / 100) : Number(discountValue))))
                   : Math.max(0, grandTotal - (discountType === 'percentage' ? (grandTotal * Number(discountValue) / 100) : Number(discountValue)))
@@ -589,8 +589,8 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
                 ✨ Termasuk Pembulatan Ke Atas (500)
               </p>
             )}
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-              Estimasi Selesai: <span style={{ color: 'white', fontWeight: 600 }}>{orderItems.length > 0 ? new Date(maxDueDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'}</span>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
+              Estimasi Selesai: <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{orderItems.length > 0 ? new Date(maxDueDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'}</span>
             </p>
           </div>
           
