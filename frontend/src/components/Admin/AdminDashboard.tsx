@@ -140,6 +140,7 @@ export const AdminDashboard = () => {
       if (filterType === 'range') {
         if (!startDate || !endDate) return true;
         const start = new Date(startDate);
+        start.setHours(0, 0, 0, 0);
         const end = new Date(endDate);
         end.setHours(23, 59, 59, 999);
         return d >= start && d <= end;
@@ -678,12 +679,7 @@ export const AdminDashboard = () => {
               <div>
                 <h5 style={{ color: 'var(--primary)', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem', marginBottom: '1rem', fontSize: '0.9rem' }}>PENDAPATAN</h5>
                 {(() => {
-                  const filteredT = transactions.filter(t => {
-                    const d = new Date(t.created_at);
-                    const m = filterMonth === 'all' || d.getMonth() === filterMonth;
-                    const y = filterYear === 'all' || d.getFullYear() === filterYear;
-                    return m && y && t.is_paid;
-                  });
+                  const filteredT = transactions.filter(t => stats.isWithinFilter(t.created_at) && t.is_paid);
 
                   // Item mapping for details
                   const itemMap: Record<string, { amount: number, category: string }> = {};
@@ -776,14 +772,9 @@ export const AdminDashboard = () => {
                 <h5 style={{ color: '#f43f5e', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.5rem', marginBottom: '1rem', fontSize: '0.9rem' }}>BIAYA / PENGELUARAN</h5>
                 {(() => {
                   const filteredEx = expenses.filter(ex => stats.isWithinFilter(ex.date));
-
-                  const filteredInc = transactions.filter(t => {
-                    const d = new Date(t.created_at);
-                    const m = filterMonth === 'all' || d.getMonth() === filterMonth;
-                    const y = filterYear === 'all' || d.getFullYear() === filterYear;
-                    return m && y && t.is_paid;
-                  });
-                  const totalInc = filteredInc.reduce((acc, t) => acc + t.final_price, 0);
+                  const filteredT = transactions.filter(t => stats.isWithinFilter(t.created_at) && t.is_paid);
+                  const totalInc = filteredT.reduce((acc, t) => acc + t.final_price, 0);
+                  const totalEx = filteredEx.reduce((acc, ex) => acc + ex.amount, 0);
 
                   // Group by cash_type then category
                   const cashGroup: Record<string, Record<string, number>> = {
@@ -820,7 +811,7 @@ export const AdminDashboard = () => {
                               <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
                                 <span>Rp {amt.toLocaleString()}</span>
                                 <span style={{ width: '45px', textAlign: 'right', opacity: 0.6, fontSize: '0.65rem' }}>
-                                  ({totalInc > 0 ? ((amt / totalInc) * 100).toFixed(1) : '0'}%)
+                                  ({totalEx > 0 ? ((amt / totalEx) * 100).toFixed(1) : '0'}%)
                                 </span>
                               </div>
                             </div>
@@ -829,8 +820,6 @@ export const AdminDashboard = () => {
                       </div>
                     );
                   };
-
-                  const totalEx = filteredEx.reduce((acc, ex) => acc + ex.amount, 0);
 
                   return (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
@@ -856,6 +845,50 @@ export const AdminDashboard = () => {
                 })()}
               </div>
             </div>
+
+            {/* Net Profit Summary Row */}
+            {(() => {
+              const filteredT = transactions.filter(t => stats.isWithinFilter(t.created_at) && t.is_paid);
+              const filteredEx = expenses.filter(ex => stats.isWithinFilter(ex.date));
+              const totalInc = filteredT.reduce((acc, t) => acc + t.final_price, 0);
+              const totalEx = filteredEx.reduce((acc, ex) => acc + ex.amount, 0);
+              const netProfit = totalInc - totalEx;
+              const margin = totalInc > 0 ? ((netProfit / totalInc) * 100).toFixed(1) : '0';
+
+              return (
+                <div style={{ 
+                  marginTop: '1.75rem', 
+                  paddingTop: '1.25rem', 
+                  borderTop: '2px solid #e9d5ff', 
+                  display: 'flex', 
+                  justify: 'space-between', 
+                  alignItems: 'center', 
+                  flexWrap: 'wrap', 
+                  gap: '1rem',
+                  background: netProfit >= 0 ? 'rgba(16, 185, 129, 0.04)' : 'rgba(244, 63, 94, 0.04)',
+                  padding: '1rem 1.25rem',
+                  borderRadius: '16px'
+                }}>
+                  <div>
+                    <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#1e1b4b' }}>LABA BERSIH (NET PROFIT): </span>
+                    <span style={{ fontSize: '1.2rem', fontWeight: 900, color: netProfit >= 0 ? '#059669' : '#dc2626' }}>
+                      Rp {netProfit.toLocaleString()}
+                    </span>
+                  </div>
+                  <div style={{ 
+                    fontSize: '0.8rem', 
+                    fontWeight: 800, 
+                    color: netProfit >= 0 ? '#059669' : '#dc2626', 
+                    background: netProfit >= 0 ? '#ecfdf5' : '#fff1f2', 
+                    padding: '0.4rem 0.9rem', 
+                    borderRadius: '999px', 
+                    border: `1px solid ${netProfit >= 0 ? '#a7f3d0' : '#fecdd3'}` 
+                  }}>
+                    Margin Keuntungan: {margin}%
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         </>
       ) : activeTab === 'management' ? (
