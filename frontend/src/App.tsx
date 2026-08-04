@@ -177,8 +177,8 @@ function App() {
         <main style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           
           {/* Top Header & Greeting Bar */}
-          <div className="clay-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.2rem 1.75rem' }}>
-            <div>
+          <div className="clay-card zomo-top-header">
+            <div className="zomo-header-title-box">
               <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: '#2d1b4e' }}>
                 {settings?.name || 'DN Laundry'} POS ☀️
               </h2>
@@ -187,7 +187,7 @@ function App() {
               </p>
             </div>
 
-            <div style={{ display: 'flex', gap: '0.85rem', alignItems: 'center' }}>
+            <div className="zomo-header-actions">
               {/* Online Indicator */}
               <div style={{ 
                 padding: '0.45rem 0.9rem', 
