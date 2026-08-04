@@ -170,6 +170,25 @@ input:-webkit-autofill:active {
   gap: 0.5rem;
 }
 
+.tx-action-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  padding-top: 0.85rem;
+  border-top: 1.5px solid var(--glass-border);
+}
+
+.tx-action-btn {
+  height: 42px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.tx-action-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.15);
+}
+
 .clay-app-layout {
   display: grid;
   grid-template-columns: 270px 1fr;
@@ -219,6 +238,18 @@ input:-webkit-autofill:active {
   .tier-buttons-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 0.5rem !important;
+  }
+
+  .tx-action-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+
+  .tx-action-btn {
+    height: 44px !important;
+    font-size: 0.825rem !important;
+    font-weight: 800 !important;
+    border-radius: 14px !important;
   }
   .zomo-top-header {
     flex-direction: column !important;

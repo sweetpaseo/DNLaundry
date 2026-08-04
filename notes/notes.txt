@@ -1,0 +1,4 @@
+Rule:
+1. Prinsip tampilan adalah mobile first application, terbagi menjadi 3 yaitu mobile, tablet dan desktop. 
+2. Gunakan clean code dan clean architecture untuk menulis coding webapp.
+3. Maksimalkan tampilan di semua device.

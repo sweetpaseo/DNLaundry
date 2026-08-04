@@ -9,6 +9,19 @@ import { WhatsAppIcon } from '../Icons';
 import { getWhatsAppUrl } from '../../utils/whatsapp';
 import { getDisplayId, formatDisplayId } from '../../utils/customer';
 
+const getCustomerTheme = (name: string) => {
+  const themes = [
+    { avatarBg: 'linear-gradient(135deg, #ec4899, #be185d)', border: '#fbcfe8', pillBg: '#fdf2f8', pillColor: '#db2777' },
+    { avatarBg: 'linear-gradient(135deg, #38bdf8, #0284c7)', border: '#bae6fd', pillBg: '#f0f9ff', pillColor: '#0284c7' },
+    { avatarBg: 'linear-gradient(135deg, #34d399, #059669)', border: '#a7f3d0', pillBg: '#f0fdf4', pillColor: '#059669' },
+    { avatarBg: 'linear-gradient(135deg, #a855f7, #7e22ce)', border: '#e9d5ff', pillBg: '#faf5ff', pillColor: '#7e22ce' },
+    { avatarBg: 'linear-gradient(135deg, #fb923c, #ea580c)', border: '#fed7aa', pillBg: '#fff7ed', pillColor: '#ea580c' },
+  ];
+  let hash = 0;
+  for (let i = 0; i < (name || '').length; i++) hash = (name || '').charCodeAt(i) + ((hash << 5) - hash);
+  return themes[Math.abs(hash) % themes.length];
+};
+
 interface TransactionListProps {
   currentUser?: any;
 }
@@ -490,56 +503,82 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
                 );
                 const totalDebt = unpaidTransactions.reduce((sum, tr) => sum + tr.final_price, 0);
                 
+                const customerTheme = getCustomerTheme(t.customer_name);
+                const initials = (t.customer_name || 'P').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+
                 return (
                   <motion.div 
                     key={groupId} 
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    whileHover={{ y: -3 }}
-                    transition={{ duration: 0.2 }}
-                    className="glass-card hover-glow" 
+                    initial={{ opacity: 0, y: 22, scale: 0.97 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    whileHover={{ y: -4, scale: 1.015 }}
+                    whileTap={{ scale: 0.985 }}
+                    transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                    className="glass-card hover-glow transaction-card-animated" 
                     style={{ 
                       padding: '1.25rem', 
                       display: 'flex', 
                       flexDirection: 'column', 
                       gap: '1rem',
-                      border: isOverdue ? '2px solid #ef4444' : '1px solid var(--glass-border)',
-                      boxShadow: isOverdue ? '0 0 15px rgba(239, 68, 68, 0.2)' : 'none'
+                      borderLeft: isOverdue ? '6px solid #ef4444' : `6px solid ${statusStyle.color}`,
+                      borderTop: '1px solid var(--glass-border)',
+                      borderRight: '1px solid var(--glass-border)',
+                      borderBottom: '1px solid var(--glass-border)',
+                      boxShadow: isOverdue ? '0 0 20px rgba(239, 68, 68, 0.25)' : '0 10px 30px rgba(0, 0, 0, 0.2)',
+                      borderRadius: '20px'
                     }}
                   >
-                    {/* Responsive Header */}
-                    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.75rem' }}>
-                      <div style={{ flex: 1, minWidth: '150px' }}>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', gap: '0.4rem', marginBottom: '0.2rem' }}>
-                          <h4 style={{ fontSize: '1.1rem', fontWeight: 800, whiteSpace: 'nowrap' }}>{t.customer_name}</h4>
-                          <span style={{ fontSize: '0.6rem', fontWeight: 600, opacity: 0.5, background: 'rgba(255,255,255,0.1)', padding: '0.1rem 0.3rem', borderRadius: '4px' }}>
-                            {formatDisplayId(customer ? getDisplayId(customer) : (t.customer?.customer_id || (t.customer_id ? `#DN-${t.customer_id.slice(0, 5).toUpperCase()}` : '#DN-NEW')))}
-                          </span>
+                    {/* Header with Customer Avatar & Status */}
+                    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: 1, minWidth: '160px' }}>
+                        <div style={{ 
+                          width: 42, 
+                          height: 42, 
+                          borderRadius: '50%', 
+                          background: customerTheme.avatarBg,
+                          color: 'white',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontWeight: 900,
+                          fontSize: '0.9rem',
+                          boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                          flexShrink: 0
+                        }}>
+                          {initials}
                         </div>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                          <Clock size={12} /> {new Date(t.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}
+                        <div>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', gap: '0.4rem' }}>
+                            <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'white', margin: 0 }}>{t.customer_name}</h4>
+                            <span style={{ fontSize: '0.65rem', fontWeight: 800, color: customerTheme.pillColor, background: customerTheme.pillBg, padding: '0.1rem 0.4rem', borderRadius: '6px', border: `1px solid ${customerTheme.border}` }}>
+                              {formatDisplayId(customer ? getDisplayId(customer) : (t.customer?.customer_id || (t.customer_id ? `#DN-${t.customer_id.slice(0, 5).toUpperCase()}` : '#DN-NEW')))}
+                            </span>
+                          </div>
+                          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.15rem' }}>
+                            <Clock size={12} color="var(--primary)" /> {new Date(t.created_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })}
+                          </div>
                         </div>
                       </div>
                       
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.4rem' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.3rem' }}>
                         <span style={{ 
-                          padding: '0.35rem 0.6rem', 
-                          borderRadius: '8px', 
+                          padding: '0.35rem 0.65rem', 
+                          borderRadius: '10px', 
                           fontSize: '0.7rem', 
                           fontWeight: 800,
                           background: statusStyle.bg,
                           color: statusStyle.color,
-                          border: `1px solid ${statusStyle.color}44`,
+                          border: `1px solid ${statusStyle.color}66`,
                           display: 'flex',
                           alignItems: 'center',
                           gap: '0.3rem',
-                          whiteSpace: 'nowrap'
+                          boxShadow: `0 4px 12px ${statusStyle.color}22`
                         }}>
                           {['Siap Ambil', 'Siap Kirim'].includes(t.status) ? <CheckCircle size={12} /> : <Clock size={12} />}
                           {t.status.toUpperCase()}
                         </span>
                         {t.receipt_no && (
-                          <span style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--primary)', opacity: 0.8 }}>
+                          <span style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--primary)', opacity: 0.9 }}>
                             #{t.receipt_no}
                           </span>
                         )}
@@ -559,14 +598,14 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
                       </div>
                     )}
 
-                    <div style={{ padding: '0.75rem', background: 'rgba(255,255,255,0.01)', borderRadius: '12px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                    <div style={{ padding: '0.75rem 1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '14px', border: '1px solid var(--glass-border)', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                       {group.map((item, idx) => (
                         <div key={item.id} style={{ borderTop: idx === 0 ? 'none' : '1px solid rgba(255,255,255,0.05)', paddingTop: idx === 0 ? '0' : '0.4rem' }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.1rem' }}>
-                            <span style={{ fontWeight: 700, fontSize: '0.85rem' }}>{item.service_name}</span>
-                            <span style={{ fontWeight: 700, fontSize: '0.85rem' }}>Rp {item.final_price.toLocaleString()}</span>
+                            <span style={{ fontWeight: 700, fontSize: '0.875rem', color: 'white' }}>{item.service_name}</span>
+                            <span style={{ fontWeight: 800, fontSize: '0.875rem', color: 'white' }}>Rp {item.final_price.toLocaleString()}</span>
                           </div>
-                          <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>
+                          <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
                             {item.weight} {item.unit || 'kg'} x Rp {((item.total_price / (item.weight || 1))).toLocaleString()}
                           </div>
                         </div>
@@ -576,12 +615,12 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: '0.25rem' }}>
                       <div style={{ display: 'flex', gap: '0.4rem' }}>
                         <div style={{ 
-                          background: allPaid ? 'rgba(37, 211, 102, 0.1)' : 'rgba(255, 0, 132, 0.1)',
+                          background: allPaid ? 'rgba(37, 211, 102, 0.15)' : 'rgba(255, 0, 132, 0.15)',
                           color: allPaid ? '#25d366' : 'var(--primary)',
-                          border: `1px solid ${allPaid ? 'rgba(37, 211, 102, 0.2)' : 'rgba(255, 0, 132, 0.2)'}`,
-                          padding: '0.3rem 0.6rem',
-                          borderRadius: '6px',
-                          fontSize: '0.65rem',
+                          border: `1px solid ${allPaid ? 'rgba(37, 211, 102, 0.3)' : 'rgba(255, 0, 132, 0.3)'}`,
+                          padding: '0.35rem 0.65rem',
+                          borderRadius: '8px',
+                          fontSize: '0.7rem',
                           fontWeight: 800,
                           display: 'flex',
                           alignItems: 'center',
@@ -596,9 +635,9 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
                               background: 'rgba(255, 255, 255, 0.05)',
                               color: 'var(--text-muted)',
                               border: '1px solid var(--glass-border)',
-                              padding: '0.3rem 0.6rem',
-                              borderRadius: '6px',
-                              fontSize: '0.65rem',
+                              padding: '0.35rem 0.65rem',
+                              borderRadius: '8px',
+                              fontSize: '0.7rem',
                               fontWeight: 800,
                               display: 'flex',
                               alignItems: 'center',
@@ -607,55 +646,50 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
                               <Wallet size={12} />
                               {t.payment_method.toUpperCase()}
                             </div>
-                            {t.paid_at && (
-                              <span style={{ fontSize: '0.6rem', color: 'var(--text-muted)', opacity: 0.8, textAlign: 'right' }}>
-                                Lunas: {new Date(t.paid_at).toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' })}
-                              </span>
-                            )}
                           </div>
                         )}
                       </div>
                       <div style={{ textAlign: 'right' }}>
                         <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '0.1rem' }}>Total Bayar:</p>
-                        <h3 style={{ fontSize: '1.25rem', fontWeight: 900, color: 'white' }}>
+                        <h3 style={{ fontSize: '1.3rem', fontWeight: 900, color: 'white', margin: 0 }}>
                           Rp {totalGroupPrice.toLocaleString('id-ID')}
                         </h3>
                       </div>
                     </div>
 
-                    {/* Action buttons list */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', paddingTop: '0.75rem', borderTop: '1px solid var(--glass-border)' }}>
+                    {/* Touch-Friendly Action Buttons List */}
+                    <div className="tx-action-grid">
                       <button 
                         onClick={() => { setSelectedTransaction(group as any); setIsReceiptOpen(true); }}
-                        style={{ height: '2.4rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', color: 'white', fontSize: '0.75rem' }}
-                        title="Nota"
+                        className="tx-action-btn btn-nota"
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', background: 'rgba(255,255,255,0.06)', borderRadius: '10px', color: 'white', fontSize: '0.8rem', fontWeight: 700, border: '1px solid var(--glass-border)', cursor: 'pointer' }}
                       >
-                        <Printer size={14} /> <span className="mobile-hide">Nota</span>
+                        <Printer size={15} /> Nota
                       </button>
                       
                       <button 
                         onClick={() => handleWhatsAppShare(group)}
-                        style={{ height: '2.4rem', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(37, 211, 102, 0.1)', border: '1px solid rgba(37, 211, 102, 0.2)', borderRadius: '8px', color: '#25D366' }}
-                        title="WA"
+                        className="tx-action-btn btn-wa"
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', background: 'rgba(37, 211, 102, 0.12)', border: '1px solid rgba(37, 211, 102, 0.3)', borderRadius: '10px', color: '#25D366', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer' }}
                       >
-                        <WhatsAppIcon size={16} color="#25D366" /> <span className="mobile-hide" style={{ marginLeft: '0.4rem' }}>WA</span>
+                        <WhatsAppIcon size={16} color="#25D366" /> WA
                       </button>
 
                       <button 
                         onClick={() => { setEditingTransaction(group[0]); setIsEditOpen(true); }}
-                        style={{ height: '2.4rem', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255, 193, 7, 0.1)', border: '1px solid rgba(255, 193, 7, 0.2)', color: '#FFC107', borderRadius: '8px' }}
-                        title="Edit"
+                        className="tx-action-btn btn-edit"
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', background: 'rgba(255, 193, 7, 0.12)', border: '1px solid rgba(255, 193, 7, 0.3)', color: '#FFC107', borderRadius: '10px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer' }}
                       >
-                        <Edit3 size={14} /> <span className="mobile-hide" style={{ marginLeft: '0.4rem' }}>Edit</span>
+                        <Edit3 size={15} /> Edit
                       </button>
 
                       {(currentUser?.role === 'owner' || true) && (
                         <button 
                           onClick={() => handleDelete(groupId)}
-                          style={{ height: '2.4rem', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(244, 63, 94, 0.1)', borderRadius: '8px', color: '#f43f5e', border: '1px solid rgba(244, 63, 94, 0.2)' }}
-                          title="Hapus"
+                          className="tx-action-btn btn-delete"
+                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', background: 'rgba(244, 63, 94, 0.12)', borderRadius: '10px', color: '#f43f5e', border: '1px solid rgba(244, 63, 94, 0.3)', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer' }}
                         >
-                          <Trash2 size={14} /> <span className="mobile-hide" style={{ marginLeft: '0.4rem' }}>Hapus</span>
+                          <Trash2 size={15} /> Hapus
                         </button>
                       )}
                     </div>
