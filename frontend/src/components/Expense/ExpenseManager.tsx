@@ -166,33 +166,33 @@ export const ExpenseManager = ({ userRole = 'staff' }: ExpenseManagerProps) => {
               
               <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
                 {/* Category Filter */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.05)', padding: '0.4rem 0.8rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#F8FAFC', padding: '0.4rem 0.8rem', borderRadius: '10px', border: '1px solid var(--border)' }}>
                   <Filter size={16} color="var(--primary)" />
                   <select 
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
-                    style={{ background: 'transparent', color: 'white', border: 'none', outline: 'none', cursor: 'pointer' }}
+                    style={{ background: 'transparent', color: 'var(--text-primary)', border: 'none', outline: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '0.875rem' }}
                   >
-                    <option value="all" style={{ background: '#1e1e2e' }}>Semua Kategori</option>
+                    <option value="all" style={{ background: '#FFFFFF', color: '#0F172A' }}>Semua Kategori</option>
                     {categories.map(cat => (
-                      <option key={cat.id} value={cat.id} style={{ background: '#1e1e2e' }}>{cat.name}</option>
+                      <option key={cat.id} value={cat.id} style={{ background: '#FFFFFF', color: '#0F172A' }}>{cat.name}</option>
                     ))}
                   </select>
                 </div>
 
                 {/* Date Filter */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.05)', padding: '0.4rem 0.8rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#F8FAFC', padding: '0.4rem 0.8rem', borderRadius: '10px', border: '1px solid var(--border)' }}>
                   <Calendar size={16} color="var(--primary)" />
                   <select 
                     value={dateFilter}
                     onChange={(e) => setDateFilter(e.target.value as any)}
-                    style={{ background: 'transparent', color: 'white', border: 'none', outline: 'none', cursor: 'pointer' }}
+                    style={{ background: 'transparent', color: 'var(--text-primary)', border: 'none', outline: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '0.875rem' }}
                   >
-                    <option value="all" style={{ background: '#1e1e2e' }}>Semua Waktu</option>
-                    <option value="daily" style={{ background: '#1e1e2e' }}>Hari Ini</option>
-                    <option value="weekly" style={{ background: '#1e1e2e' }}>7 Hari Terakhir</option>
-                    <option value="monthly" style={{ background: '#1e1e2e' }}>Bulan Ini</option>
-                    <option value="custom" style={{ background: '#1e1e2e' }}>Custom Tanggal</option>
+                    <option value="all" style={{ background: '#FFFFFF', color: '#0F172A' }}>Semua Waktu</option>
+                    <option value="daily" style={{ background: '#FFFFFF', color: '#0F172A' }}>Hari Ini</option>
+                    <option value="weekly" style={{ background: '#FFFFFF', color: '#0F172A' }}>7 Hari Terakhir</option>
+                    <option value="monthly" style={{ background: '#FFFFFF', color: '#0F172A' }}>Bulan Ini</option>
+                    <option value="custom" style={{ background: '#FFFFFF', color: '#0F172A' }}>Custom Tanggal</option>
                   </select>
                 </div>
 
@@ -216,7 +216,7 @@ export const ExpenseManager = ({ userRole = 'staff' }: ExpenseManagerProps) => {
                   </div>
                 )}
 
-                <button className="btn-secondary" onClick={fetchExpenses} disabled={loading} style={{ padding: '0.4rem 1rem' }}>
+                <button className="btn-secondary" onClick={fetchExpenses} disabled={loading} style={{ padding: '0.4rem 1rem', background: '#F1F5F9', color: 'var(--text-primary)', border: '1px solid var(--border)', fontWeight: 600, borderRadius: '10px' }}>
                   {loading ? 'Memuat...' : 'Refresh'}
                 </button>
               </div>

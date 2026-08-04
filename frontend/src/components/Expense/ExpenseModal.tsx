@@ -118,7 +118,7 @@ export const ExpenseModal = ({ isOpen, onClose, onSave, initialData, forcedCashT
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder="Misal: Beli sabun cair 5L"
-              style={{ width: '100%', minHeight: '80px', borderRadius: '8px', padding: '0.75rem', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white' }}
+              style={{ width: '100%', minHeight: '80px', borderRadius: '12px', padding: '0.75rem', background: 'var(--surface)', border: '1.5px solid var(--border)', color: 'var(--text-primary)' }}
             />
           </div>
 
