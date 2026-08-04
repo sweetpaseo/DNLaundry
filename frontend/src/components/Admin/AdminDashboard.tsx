@@ -895,46 +895,46 @@ export const AdminDashboard = () => {
           <div className="glass-card">
             <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <Settings size={18} color="var(--primary)" /> Manajemen Layanan & Harga
+                <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                  <Settings size={20} color="var(--primary)" /> Manajemen Layanan & Harga
                 </h4>
-                <div style={{ display: 'flex', gap: '0.5rem', background: 'rgba(255,255,255,0.02)', padding: '0.3rem', borderRadius: '10px', border: '1px solid var(--glass-border)', width: 'fit-content' }}>
+                <div style={{ display: 'flex', gap: '0.3rem', background: '#F1F5F9', padding: '0.3rem', borderRadius: '10px', border: '1px solid var(--border)', width: 'fit-content' }}>
                   <button 
                     onClick={() => setManagementView('edit')}
-                    style={{ padding: '0.4rem 0.8rem', fontSize: '0.75rem', background: managementView === 'edit' ? 'var(--primary-gradient)' : 'transparent', color: managementView === 'edit' ? 'white' : 'var(--text-muted)', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}
+                    style={{ padding: '0.4rem 0.9rem', fontSize: '0.78rem', background: managementView === 'edit' ? 'var(--primary)' : 'transparent', color: managementView === 'edit' ? '#ffffff' : 'var(--text-secondary)', border: 'none', borderRadius: '7px', cursor: 'pointer', fontWeight: 700, transition: 'all 0.2s' }}
                   >Kelola</button>
                   <button 
                     onClick={() => setManagementView('price-list')}
-                    style={{ padding: '0.4rem 0.8rem', fontSize: '0.75rem', background: managementView === 'price-list' ? 'var(--primary-gradient)' : 'transparent', color: managementView === 'price-list' ? 'white' : 'var(--text-muted)', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}
+                    style={{ padding: '0.4rem 0.9rem', fontSize: '0.78rem', background: managementView === 'price-list' ? 'var(--primary)' : 'transparent', color: managementView === 'price-list' ? '#ffffff' : 'var(--text-secondary)', border: 'none', borderRadius: '7px', cursor: 'pointer', fontWeight: 700, transition: 'all 0.2s' }}
                   >Daftar Harga</button>
                 </div>
               </div>
 
               <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.05)', padding: '0.4rem 0.8rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
-                  <Search size={14} color="var(--text-muted)" />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#F8FAFC', padding: '0.45rem 0.9rem', borderRadius: '10px', border: '1.5px solid var(--border)' }}>
+                  <Search size={16} color="var(--text-secondary)" />
                   <input 
                     type="text" 
                     placeholder="Cari layanan..."
                     value={serviceSearch}
                     onChange={(e) => setServiceSearch(e.target.value)}
-                    style={{ background: 'transparent', border: 'none', color: 'white', fontSize: '0.8rem', outline: 'none', width: '150px' }}
+                    style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)', fontSize: '0.85rem', fontWeight: 600, outline: 'none', width: '150px' }}
                   />
                 </div>
                 {managementView === 'price-list' && (
                   <button
                     onClick={exportPriceListCSV}
-                    style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.4rem 0.8rem', borderRadius: '8px', background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.2)', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600 }}
+                    style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.5rem 0.9rem', borderRadius: '10px', background: '#ECFDF5', color: '#059669', border: '1px solid #A7F3D0', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 700 }}
                   >
                     <Download size={14} /> CSV
                   </button>
                 )}
                 <button
                   className="btn-primary"
-                  style={{ padding: '0.4rem 1rem', fontSize: '0.8125rem' }}
+                  style={{ padding: '0.5rem 1.1rem', fontSize: '0.825rem', fontWeight: 800 }}
                   onClick={() => { setEditingService(null); setIsServiceModalOpen(true); }}
                 >
-                  <Plus size={14} /> Layanan Baru
+                  <Plus size={16} /> Layanan Baru
                 </button>
               </div>
             </div>
@@ -942,87 +942,100 @@ export const AdminDashboard = () => {
             {managementView === 'edit' ? (
               <table className="responsive-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr style={{ borderBottom: '1px solid var(--glass-border)', color: 'var(--text-muted)', fontSize: '0.8125rem', textAlign: 'left' }}>
-                  <th style={{ padding: '0.75rem' }}>Layanan</th>
-                  <th style={{ padding: '0.75rem' }}>Waktu</th>
-                  <th style={{ padding: '0.75rem' }}>Komisi</th>
-                  <th style={{ padding: '0.75rem' }}>Status</th>
-                  <th style={{ padding: '0.75rem' }}>Aksi</th>
+                <tr style={{ borderBottom: '2px solid var(--border)', color: 'var(--text-secondary)', fontSize: '0.8125rem', textAlign: 'left', fontWeight: 700 }}>
+                  <th style={{ padding: '0.85rem 0.75rem' }}>Layanan</th>
+                  <th style={{ padding: '0.85rem 0.75rem' }}>Waktu</th>
+                  <th style={{ padding: '0.85rem 0.75rem' }}>Komisi</th>
+                  <th style={{ padding: '0.85rem 0.75rem' }}>Status</th>
+                  <th style={{ padding: '0.85rem 0.75rem', textAlign: 'right' }}>Aksi</th>
                 </tr>
               </thead>
               <tbody>
                 {services
                   .filter(s => s.name.toLowerCase().includes(serviceSearch.toLowerCase()))
                   .map(service => (
-                  <tr key={service.id} style={{ borderBottom: '1px solid var(--glass-border)', opacity: service.is_active ? 1 : 0.5 }}>
-                    <td style={{ padding: '1rem' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                        <span style={{ fontWeight: 600 }}>{service.name}</span>
-                        <span style={{ fontSize: '0.65rem', padding: '2px 6px', borderRadius: '4px', background: service.category === 'product' ? 'rgba(59, 130, 246, 0.1)' : 'rgba(6, 182, 212, 0.1)', color: service.category === 'product' ? '#3b82f6' : '#06B6D4' }}>
-                          {service.category === 'product' ? 'Product' : 'Service'}
+                  <tr key={service.id} style={{ borderBottom: '1px solid var(--border)', opacity: service.is_active ? 1 : 0.6 }}>
+                    <td style={{ padding: '1rem 0.75rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.6rem' }}>
+                        <span style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--text-primary)' }}>{service.name}</span>
+                        <span style={{ 
+                          fontSize: '0.68rem', 
+                          padding: '3px 8px', 
+                          borderRadius: '999px', 
+                          fontWeight: 700,
+                          background: service.category === 'product' ? '#EFF6FF' : '#ECFEFF', 
+                          color: service.category === 'product' ? '#2563EB' : '#0891B2',
+                          border: `1px solid ${service.category === 'product' ? '#BFDBFE' : '#A5F3FC'}`
+                        }}>
+                          {service.category === 'product' ? 'Produk' : 'Jasa'}
                         </span>
                       </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.4rem', fontSize: '0.7rem' }}>
-                        <div style={{ padding: '2px 6px', background: 'rgba(255,255,255,0.03)', borderRadius: '4px' }}>
-                          <span style={{ color: 'var(--text-muted)' }}>N:</span> Rp {service.price_normal?.toLocaleString()}
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.45rem', fontSize: '0.75rem' }}>
+                        <div style={{ padding: '4px 8px', background: '#F1F5F9', borderRadius: '6px', border: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', color: '#334155' }}>
+                          <span style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>Normal:</span>
+                          <span style={{ fontWeight: 700 }}>Rp {service.price_normal?.toLocaleString()}</span>
                         </div>
-                        <div style={{ padding: '2px 6px', background: 'rgba(59, 130, 246, 0.05)', borderRadius: '4px', color: 'var(--primary)', fontWeight: 600 }}>
-                          <span>M:</span> Rp {service.price_member?.toLocaleString()}
+                        <div style={{ padding: '4px 8px', background: '#EFF6FF', borderRadius: '6px', border: '1px solid #BFDBFE', display: 'flex', justifyContent: 'space-between', color: '#1D4ED8' }}>
+                          <span style={{ fontWeight: 600 }}>Member:</span>
+                          <span style={{ fontWeight: 800 }}>Rp {service.price_member?.toLocaleString()}</span>
                         </div>
-                        <div style={{ padding: '2px 6px', background: 'rgba(0, 212, 255, 0.05)', borderRadius: '4px', color: 'var(--accent)' }}>
-                          <span>E:</span> Rp {service.price_express?.toLocaleString()}
+                        <div style={{ padding: '4px 8px', background: '#F3E8FF', borderRadius: '6px', border: '1px solid #E9D5FF', display: 'flex', justifyContent: 'space-between', color: '#7E22CE' }}>
+                          <span style={{ fontWeight: 600 }}>Express:</span>
+                          <span style={{ fontWeight: 700 }}>Rp {service.price_express?.toLocaleString()}</span>
                         </div>
-                        <div style={{ padding: '2px 6px', background: 'rgba(251, 191, 36, 0.05)', borderRadius: '4px', color: '#fbbf24' }}>
-                          <span>S:</span> Rp {service.price_special?.toLocaleString()}
+                        <div style={{ padding: '4px 8px', background: '#FEF3C7', borderRadius: '6px', border: '1px solid #FDE68A', display: 'flex', justifyContent: 'space-between', color: '#B45309' }}>
+                          <span style={{ fontWeight: 600 }}>Spesial:</span>
+                          <span style={{ fontWeight: 700 }}>Rp {service.price_special?.toLocaleString()}</span>
                         </div>
                       </div>
                     </td>
-                    <td style={{ padding: '1rem' }}>
-                      <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-main)' }}>
+                    <td style={{ padding: '1rem 0.75rem' }}>
+                      <div style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--text-primary)' }}>
                         {service.processing_days || 0} Hari
                       </div>
-                      <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>Estimasi Selesai</div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', fontWeight: 500 }}>Estimasi Selesai</div>
                     </td>
-                    <td style={{ padding: '1rem' }}>
+                    <td style={{ padding: '1rem 0.75rem' }}>
                       {service.commission_value ? (
-                        <span style={{ fontSize: '0.875rem', color: 'var(--primary)', fontWeight: 600 }}>
+                        <span style={{ fontSize: '0.85rem', color: '#2563EB', fontWeight: 800, background: '#EFF6FF', padding: '0.25rem 0.6rem', borderRadius: '6px', border: '1px solid #BFDBFE' }}>
                           {service.commission_type === 'percentage' ? `${service.commission_value}%` : `Rp ${service.commission_value.toLocaleString()}`}
                         </span>
-                      ) : '-'}
+                      ) : (
+                        <span style={{ color: 'var(--text-secondary)' }}>-</span>
+                      )}
                     </td>
-                    <td style={{ padding: '1rem' }}>
+                    <td style={{ padding: '1rem 0.75rem' }}>
                       <button
                         onClick={() => toggleService(service.id)}
                         style={{
-                          display: 'flex', alignItems: 'center', gap: '0.4rem', border: 'none', padding: '0.4rem 0.8rem', borderRadius: '20px', fontSize: '0.75rem', cursor: 'pointer',
-                          background: service.is_active ? 'rgba(16, 185, 129, 0.1)' : 'rgba(244, 63, 94, 0.1)',
-                          color: service.is_active ? '#10b981' : '#f43f5e'
+                          display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.35rem 0.8rem', borderRadius: '999px', fontSize: '0.75rem', cursor: 'pointer', fontWeight: 800,
+                          background: service.is_active ? '#ECFDF5' : '#FEF2F2',
+                          color: service.is_active ? '#059669' : '#DC2626',
+                          border: `1px solid ${service.is_active ? '#A7F3D0' : '#FECDD3'}`
                         }}
                       >
-                        <Power size={12} /> {service.is_active ? 'Aktif' : 'Nonaktif'}
+                        <Power size={13} /> {service.is_active ? 'Aktif' : 'Nonaktif'}
                       </button>
                     </td>
-                    <td style={{ padding: '1rem' }}>
+                    <td style={{ padding: '1rem 0.75rem' }}>
                       <div style={{ display: 'flex', gap: '0.4rem', justifyContent: 'flex-end' }}>
                         <button 
                           style={{ 
-                            padding: '0.4rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)', border: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s'
+                            padding: '0.45rem', borderRadius: '8px', background: '#EFF6FF', color: '#2563EB', border: '1px solid #BFDBFE', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s'
                           }} 
-                          onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = 'white'; }}
-                          onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = 'var(--text-muted)'; }}
                           onClick={() => { setEditingService(service); setIsServiceModalOpen(true); }}
+                          title="Edit Layanan"
                         >
-                          <Settings size={14} />
+                          <Settings size={15} />
                         </button>
                         <button 
                           style={{ 
-                            padding: '0.4rem', borderRadius: '8px', background: 'rgba(244, 63, 94, 0.1)', color: '#f43f5e', border: '1px solid rgba(244, 63, 94, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s'
+                            padding: '0.45rem', borderRadius: '8px', background: '#FEF2F2', color: '#EF4444', border: '1px solid #FECDD3', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s'
                           }}
-                          onMouseOver={(e) => { e.currentTarget.style.background = '#f43f5e'; e.currentTarget.style.color = 'white'; }}
-                          onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(244, 63, 94, 0.1)'; e.currentTarget.style.color = '#f43f5e'; }}
                           onClick={() => deleteService(service.id)}
+                          title="Hapus Layanan"
                         >
-                          <Trash2 size={14} />
+                          <Trash2 size={15} />
                         </button>
                       </div>
                     </td>
@@ -1034,7 +1047,7 @@ export const AdminDashboard = () => {
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
                   <thead>
-                    <tr style={{ borderBottom: '2px solid var(--glass-border)', color: 'var(--text-muted)', textAlign: 'left' }}>
+                    <tr style={{ borderBottom: '2px solid var(--border)', color: 'var(--text-secondary)', textAlign: 'left', fontWeight: 700 }}>
                       <th style={{ padding: '1rem 0.75rem' }}>Nama Layanan</th>
                       <th style={{ padding: '1rem 0.75rem', textAlign: 'right' }}>Normal</th>
                       <th style={{ padding: '1rem 0.75rem', textAlign: 'right' }}>Member</th>
@@ -1047,16 +1060,16 @@ export const AdminDashboard = () => {
                     {services
                       .filter(s => s.name.toLowerCase().includes(serviceSearch.toLowerCase()))
                       .map(s => (
-                        <tr key={s.id} style={{ borderBottom: '1px solid var(--glass-border)', opacity: s.is_active ? 1 : 0.5 }}>
+                        <tr key={s.id} style={{ borderBottom: '1px solid var(--border)', opacity: s.is_active ? 1 : 0.6 }}>
                           <td style={{ padding: '1rem 0.75rem' }}>
-                            <div style={{ fontWeight: 600 }}>{s.name}</div>
-                            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{s.category === 'product' ? 'Produk' : 'Jasa'}</div>
+                            <div style={{ fontWeight: 800, color: 'var(--text-primary)' }}>{s.name}</div>
+                            <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>{s.category === 'product' ? 'Produk' : 'Jasa'}</div>
                           </td>
-                          <td style={{ padding: '1rem 0.75rem', textAlign: 'right' }}>Rp {s.price_normal?.toLocaleString()}</td>
-                          <td style={{ padding: '1rem 0.75rem', textAlign: 'right', color: 'var(--primary)', fontWeight: 600 }}>Rp {s.price_member?.toLocaleString()}</td>
-                          <td style={{ padding: '1rem 0.75rem', textAlign: 'right', color: 'var(--accent)' }}>Rp {s.price_express?.toLocaleString()}</td>
-                          <td style={{ padding: '1rem 0.75rem', textAlign: 'right', color: '#fbbf24' }}>Rp {s.price_special?.toLocaleString()}</td>
-                          <td style={{ padding: '1rem 0.75rem', textAlign: 'center' }}>{s.processing_days || 0} Hari</td>
+                          <td style={{ padding: '1rem 0.75rem', textAlign: 'right', fontWeight: 600 }}>Rp {s.price_normal?.toLocaleString()}</td>
+                          <td style={{ padding: '1rem 0.75rem', textAlign: 'right', color: '#1D4ED8', fontWeight: 800 }}>Rp {s.price_member?.toLocaleString()}</td>
+                          <td style={{ padding: '1rem 0.75rem', textAlign: 'right', color: '#7E22CE', fontWeight: 700 }}>Rp {s.price_express?.toLocaleString()}</td>
+                          <td style={{ padding: '1rem 0.75rem', textAlign: 'right', color: '#B45309', fontWeight: 700 }}>Rp {s.price_special?.toLocaleString()}</td>
+                          <td style={{ padding: '1rem 0.75rem', textAlign: 'center', fontWeight: 700 }}>{s.processing_days || 0} Hari</td>
                         </tr>
                       ))}
                   </tbody>
@@ -1069,37 +1082,36 @@ export const AdminDashboard = () => {
             {/* Employee Management */}
             <div className="glass-card">
               <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <Briefcase size={18} color="var(--primary)" /> Manajemen Karyawan
+                <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                  <Briefcase size={20} color="var(--primary)" /> Manajemen Karyawan
                 </h4>
-                <button className="btn-primary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.75rem' }} onClick={() => { setEditingEmployee(null); setIsEmployeeModalOpen(true); }}>
+                <button className="btn-primary" style={{ padding: '0.4rem 0.9rem', fontSize: '0.78rem', fontWeight: 800 }} onClick={() => { setEditingEmployee(null); setIsEmployeeModalOpen(true); }}>
                   <Plus size={14} /> Tambah
                 </button>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                 {employees.map(emp => (
-                  <div key={emp.id} style={{ padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div key={emp.id} style={{ padding: '0.9rem 1.1rem', background: '#F8FAFC', borderRadius: '14px', border: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
-                      <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{emp.name}</div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: '0.2rem', marginTop: '0.25rem' }}>
+                      <div style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--text-primary)' }}>{emp.name}</div>
+                      <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.2rem', marginTop: '0.3rem', fontWeight: 500 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                          <Phone size={10} /> {emp.phone}
+                          <Phone size={12} color="#2563EB" /> {emp.phone}
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                          <History size={10} /> Gabung: {new Date(emp.join_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                          <History size={12} color="#64748B" /> Gabung: {new Date(emp.join_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                         </div>
                       </div>
                     </div>
                     <div style={{ display: 'flex', gap: '0.4rem' }}>
                       <button 
                         style={{ 
-                          padding: '0.4rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)', border: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s'
+                          padding: '0.45rem', borderRadius: '8px', background: '#EFF6FF', color: '#2563EB', border: '1px solid #BFDBFE', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s'
                         }} 
-                        onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = 'white'; }}
-                        onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = 'var(--text-muted)'; }}
                         onClick={() => { setEditingEmployee(emp); setIsEmployeeModalOpen(true); }}
+                        title="Edit Karyawan"
                       >
-                        <Settings size={12} />
+                        <Settings size={15} />
                       </button>
                     </div>
                   </div>
@@ -1110,37 +1122,35 @@ export const AdminDashboard = () => {
             {/* Membership Management */}
             <div className="glass-card">
               <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <Users size={18} color="var(--accent)" /> Jenis Member
+                <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                  <Users size={20} color="var(--primary)" /> Jenis Member
                 </h4>
-                <button className="btn-primary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.75rem' }} onClick={() => { setEditingMemberType(null); setIsMemberTypeModalOpen(true); }}>
+                <button className="btn-primary" style={{ padding: '0.4rem 0.9rem', fontSize: '0.78rem', fontWeight: 800 }} onClick={() => { setEditingMemberType(null); setIsMemberTypeModalOpen(true); }}>
                   <Plus size={14} /> Baru
                 </button>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                 {memberTypes.map(type => (
-                  <div key={type.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
-                    <div style={{ fontWeight: 600, fontSize: '0.875rem' }}>{type.name}</div>
+                  <div key={type.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.85rem 1rem', background: '#F8FAFC', borderRadius: '14px', border: '1px solid var(--border)' }}>
+                    <div style={{ fontWeight: 800, fontSize: '0.9rem', color: 'var(--text-primary)' }}>{type.name}</div>
                     <div style={{ display: 'flex', gap: '0.4rem' }}>
                       <button 
                         style={{ 
-                          padding: '0.4rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)', border: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s'
+                          padding: '0.45rem', borderRadius: '8px', background: '#EFF6FF', color: '#2563EB', border: '1px solid #BFDBFE', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s'
                         }} 
-                        onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = 'white'; }}
-                        onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = 'var(--text-muted)'; }}
                         onClick={() => { setEditingMemberType(type); setIsMemberTypeModalOpen(true); }}
+                        title="Edit Member Type"
                       >
-                        <Settings size={12} />
+                        <Settings size={15} />
                       </button>
                       <button 
                         style={{ 
-                          padding: '0.4rem', borderRadius: '8px', background: 'rgba(244, 63, 94, 0.1)', color: '#f43f5e', border: '1px solid rgba(244, 63, 94, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s'
+                          padding: '0.45rem', borderRadius: '8px', background: '#FEF2F2', color: '#EF4444', border: '1px solid #FECDD3', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s'
                         }}
-                        onMouseOver={(e) => { e.currentTarget.style.background = '#f43f5e'; e.currentTarget.style.color = 'white'; }}
-                        onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(244, 63, 94, 0.1)'; e.currentTarget.style.color = '#f43f5e'; }}
                         onClick={() => deleteMemberType(type.id)}
+                        title="Hapus Member Type"
                       >
-                        <Trash2 size={12} />
+                        <Trash2 size={15} />
                       </button>
                     </div>
                   </div>
