@@ -282,22 +282,22 @@ export function StockManager({ user }: StockManagerProps) {
               } catch (e: any) { alert(e.message || 'Gagal menyimpan barang'); }
             }}>
               <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.4rem' }}>Nama Barang</label>
-                <input name="name" defaultValue={selectedStock?.name} required style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white' }} />
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.4rem' }}>Nama Barang</label>
+                <input name="name" defaultValue={selectedStock?.name} required style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', background: '#F8FAFC', border: '1.5px solid var(--border)', color: 'var(--text-primary)', fontWeight: 600 }} />
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.4rem' }}>Satuan (Liter, Kg, dll)</label>
-                  <input name="unit" defaultValue={selectedStock?.unit} placeholder="Liter" required style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white' }} />
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.4rem' }}>Satuan (Liter, Kg, dll)</label>
+                  <input name="unit" defaultValue={selectedStock?.unit} placeholder="Liter" required style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', background: '#F8FAFC', border: '1.5px solid var(--border)', color: 'var(--text-primary)', fontWeight: 600 }} />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.4rem' }}>Batas Minimum</label>
-                  <input name="min_stock" type="number" defaultValue={selectedStock?.min_stock || 5} required style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white' }} />
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.4rem' }}>Batas Minimum</label>
+                  <input name="min_stock" type="number" defaultValue={selectedStock?.min_stock || 5} required style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', background: '#F8FAFC', border: '1.5px solid var(--border)', color: 'var(--text-primary)', fontWeight: 600 }} />
                 </div>
               </div>
               <div style={{ display: 'flex', gap: '1rem' }}>
-                <button type="button" onClick={() => setIsItemModalOpen(false)} style={{ flex: 1, padding: '0.75rem', borderRadius: '8px', background: 'transparent', border: '1px solid var(--glass-border)', color: 'white', cursor: 'pointer' }}>Batal</button>
-                <button type="submit" className="btn-primary" style={{ flex: 1, padding: '0.75rem' }}>Simpan</button>
+                <button type="button" onClick={() => setIsItemModalOpen(false)} style={{ flex: 1, padding: '0.75rem', borderRadius: '10px', background: '#F1F5F9', border: '1px solid #E2E8F0', color: '#475569', fontWeight: 700, cursor: 'pointer' }}>Batal</button>
+                <button type="submit" className="btn-primary" style={{ flex: 1, padding: '0.75rem', fontWeight: 800 }}>Simpan</button>
               </div>
             </form>
           </motion.div>
@@ -309,10 +309,10 @@ export function StockManager({ user }: StockManagerProps) {
         <div className="modal-overlay">
           <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="modal-content glass-card" style={{ maxWidth: 400 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
-              <div style={{ padding: '0.5rem', borderRadius: '8px', background: movementType === 'in' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(244, 63, 94, 0.1)', color: movementType === 'in' ? '#10b981' : '#f43f5e' }}>
+              <div style={{ padding: '0.5rem', borderRadius: '8px', background: movementType === 'in' ? '#ECFDF5' : '#FEF2F2', color: movementType === 'in' ? '#059669' : '#DC2626', border: `1px solid ${movementType === 'in' ? '#A7F3D0' : '#FECDD3'}` }}>
                 {movementType === 'in' ? <ArrowUpRight size={20} /> : <ArrowDownLeft size={20} />}
               </div>
-              <h3 style={{ margin: 0 }}>{movementType === 'in' ? 'Isi Ulang' : 'Pakai'} {selectedStock?.name}</h3>
+              <h3 style={{ margin: 0, fontWeight: 800, color: 'var(--text-primary)' }}>{movementType === 'in' ? 'Isi Ulang' : 'Pakai'} {selectedStock?.name}</h3>
             </div>
             <form onSubmit={(e) => {
               e.preventDefault();
@@ -320,16 +320,16 @@ export function StockManager({ user }: StockManagerProps) {
               handleRecordMovement(Number(formData.get('amount')), formData.get('note') as string);
             }}>
               <div style={{ marginBottom: '1rem' }}>
-                <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.4rem' }}>Jumlah ({selectedStock?.unit})</label>
-                <input name="amount" type="number" step="any" required autoFocus style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', fontSize: '1.25rem', fontWeight: 700 }} />
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.4rem' }}>Jumlah ({selectedStock?.unit})</label>
+                <input name="amount" type="number" step="any" required autoFocus style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', background: '#F8FAFC', border: '1.5px solid var(--border)', color: 'var(--text-primary)', fontSize: '1.25rem', fontWeight: 800 }} />
               </div>
               <div style={{ marginBottom: '1.5rem' }}>
-                <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.4rem' }}>Catatan</label>
-                <textarea name="note" placeholder="Contoh: Pemakaian harian / Belanja di Grosir" style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', minHeight: 80 }} />
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.4rem' }}>Catatan</label>
+                <textarea name="note" placeholder="Contoh: Pemakaian harian / Belanja di Grosir" style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', background: '#F8FAFC', border: '1.5px solid var(--border)', color: 'var(--text-primary)', fontWeight: 600, minHeight: 80 }} />
               </div>
               <div style={{ display: 'flex', gap: '1rem' }}>
-                <button type="button" onClick={() => setIsMovementModalOpen(false)} style={{ flex: 1, padding: '0.75rem', borderRadius: '8px', background: 'transparent', border: '1px solid var(--glass-border)', color: 'white', cursor: 'pointer' }}>Batal</button>
-                <button type="submit" className="btn-primary" style={{ flex: 1, padding: '0.75rem', background: movementType === 'in' ? '#10b981' : '#f43f5e' }}>
+                <button type="button" onClick={() => setIsMovementModalOpen(false)} style={{ flex: 1, padding: '0.75rem', borderRadius: '10px', background: '#F1F5F9', border: '1px solid #E2E8F0', color: '#475569', fontWeight: 700, cursor: 'pointer' }}>Batal</button>
+                <button type="submit" className="btn-primary" style={{ flex: 1, padding: '0.75rem', background: movementType === 'in' ? '#059669' : '#DC2626', fontWeight: 800 }}>
                   {movementType === 'in' ? 'Tambah Stok' : 'Kurangi Stok'}
                 </button>
               </div>

@@ -1165,8 +1165,8 @@ export const AdminDashboard = () => {
       ) : activeTab === 'payroll' ? (
         /* Payroll Tab Content */
         <div className="glass-card" style={{ padding: '2rem' }}>
-          <div style={{ marginBottom: '2rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-            <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', fontSize: '1.1rem' }}>
+          <div style={{ marginBottom: '2rem', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+            <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)' }}>
               <History size={20} color="var(--primary)" /> Rangkuman Gaji & Komisi
             </h4>
             
@@ -1175,22 +1175,22 @@ export const AdminDashboard = () => {
               <select 
                 value={filterMonth} 
                 onChange={(e) => setFilterMonth(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-                style={{ padding: '0.4rem 0.8rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', fontSize: '0.8rem' }}
+                style={{ padding: '0.45rem 0.9rem', borderRadius: '10px', background: '#F8FAFC', border: '1.5px solid var(--border)', color: 'var(--text-primary)', fontSize: '0.825rem', fontWeight: 700, outline: 'none' }}
               >
-                <option value="all">Semua Bulan</option>
+                <option value="all" style={{ background: '#ffffff', color: '#0F172A' }}>Semua Bulan</option>
                 {months.map((m, i) => (
-                  <option key={m} value={i}>{m}</option>
+                  <option key={m} value={i} style={{ background: '#ffffff', color: '#0F172A' }}>{m}</option>
                 ))}
               </select>
               
               <select 
                 value={filterYear} 
                 onChange={(e) => setFilterYear(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-                style={{ padding: '0.4rem 0.8rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', fontSize: '0.8rem' }}
+                style={{ padding: '0.45rem 0.9rem', borderRadius: '10px', background: '#F8FAFC', border: '1.5px solid var(--border)', color: 'var(--text-primary)', fontSize: '0.825rem', fontWeight: 700, outline: 'none' }}
               >
-                <option value="all">Semua Tahun</option>
+                <option value="all" style={{ background: '#ffffff', color: '#0F172A' }}>Semua Tahun</option>
                 {years.map(y => (
-                  <option key={y} value={y}>{y}</option>
+                  <option key={y} value={y} style={{ background: '#ffffff', color: '#0F172A' }}>{y}</option>
                 ))}
               </select>
             </div>
@@ -1207,20 +1207,19 @@ export const AdminDashboard = () => {
               const grandTotal = emp.base_salary + commissionTotal + incentiveTotal;
 
               return (
-                <div key={emp.id} className="glass-card" style={{ padding: '1.5rem', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--glass-border)' }}>
+                <div key={emp.id} style={{ padding: '1.5rem', background: '#F8FAFC', borderRadius: '16px', border: '1px solid var(--border)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <div style={{ width: 44, height: 44, borderRadius: '12px', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700 }}>
+                      <div style={{ width: 44, height: 44, borderRadius: '12px', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, fontSize: '1.1rem' }}>
                         {emp.name.charAt(0)}
                       </div>
                       <div>
-                        <h5 style={{ fontSize: '1.1rem', fontWeight: 700 }}>{emp.name}</h5>
-                        <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{emp.phone}</p>
+                        <h5 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)' }}>{emp.name}</h5>
+                        <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>{emp.phone}</p>
                       </div>
                     </div>
                     <button
-                      className="btn-primary"
-                      style={{ padding: '0.5rem 1rem', fontSize: '0.8rem', background: 'rgba(255,255,255,0.05)', color: 'white' }}
+                      style={{ padding: '0.5rem 1rem', fontSize: '0.8rem', background: '#EFF6FF', color: '#2563EB', border: '1px solid #BFDBFE', borderRadius: '10px', cursor: 'pointer', fontWeight: 800, transition: 'all 0.2s' }}
                       onClick={() => { setSelectedEmployeeForIncentive(emp.id); setIsIncentiveModalOpen(true); }}
                     >
                       + Berikan Insentif
@@ -1228,33 +1227,33 @@ export const AdminDashboard = () => {
                   </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
-                    <div style={{ padding: '1rem', background: 'rgba(0,0,0,0.2)', borderRadius: '12px' }}>
-                      <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Gaji Pokok</p>
-                      <div style={{ fontWeight: 600, fontSize: '1rem' }}>Rp {emp.base_salary.toLocaleString()}</div>
+                    <div style={{ padding: '1rem', background: '#FFFFFF', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
+                      <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 600, marginBottom: '0.25rem' }}>Gaji Pokok</p>
+                      <div style={{ fontWeight: 800, fontSize: '1.05rem', color: 'var(--text-primary)' }}>Rp {emp.base_salary.toLocaleString()}</div>
                     </div>
-                    <div style={{ padding: '1rem', background: 'rgba(0,0,0,0.2)', borderRadius: '12px' }}>
-                      <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Komisi Jasa</p>
-                      <div style={{ fontWeight: 600, fontSize: '1rem', color: 'var(--primary)' }}>+ Rp {commissionTotal.toLocaleString()}</div>
+                    <div style={{ padding: '1rem', background: '#EFF6FF', borderRadius: '12px', border: '1px solid #BFDBFE' }}>
+                      <p style={{ fontSize: '0.75rem', color: '#1E40AF', fontWeight: 600, marginBottom: '0.25rem' }}>Komisi Jasa</p>
+                      <div style={{ fontWeight: 800, fontSize: '1.05rem', color: '#1D4ED8' }}>+ Rp {commissionTotal.toLocaleString()}</div>
                     </div>
-                    <div style={{ padding: '1rem', background: 'rgba(0,0,0,0.2)', borderRadius: '12px' }}>
-                      <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Insentif Manual</p>
-                      <div style={{ fontWeight: 600, fontSize: '1rem', color: 'var(--accent)' }}>+ Rp {incentiveTotal.toLocaleString()}</div>
+                    <div style={{ padding: '1rem', background: '#F3E8FF', borderRadius: '12px', border: '1px solid #E9D5FF' }}>
+                      <p style={{ fontSize: '0.75rem', color: '#6B21A8', fontWeight: 600, marginBottom: '0.25rem' }}>Insentif Manual</p>
+                      <div style={{ fontWeight: 800, fontSize: '1.05rem', color: '#7E22CE' }}>+ Rp {incentiveTotal.toLocaleString()}</div>
                     </div>
-                    <div style={{ padding: '1rem', background: 'var(--primary-gradient)', borderRadius: '12px' }}>
-                      <p style={{ fontSize: '0.75rem', opacity: 0.8, marginBottom: '0.25rem', color: 'white' }}>Total Diterima</p>
-                      <div style={{ fontWeight: 800, fontSize: '1.25rem', color: 'white' }}>Rp {grandTotal.toLocaleString()}</div>
+                    <div style={{ padding: '1rem', background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)', borderRadius: '12px', boxShadow: '0 4px 12px rgba(37,99,235,0.2)' }}>
+                      <p style={{ fontSize: '0.75rem', opacity: 0.9, marginBottom: '0.25rem', color: '#DBEAFE', fontWeight: 600 }}>Total Diterima</p>
+                      <div style={{ fontWeight: 900, fontSize: '1.25rem', color: '#FFFFFF' }}>Rp {grandTotal.toLocaleString()}</div>
                     </div>
                   </div>
 
                   {filteredIncentives.length > 0 && (
-                    <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px dashed var(--glass-border)' }}>
-                      <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                    <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px dashed #CBD5E1' }}>
+                      <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 700, marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                         <Wallet size={12} /> Detail Insentif:
                       </p>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                         {filteredIncentives.map(inc => (
-                          <div key={inc.id} style={{ padding: '0.3rem 0.6rem', background: 'rgba(255,255,255,0.05)', borderRadius: '6px', fontSize: '0.7rem' }}>
-                            <span style={{ color: 'var(--primary)' }}>Rp {inc.amount.toLocaleString()}</span> - {inc.description}
+                          <div key={inc.id} style={{ padding: '0.3rem 0.6rem', background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600, color: '#334155' }}>
+                            <span style={{ color: '#2563EB', fontWeight: 800 }}>Rp {inc.amount.toLocaleString()}</span> - {inc.description}
                           </div>
                         ))}
                       </div>
@@ -1268,17 +1267,17 @@ export const AdminDashboard = () => {
       ) : activeTab === 'expenses' ? (
         /* Expenses Tab Content */
         <div className="glass-card" style={{ padding: '2rem' }}>
-          <div style={{ marginBottom: '2rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ marginBottom: '2rem', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ display: 'flex', gap: '1.5rem' }}>
               <button 
                 onClick={() => setExpenseSubTab('history')}
-                style={{ background: 'transparent', border: 'none', borderBottom: expenseSubTab === 'history' ? '2px solid var(--primary)' : '2px solid transparent', color: expenseSubTab === 'history' ? 'white' : 'var(--text-muted)', cursor: 'pointer', padding: '0.5rem 0', fontWeight: 600 }}
+                style={{ background: 'transparent', border: 'none', borderBottom: expenseSubTab === 'history' ? '2.5px solid var(--primary)' : '2.5px solid transparent', color: expenseSubTab === 'history' ? 'var(--primary)' : 'var(--text-secondary)', cursor: 'pointer', padding: '0.5rem 0', fontWeight: 800 }}
               >
                 Histori Pengeluaran
               </button>
               <button 
                 onClick={() => setExpenseSubTab('categories')}
-                style={{ background: 'transparent', border: 'none', borderBottom: expenseSubTab === 'categories' ? '2px solid var(--primary)' : '2px solid transparent', color: expenseSubTab === 'categories' ? 'white' : 'var(--text-muted)', cursor: 'pointer', padding: '0.5rem 0', fontWeight: 600 }}
+                style={{ background: 'transparent', border: 'none', borderBottom: expenseSubTab === 'categories' ? '2.5px solid var(--primary)' : '2.5px solid transparent', color: expenseSubTab === 'categories' ? 'var(--primary)' : 'var(--text-secondary)', cursor: 'pointer', padding: '0.5rem 0', fontWeight: 800 }}
               >
                 Kelola Kategori
               </button>
@@ -1286,33 +1285,33 @@ export const AdminDashboard = () => {
             {expenseSubTab === 'history' ? (
               <div style={{ display: 'flex', gap: '0.8125rem', alignItems: 'center', flexWrap: 'wrap' }}>
                 {/* Category Filter */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.05)', padding: '0.4rem 0.8rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#F8FAFC', padding: '0.45rem 0.9rem', borderRadius: '10px', border: '1.5px solid var(--border)' }}>
                   <Filter size={16} color="var(--primary)" />
                   <select 
                     value={expenseSelectedCategory}
                     onChange={(e) => setExpenseSelectedCategory(e.target.value)}
-                    style={{ background: 'transparent', color: 'white', border: 'none', outline: 'none', cursor: 'pointer', fontSize: '0.8rem' }}
+                    style={{ background: 'transparent', color: 'var(--text-primary)', border: 'none', outline: 'none', cursor: 'pointer', fontSize: '0.825rem', fontWeight: 600 }}
                   >
-                    <option value="all" style={{ background: '#1e1e2e' }}>Semua Kategori</option>
+                    <option value="all" style={{ background: '#ffffff', color: '#0F172A' }}>Semua Kategori</option>
                     {expenseCategories.map(cat => (
-                      <option key={cat.id} value={cat.id} style={{ background: '#1e1e2e' }}>{cat.name}</option>
+                      <option key={cat.id} value={cat.id} style={{ background: '#ffffff', color: '#0F172A' }}>{cat.name}</option>
                     ))}
                   </select>
                 </div>
 
                 {/* Date Filter */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.05)', padding: '0.4rem 0.8rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#F8FAFC', padding: '0.45rem 0.9rem', borderRadius: '10px', border: '1.5px solid var(--border)' }}>
                   <Calendar size={16} color="var(--primary)" />
                   <select 
                     value={expenseDateFilter}
                     onChange={(e) => setExpenseDateFilter(e.target.value as any)}
-                    style={{ background: 'transparent', color: 'white', border: 'none', outline: 'none', cursor: 'pointer', fontSize: '0.8rem' }}
+                    style={{ background: 'transparent', color: 'var(--text-primary)', border: 'none', outline: 'none', cursor: 'pointer', fontSize: '0.825rem', fontWeight: 600 }}
                   >
-                    <option value="all" style={{ background: '#1e1e2e' }}>Semua Waktu</option>
-                    <option value="daily" style={{ background: '#1e1e2e' }}>Hari Ini</option>
-                    <option value="weekly" style={{ background: '#1e1e2e' }}>7 Hari Terakhir</option>
-                    <option value="monthly" style={{ background: '#1e1e2e' }}>Bulan Ini</option>
-                    <option value="custom" style={{ background: '#1e1e2e' }}>Custom Tanggal</option>
+                    <option value="all" style={{ background: '#ffffff', color: '#0F172A' }}>Semua Waktu</option>
+                    <option value="daily" style={{ background: '#ffffff', color: '#0F172A' }}>Hari Ini</option>
+                    <option value="weekly" style={{ background: '#ffffff', color: '#0F172A' }}>7 Hari Terakhir</option>
+                    <option value="monthly" style={{ background: '#ffffff', color: '#0F172A' }}>Bulan Ini</option>
+                    <option value="custom" style={{ background: '#ffffff', color: '#0F172A' }}>Custom Tanggal</option>
                   </select>
                 </div>
 
@@ -1322,14 +1321,14 @@ export const AdminDashboard = () => {
                       type="date" 
                       value={expenseDateRange.start} 
                       onChange={(e) => setExpenseDateRange(prev => ({ ...prev, start: e.target.value }))}
-                      style={{ padding: '0.4rem', fontSize: '0.8rem', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', borderRadius: '4px' }}
+                      style={{ padding: '0.45rem', fontSize: '0.825rem', background: '#F8FAFC', border: '1.5px solid var(--border)', color: 'var(--text-primary)', borderRadius: '8px', fontWeight: 600 }}
                     />
-                    <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>sd</span>
+                    <span style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', fontWeight: 600 }}>sd</span>
                     <input 
                       type="date" 
                       value={expenseDateRange.end} 
                       onChange={(e) => setExpenseDateRange(prev => ({ ...prev, end: e.target.value }))}
-                      style={{ padding: '0.4rem', fontSize: '0.8rem', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', borderRadius: '4px' }}
+                      style={{ padding: '0.45rem', fontSize: '0.825rem', background: '#F8FAFC', border: '1.5px solid var(--border)', color: 'var(--text-primary)', borderRadius: '8px', fontWeight: 600 }}
                     />
                   </div>
                 )}
@@ -1337,32 +1336,32 @@ export const AdminDashboard = () => {
                 <select 
                   value={expenseCashFilter} 
                   onChange={(e) => setExpenseCashFilter(e.target.value as any)}
-                  style={{ padding: '0.4rem 0.8rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', fontSize: '0.8rem' }}
+                  style={{ padding: '0.45rem 0.9rem', borderRadius: '10px', background: '#F8FAFC', border: '1.5px solid var(--border)', color: 'var(--text-primary)', fontSize: '0.825rem', fontWeight: 600, outline: 'none' }}
                 >
-                  <option value="all">Semua Kas</option>
-                  <option value="petty">Kas Kecil (Staff)</option>
-                  <option value="main">Kas Utama (Owner)</option>
+                  <option value="all" style={{ background: '#ffffff', color: '#0F172A' }}>Semua Kas</option>
+                  <option value="petty" style={{ background: '#ffffff', color: '#0F172A' }}>Kas Kecil (Staff)</option>
+                  <option value="main" style={{ background: '#ffffff', color: '#0F172A' }}>Kas Utama (Owner)</option>
                 </select>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.05)', padding: '0.4rem 0.8rem', borderRadius: '8px', border: '1px solid var(--glass-border)' }}>
-                  <Search size={14} color="var(--text-muted)" />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#F8FAFC', padding: '0.45rem 0.9rem', borderRadius: '10px', border: '1.5px solid var(--border)' }}>
+                  <Search size={14} color="var(--text-secondary)" />
                   <input 
                     type="text" 
                     placeholder="Cari deskripsi..."
                     value={expenseSearch}
                     onChange={(e) => setExpenseSearch(e.target.value)}
-                    style={{ background: 'transparent', border: 'none', color: 'white', fontSize: '0.8rem', outline: 'none', width: '150px' }}
+                    style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)', fontSize: '0.825rem', fontWeight: 600, outline: 'none', width: '150px' }}
                   />
                 </div>
                 <button
                   onClick={exportExpensesCSV}
-                  style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.4rem 0.8rem', borderRadius: '8px', background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.2)', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.5rem 0.9rem', borderRadius: '10px', background: '#ECFDF5', color: '#059669', border: '1px solid #A7F3D0', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 700 }}
                 >
                   <Download size={16} /> Export
                 </button>
                 <button 
                   onClick={() => { setEditingExpense(null); setIsExpenseModalOpen(true); }}
                   className="btn-primary" 
-                  style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', fontSize: '0.85rem' }}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', fontSize: '0.85rem', fontWeight: 800 }}
                 >
                   <Plus size={18} /> Tambah Pengeluaran
                 </button>
@@ -1371,7 +1370,7 @@ export const AdminDashboard = () => {
               <button 
                 onClick={() => { setEditingCategory(null); setIsCategoryModalOpen(true); }}
                 className="btn-primary" 
-                style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', fontSize: '0.85rem' }}
+                style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', fontSize: '0.85rem', fontWeight: 800 }}
               >
                 <Plus size={18} /> Tambah Kategori
               </button>
@@ -1382,17 +1381,13 @@ export const AdminDashboard = () => {
             {expenseSubTab === 'history' ? (
               <div style={{ display: 'grid', gap: '1rem' }}>
                 {expenses.filter(ex => (expenseCashFilter === 'all' || ex.cash_type === expenseCashFilter) && stats.isWithinFilter(ex.date)).length === 0 ? (
-                  <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>Belum ada catatan pengeluaran.</div>
+                  <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-secondary)', fontWeight: 600 }}>Belum ada catatan pengeluaran.</div>
                 ) : (
                   expenses
                     .filter(ex => {
-                      // 1. Cash Type Filter
                       if (expenseCashFilter !== 'all' && ex.cash_type !== expenseCashFilter) return false;
-
-                      // 2. Category Filter
                       if (expenseSelectedCategory !== 'all' && ex.category_id !== expenseSelectedCategory) return false;
 
-                      // 3. Date Filter (using the same logic as ExpenseManager)
                       const expenseDate = new Date(ex.date);
                       expenseDate.setHours(0, 0, 0, 0);
                       const now = new Date();
@@ -1418,45 +1413,45 @@ export const AdminDashboard = () => {
                           if (expenseDate > end) return false;
                         }
                       } else {
-                        // fallback to the default stats.isWithinFilter which handles the monthly/range filters from the top bar
-                        // but only if expenseDateFilter is 'all'
                         if (!stats.isWithinFilter(ex.date)) return false;
                       }
 
                       return true;
                     })
                     .map(ex => (
-                      <div key={ex.id} className="glass-card" style={{ padding: '1.25rem', background: 'rgba(255,255,255,0.02)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                      <div key={ex.id} style={{ padding: '1.25rem', background: '#F8FAFC', borderRadius: '16px', border: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
                         <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', minWidth: 'min(100%, 250px)', flex: 1 }}>
-                          <div style={{ padding: '0.75rem', borderRadius: '12px', background: ex.cash_type === 'main' ? 'rgba(59, 130, 246, 0.1)' : 'rgba(244, 63, 94, 0.1)', color: ex.cash_type === 'main' ? 'var(--primary)' : '#f43f5e', flexShrink: 0 }}>
+                          <div style={{ padding: '0.75rem', borderRadius: '12px', background: ex.cash_type === 'main' ? '#EFF6FF' : '#FEF2F2', color: ex.cash_type === 'main' ? '#2563EB' : '#DC2626', border: `1px solid ${ex.cash_type === 'main' ? '#BFDBFE' : '#FECDD3'}`, flexShrink: 0 }}>
                             <Wallet size={20} />
                           </div>
                           <div>
-                            <div style={{ fontWeight: 600, fontSize: '1rem' }}>{ex.description}</div>
-                            <div style={{ display: 'flex', gap: '1rem', marginTop: '0.25rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.05)', padding: '0.1rem 0.5rem', borderRadius: '4px' }}>
+                            <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--text-primary)' }}>{ex.description}</div>
+                            <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.35rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                              <span style={{ fontSize: '0.75rem', color: '#334155', background: '#F1F5F9', border: '1px solid #E2E8F0', padding: '0.15rem 0.6rem', borderRadius: '6px', fontWeight: 700 }}>
                                 {(ex as any).expense_categories?.[0]?.name || ex.category || 'Tanpa Kategori'}
                               </span>
-                              <span style={{ fontSize: '0.65rem', padding: '2px 6px', borderRadius: '4px', background: ex.cash_type === 'main' ? 'var(--primary)' : 'rgba(255,255,255,0.1)', color: 'white', fontWeight: 600 }}>
+                              <span style={{ fontSize: '0.7rem', padding: '3px 8px', borderRadius: '999px', background: ex.cash_type === 'main' ? '#EFF6FF' : '#FEF2F2', color: ex.cash_type === 'main' ? '#1D4ED8' : '#DC2626', border: `1px solid ${ex.cash_type === 'main' ? '#BFDBFE' : '#FECDD3'}`, fontWeight: 800 }}>
                                 {ex.cash_type === 'main' ? 'KAS UTAMA' : 'KAS KECIL'}
                               </span>
-                              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{new Date(ex.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                              <span style={{ fontSize: '0.78rem', color: '#64748B', fontWeight: 500 }}>{new Date(ex.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
                             </div>
                           </div>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', justifyContent: 'flex-end', minWidth: 'min(100%, 150px)', flex: '0 0 auto' }}>
                           <div style={{ textAlign: 'right', marginRight: '0.5rem' }}>
-                            <div style={{ fontWeight: 700, color: '#f43f5e', fontSize: '1.1rem' }}>- Rp {ex.amount.toLocaleString()}</div>
+                            <div style={{ fontWeight: 900, color: '#DC2626', fontSize: '1.1rem' }}>- Rp {ex.amount.toLocaleString()}</div>
                           </div>
                           <button 
                             onClick={() => { setEditingExpense(ex); setIsExpenseModalOpen(true); }}
-                            style={{ padding: '0.5rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid var(--glass-border)', cursor: 'pointer', transition: 'all 0.2s' }}
+                            style={{ padding: '0.45rem', borderRadius: '8px', background: '#EFF6FF', color: '#2563EB', border: '1px solid #BFDBFE', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                            title="Edit Pengeluaran"
                           >
                             <Edit size={16} />
                           </button>
                           <button 
                             onClick={() => deleteExpense(ex.id)}
-                            style={{ padding: '0.5rem', borderRadius: '8px', background: 'rgba(244, 63, 94, 0.1)', color: '#f43f5e', border: '1px solid rgba(244, 63, 94, 0.2)', cursor: 'pointer', transition: 'all 0.2s' }}
+                            style={{ padding: '0.45rem', borderRadius: '8px', background: '#FEF2F2', color: '#EF4444', border: '1px solid #FECDD3', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                            title="Hapus Pengeluaran"
                           >
                             <Trash2 size={16} />
                           </button>
@@ -1470,29 +1465,29 @@ export const AdminDashboard = () => {
                 <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
                    <button 
                      onClick={() => setExpenseCashFilter('all')}
-                     style={{ padding: '0.3rem 0.8rem', borderRadius: '20px', fontSize: '0.75rem', background: expenseCashFilter === 'all' ? 'var(--primary-gradient)' : 'rgba(255,255,255,0.05)', color: 'white', border: 'none', cursor: 'pointer' }}
+                     style={{ padding: '0.4rem 0.9rem', borderRadius: '20px', fontSize: '0.78rem', background: expenseCashFilter === 'all' ? 'var(--primary)' : '#F1F5F9', color: expenseCashFilter === 'all' ? '#ffffff' : 'var(--text-secondary)', border: 'none', cursor: 'pointer', fontWeight: 700 }}
                    >Semua</button>
                    <button 
                      onClick={() => setExpenseCashFilter('petty')}
-                     style={{ padding: '0.3rem 0.8rem', borderRadius: '20px', fontSize: '0.75rem', background: expenseCashFilter === 'petty' ? 'var(--primary-gradient)' : 'rgba(255,255,255,0.05)', color: 'white', border: 'none', cursor: 'pointer' }}
+                     style={{ padding: '0.4rem 0.9rem', borderRadius: '20px', fontSize: '0.78rem', background: expenseCashFilter === 'petty' ? 'var(--primary)' : '#F1F5F9', color: expenseCashFilter === 'petty' ? '#ffffff' : 'var(--text-secondary)', border: 'none', cursor: 'pointer', fontWeight: 700 }}
                    >Kas Kecil</button>
                    <button 
                      onClick={() => setExpenseCashFilter('main')}
-                     style={{ padding: '0.3rem 0.8rem', borderRadius: '20px', fontSize: '0.75rem', background: expenseCashFilter === 'main' ? 'var(--primary-gradient)' : 'rgba(255,255,255,0.05)', color: 'white', border: 'none', cursor: 'pointer' }}
+                     style={{ padding: '0.4rem 0.9rem', borderRadius: '20px', fontSize: '0.78rem', background: expenseCashFilter === 'main' ? 'var(--primary)' : '#F1F5F9', color: expenseCashFilter === 'main' ? '#ffffff' : 'var(--text-secondary)', border: 'none', cursor: 'pointer', fontWeight: 700 }}
                    >Kas Utama</button>
                 </div>
                 {expenseCategories.filter(cat => expenseCashFilter === 'all' || cat.cash_type === expenseCashFilter).length === 0 ? (
-                  <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>Belum ada kategori pengeluaran.</div>
+                  <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-secondary)', fontWeight: 600 }}>Belum ada kategori pengeluaran.</div>
                 ) : (
                   expenseCategories
                     .filter(cat => expenseCashFilter === 'all' || cat.cash_type === expenseCashFilter)
                     .map(cat => (
-                      <div key={cat.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
+                      <div key={cat.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 1.25rem', background: '#F8FAFC', borderRadius: '14px', border: '1px solid var(--border)' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                           <Tag size={18} color="var(--primary)" />
                           <div>
-                            <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{cat.name}</div>
-                            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                            <div style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--text-primary)' }}>{cat.name}</div>
+                            <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
                               {cat.cash_type === 'main' ? 'Kas Utama (Owner)' : 'Kas Kecil (Staff)'}
                             </div>
                           </div>
@@ -1500,19 +1495,21 @@ export const AdminDashboard = () => {
                         <div style={{ display: 'flex', gap: '0.4rem' }}>
                           <button 
                             style={{ 
-                              padding: '0.4rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)', border: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'
+                              padding: '0.45rem', borderRadius: '8px', background: '#EFF6FF', color: '#2563EB', border: '1px solid #BFDBFE', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'
                             }} 
                             onClick={() => { setEditingCategory(cat); setIsCategoryModalOpen(true); }}
+                            title="Edit Kategori"
                           >
-                            <Settings size={14} />
+                            <Settings size={15} />
                           </button>
                           <button 
                             style={{ 
-                              padding: '0.4rem', borderRadius: '8px', background: 'rgba(244, 63, 94, 0.1)', color: '#f43f5e', border: '1px solid rgba(244, 63, 94, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'
+                              padding: '0.45rem', borderRadius: '8px', background: '#FEF2F2', color: '#EF4444', border: '1px solid #FECDD3', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'
                             }}
                             onClick={() => deleteCategory(cat.id)}
+                            title="Hapus Kategori"
                           >
-                            <Trash2 size={14} />
+                            <Trash2 size={15} />
                           </button>
                         </div>
                       </div>
@@ -1527,14 +1524,14 @@ export const AdminDashboard = () => {
       ) : activeTab === 'users' ? (
         /* Users Tab Content */
         <div className="glass-card" style={{ padding: '2rem' }}>
-          <div style={{ marginBottom: '2rem', borderBottom: '1px solid var(--glass-border)', paddingBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', fontSize: '1.1rem' }}>
+          <div style={{ marginBottom: '2rem', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)' }}>
               <Users size={20} color="var(--primary)" /> Manajemen Akses User
             </h4>
             <button 
               onClick={() => { setEditingUser(null); setIsUserModalOpen(true); }}
               className="btn-primary" 
-              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', fontSize: '0.85rem' }}
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', fontSize: '0.85rem', fontWeight: 800 }}
             >
               <Plus size={18} /> Tambah User
             </button>
@@ -1542,33 +1539,35 @@ export const AdminDashboard = () => {
 
           <div style={{ display: 'grid', gap: '1rem' }}>
             {users.length === 0 ? (
-              <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>Belum ada data user.</div>
+              <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-secondary)', fontWeight: 600 }}>Belum ada data user.</div>
             ) : (
               users.map(u => (
-                <div key={u.id} className="glass-card" style={{ padding: '1.25rem', background: 'rgba(255,255,255,0.02)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                <div key={u.id} style={{ padding: '1.25rem', background: '#F8FAFC', borderRadius: '16px', border: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
                   <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', minWidth: 'min(100%, 250px)', flex: 1 }}>
-                    <div style={{ width: 40, height: 40, borderRadius: '10px', background: 'var(--primary-gradient)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700 }}>
+                    <div style={{ width: 42, height: 42, borderRadius: '12px', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, fontSize: '1.1rem' }}>
                       {u.name.charAt(0)}
                     </div>
                     <div>
-                      <div style={{ fontWeight: 600, fontSize: '1rem' }}>{u.name}</div>
-                      <div style={{ display: 'flex', gap: '1rem', marginTop: '0.25rem', flexWrap: 'wrap' }}>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>@{u.username}</span>
-                        <span style={{ fontSize: '0.75rem', color: u.role === 'owner' ? 'var(--primary)' : 'var(--accent)', background: 'rgba(255,255,255,0.05)', padding: '0.1rem 0.5rem', borderRadius: '4px', textTransform: 'uppercase', fontWeight: 700 }}>{u.role}</span>
+                      <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--text-primary)' }}>{u.name}</div>
+                      <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.35rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                        <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontWeight: 600 }}>@{u.username}</span>
+                        <span style={{ fontSize: '0.7rem', color: u.role === 'owner' ? '#1D4ED8' : '#0891B2', background: u.role === 'owner' ? '#EFF6FF' : '#ECFEFF', border: `1px solid ${u.role === 'owner' ? '#BFDBFE' : '#A5F3FC'}`, padding: '2px 8px', borderRadius: '999px', textTransform: 'uppercase', fontWeight: 800 }}>{u.role}</span>
                       </div>
                     </div>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', justifyContent: 'flex-end', minWidth: 'min(100%, 150px)', flex: '0 0 auto' }}>
                     <button 
                       onClick={() => { setEditingUser(u); setIsUserModalOpen(true); }}
-                      style={{ padding: '0.5rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid var(--glass-border)', cursor: 'pointer', transition: 'all 0.2s' }}
+                      style={{ padding: '0.45rem', borderRadius: '8px', background: '#EFF6FF', color: '#2563EB', border: '1px solid #BFDBFE', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      title="Edit User"
                     >
                       <Edit size={16} />
                     </button>
                     <button 
                       onClick={() => deleteUser(u.id)}
                       disabled={u.username === 'admin'}
-                      style={{ padding: '0.5rem', borderRadius: '8px', background: 'rgba(244, 63, 94, 0.1)', color: '#f43f5e', border: '1px solid rgba(244, 63, 94, 0.2)', cursor: 'pointer', opacity: u.username === 'admin' ? 0.3 : 1 }}
+                      style={{ padding: '0.45rem', borderRadius: '8px', background: '#FEF2F2', color: '#EF4444', border: '1px solid #FECDD3', cursor: 'pointer', opacity: u.username === 'admin' ? 0.3 : 1, transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      title="Hapus User"
                     >
                       <Trash2 size={16} />
                     </button>
