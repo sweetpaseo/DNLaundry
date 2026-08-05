@@ -1,16 +1,25 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { Users, Settings, PlusCircle, List, LogOut, Calculator, Receipt, Archive, Loader2, Calendar } from 'lucide-react';
-import { StockManager } from './components/Stock/StockManager';
 import { motion, AnimatePresence } from 'framer-motion';
 import { api } from './services/api';
 import { OrderInput } from './components/Transaction/OrderInput';
 import { TransactionList } from './components/Transaction/TransactionList';
-import { CustomerCRM } from './components/CRM/CustomerCRM';
-import { CustomerRetention } from './components/CRM/CustomerRetention';
-import { AdminDashboard } from './components/Admin/AdminDashboard';
-import { WalletManagement } from './components/Admin/WalletManagement';
-import { ExpenseManager } from './components/Expense/ExpenseManager';
 import { Login } from './components/Auth/Login';
+
+// Code-split heavy secondary tabs for fast initial load
+const StockManager = lazy(() => import('./components/Stock/StockManager').then(m => ({ default: m.StockManager })));
+const CustomerCRM = lazy(() => import('./components/CRM/CustomerCRM').then(m => ({ default: m.CustomerCRM })));
+const CustomerRetention = lazy(() => import('./components/CRM/CustomerRetention').then(m => ({ default: m.CustomerRetention })));
+const AdminDashboard = lazy(() => import('./components/Admin/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
+const WalletManagement = lazy(() => import('./components/Admin/WalletManagement').then(m => ({ default: m.WalletManagement })));
+const ExpenseManager = lazy(() => import('./components/Expense/ExpenseManager').then(m => ({ default: m.ExpenseManager })));
+
+const TabLoadingFallback = () => (
+  <div style={{ padding: '3rem', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem', color: 'var(--text-secondary)' }}>
+    <Loader2 size={28} className="spin" style={{ animation: 'spin 1s linear infinite', color: 'var(--primary)' }} />
+    <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>Memuat modul...</span>
+  </div>
+);
 
 const CustomerRetentionMenu = () => {
     const [customers, setCustomers] = useState([]);
@@ -324,71 +333,73 @@ function App() {
               </div>
             )}
 
-            {activeMenu === 'biaya' && (
-              <ExpenseManager userRole={user.role} />
-            )}
+            <Suspense fallback={<TabLoadingFallback />}>
+              {activeMenu === 'biaya' && (
+                <ExpenseManager userRole={user.role} />
+              )}
 
-            {activeMenu === 'stok' && <StockManager user={user} />}
+              {activeMenu === 'stok' && <StockManager user={user} />}
 
-            {activeMenu === 'pelanggan' && (
-              <div>
-                <div className="sub-nav">
-                  <motion.button 
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.97 }}
-                    className={`tab-btn ${activeTabPelanggan === 'list' ? 'active' : ''}`}
-                    onClick={() => setActiveTabPelanggan('list')}
-                  >
-                    <div className="tab-icon"><Users size={18} /></div>
-                    <span className="tab-label">Daftar Pelanggan</span>
-                  </motion.button>
-                  <motion.button 
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.97 }}
-                    className={`tab-btn ${activeTabPelanggan === 'saldo' ? 'active' : ''}`}
-                    onClick={() => setActiveTabPelanggan('saldo')}
-                  >
-                    <div className="tab-icon"><Receipt size={18} /></div>
-                    <span className="tab-label">Saldo</span>
-                  </motion.button>
-                  <motion.button 
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.97 }}
-                    className={`tab-btn ${activeTabPelanggan === 'retensi' ? 'active' : ''}`}
-                    onClick={() => setActiveTabPelanggan('retensi')}
-                  >
-                    <div className="tab-icon"><Calendar size={18} /></div>
-                    <span className="tab-label">Retensi</span>
-                  </motion.button>
+              {activeMenu === 'pelanggan' && (
+                <div>
+                  <div className="sub-nav">
+                    <motion.button 
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.97 }}
+                      className={`tab-btn ${activeTabPelanggan === 'list' ? 'active' : ''}`}
+                      onClick={() => setActiveTabPelanggan('list')}
+                    >
+                      <div className="tab-icon"><Users size={18} /></div>
+                      <span className="tab-label">Daftar Pelanggan</span>
+                    </motion.button>
+                    <motion.button 
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.97 }}
+                      className={`tab-btn ${activeTabPelanggan === 'saldo' ? 'active' : ''}`}
+                      onClick={() => setActiveTabPelanggan('saldo')}
+                    >
+                      <div className="tab-icon"><Receipt size={18} /></div>
+                      <span className="tab-label">Saldo</span>
+                    </motion.button>
+                    <motion.button 
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.97 }}
+                      className={`tab-btn ${activeTabPelanggan === 'retensi' ? 'active' : ''}`}
+                      onClick={() => setActiveTabPelanggan('retensi')}
+                    >
+                      <div className="tab-icon"><Calendar size={18} /></div>
+                      <span className="tab-label">Retensi</span>
+                    </motion.button>
+                  </div>
+
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={activeTabPelanggan}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      {activeTabPelanggan === 'list' ? (
+                        <div className="glass-card hover-glow">
+                          <CustomerCRM currentUser={user} />
+                        </div>
+                      ) : activeTabPelanggan === 'saldo' ? (
+                        <WalletManagement />
+                      ) : (
+                        <CustomerRetentionMenu />
+                      )}
+                    </motion.div>
+                  </AnimatePresence>
                 </div>
+              )}
 
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeTabPelanggan}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    {activeTabPelanggan === 'list' ? (
-                      <div className="glass-card hover-glow">
-                        <CustomerCRM currentUser={user} />
-                      </div>
-                    ) : activeTabPelanggan === 'saldo' ? (
-                      <WalletManagement />
-                    ) : (
-                      <CustomerRetentionMenu />
-                    )}
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-            )}
-
-            {activeMenu === 'admin' && (
-              <div className="glass-card hover-glow">
-                <AdminDashboard />
-              </div>
-            )}
+              {activeMenu === 'admin' && (
+                <div className="glass-card hover-glow">
+                  <AdminDashboard />
+                </div>
+              )}
+            </Suspense>
           </motion.div>
         </AnimatePresence>
       </main>
