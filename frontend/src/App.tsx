@@ -184,45 +184,45 @@ function App() {
           
           {/* Top Header & Greeting Bar */}
           <div className="clay-card zomo-top-header">
-            <div className="zomo-header-title-box" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              {/* Logo Usaha Box */}
+            <div className="zomo-header-title-box" style={{ display: 'flex', alignItems: 'center', gap: '1.1rem' }}>
+              {/* Logo Usaha Box - Enlarged to fill header height */}
               <div style={{ 
-                width: 52, 
-                height: 52, 
-                borderRadius: '16px', 
+                width: 72, 
+                height: 72, 
+                borderRadius: '20px', 
                 background: '#FFFFFF', 
-                border: '1.5px solid var(--border)',
+                border: '2px solid var(--border)',
                 display: 'flex', 
                 alignItems: 'center', 
                 justifyContent: 'center', 
-                boxShadow: '0 2px 8px rgba(15, 23, 42, 0.06)',
+                boxShadow: '0 4px 14px rgba(15, 23, 42, 0.08)',
                 overflow: 'hidden',
                 flexShrink: 0
               }}>
                 {settings?.logo_url ? (
                   <img src={settings.logo_url} alt="Logo Usaha" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '4px' }} />
                 ) : (
-                  <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #60A5FA, #3B82F6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 900, fontSize: '1.2rem' }}>
+                  <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #60A5FA, #3B82F6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 900, fontSize: '1.4rem' }}>
                     {user.name?.charAt(0).toUpperCase()}
                   </div>
                 )}
               </div>
 
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
-                  <h2 style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--text-primary)', margin: 0 }}>
-                    {settings?.name || 'DN Laundry'} POS ☀️
-                  </h2>
+                <h2 style={{ fontSize: '1.3rem', fontWeight: 900, color: 'var(--text-primary)', margin: 0, lineHeight: 1.2 }}>
+                  {settings?.name || 'DN Laundry'} POS ☀️
+                </h2>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 500, marginTop: '0.15rem', marginBottom: '0.35rem' }}>
+                  Kelola cucian & transaksi hari ini dengan mudah.
+                </p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                   <span style={{ fontSize: '0.7rem', background: '#EFF6FF', color: '#2563EB', border: '1px solid #BFDBFE', padding: '0.15rem 0.65rem', borderRadius: '999px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                     {user.role}
                   </span>
                   <span style={{ fontSize: '0.8rem', color: '#475569', fontWeight: 700 }}>
-                    • Hi, {user.name}! 👋
+                    • Hi, {user.name}! Selamat bekerja! 👋
                   </span>
                 </div>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 500, marginTop: '0.2rem' }}>
-                  Selamat bekerja! Kelola cucian & transaksi hari ini dengan mudah.
-                </p>
               </div>
             </div>
 
