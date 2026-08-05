@@ -219,9 +219,6 @@ function App() {
                   <span style={{ fontSize: '0.7rem', background: '#EFF6FF', color: '#2563EB', border: '1px solid #BFDBFE', padding: '0.15rem 0.65rem', borderRadius: '999px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                     {user.role}
                   </span>
-                  <span style={{ fontSize: '0.8rem', color: '#475569', fontWeight: 700 }}>
-                    • Hi, {user.name}! Selamat bekerja! 👋
-                  </span>
                 </div>
               </div>
             </div>
