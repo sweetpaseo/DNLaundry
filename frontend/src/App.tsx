@@ -361,14 +361,6 @@ function App() {
             )}
           </motion.div>
         </AnimatePresence>
-
-        <footer style={{ marginTop: '2.5rem', marginBottom: '1.5rem', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '0.75rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
-          <span>{settings?.name || 'DN Laundry'}</span>
-          <span>•</span>
-          <span style={{ background: 'rgba(59, 130, 246, 0.1)', color: 'var(--primary)', border: '1px solid rgba(59, 130, 246, 0.25)', padding: '0.2rem 0.6rem', borderRadius: '999px', fontWeight: 800, letterSpacing: '0.05em' }}>
-            v1.0.0 Pro
-          </span>
-        </footer>
       </main>
     </div>
   </div>
