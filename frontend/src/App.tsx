@@ -184,13 +184,43 @@ function App() {
           
           {/* Top Header & Greeting Bar */}
           <div className="clay-card zomo-top-header">
-            <div className="zomo-header-title-box">
-              <h2 style={{ fontSize: '1.4rem', fontWeight: 900, color: 'var(--text-primary)' }}>
-                {settings?.name || 'DN Laundry'} POS ☀️
-              </h2>
-              <p style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
-                Selamat bekerja! Kelola cucian & transaksi hari ini dengan mudah.
-              </p>
+            <div className="zomo-header-title-box" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              {/* Logo Usaha Box */}
+              <div style={{ 
+                width: 52, 
+                height: 52, 
+                borderRadius: '16px', 
+                background: '#FFFFFF', 
+                border: '1.5px solid var(--border)',
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                boxShadow: '0 2px 8px rgba(15, 23, 42, 0.06)',
+                overflow: 'hidden',
+                flexShrink: 0
+              }}>
+                {settings?.logo_url ? (
+                  <img src={settings.logo_url} alt="Logo Usaha" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '4px' }} />
+                ) : (
+                  <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg, #60A5FA, #3B82F6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 900, fontSize: '1.2rem' }}>
+                    {user.name?.charAt(0).toUpperCase()}
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+                  <h2 style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--text-primary)', margin: 0 }}>
+                    {settings?.name || 'DN Laundry'} POS ☀️
+                  </h2>
+                  <span style={{ fontSize: '0.7rem', background: '#EFF6FF', color: '#2563EB', border: '1px solid #BFDBFE', padding: '0.15rem 0.65rem', borderRadius: '999px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                    {user.role}
+                  </span>
+                </div>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600, marginTop: '0.15rem' }}>
+                  Hi, <strong style={{ color: 'var(--text-primary)' }}>{user.name}</strong>! Selamat bekerja & kelola cucian hari ini.
+                </p>
+              </div>
             </div>
 
             <div className="zomo-header-actions">
