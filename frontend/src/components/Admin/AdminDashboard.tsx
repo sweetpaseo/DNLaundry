@@ -1267,119 +1267,128 @@ export const AdminDashboard = () => {
       ) : activeTab === 'expenses' ? (
         /* Expenses Tab Content */
         <div className="glass-card" style={{ padding: '2rem' }}>
-          <div style={{ marginBottom: '2rem', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ display: 'flex', gap: '1.5rem' }}>
+          <div style={{ marginBottom: '1.5rem', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+            <div style={{ display: 'flex', gap: '0.5rem', background: '#F1F5F9', padding: '0.3rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
               <button 
                 onClick={() => setExpenseSubTab('history')}
-                style={{ background: 'transparent', border: 'none', borderBottom: expenseSubTab === 'history' ? '2.5px solid var(--primary)' : '2.5px solid transparent', color: expenseSubTab === 'history' ? 'var(--primary)' : 'var(--text-secondary)', cursor: 'pointer', padding: '0.5rem 0', fontWeight: 800 }}
+                style={{ padding: '0.45rem 1rem', fontSize: '0.825rem', background: expenseSubTab === 'history' ? 'var(--primary)' : 'transparent', color: expenseSubTab === 'history' ? '#ffffff' : 'var(--text-secondary)', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 800, transition: 'all 0.2s' }}
               >
                 Histori Pengeluaran
               </button>
               <button 
                 onClick={() => setExpenseSubTab('categories')}
-                style={{ background: 'transparent', border: 'none', borderBottom: expenseSubTab === 'categories' ? '2.5px solid var(--primary)' : '2.5px solid transparent', color: expenseSubTab === 'categories' ? 'var(--primary)' : 'var(--text-secondary)', cursor: 'pointer', padding: '0.5rem 0', fontWeight: 800 }}
+                style={{ padding: '0.45rem 1rem', fontSize: '0.825rem', background: expenseSubTab === 'categories' ? 'var(--primary)' : 'transparent', color: expenseSubTab === 'categories' ? '#ffffff' : 'var(--text-secondary)', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 800, transition: 'all 0.2s' }}
               >
                 Kelola Kategori
               </button>
             </div>
+
             {expenseSubTab === 'history' ? (
-              <div style={{ display: 'flex', gap: '0.8125rem', alignItems: 'center', flexWrap: 'wrap' }}>
-                {/* Category Filter */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#F8FAFC', padding: '0.45rem 0.9rem', borderRadius: '10px', border: '1.5px solid var(--border)' }}>
-                  <Filter size={16} color="var(--primary)" />
-                  <select 
-                    value={expenseSelectedCategory}
-                    onChange={(e) => setExpenseSelectedCategory(e.target.value)}
-                    style={{ background: 'transparent', color: 'var(--text-primary)', border: 'none', outline: 'none', cursor: 'pointer', fontSize: '0.825rem', fontWeight: 600 }}
-                  >
-                    <option value="all" style={{ background: '#ffffff', color: '#0F172A' }}>Semua Kategori</option>
-                    {expenseCategories.map(cat => (
-                      <option key={cat.id} value={cat.id} style={{ background: '#ffffff', color: '#0F172A' }}>{cat.name}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Date Filter */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#F8FAFC', padding: '0.45rem 0.9rem', borderRadius: '10px', border: '1.5px solid var(--border)' }}>
-                  <Calendar size={16} color="var(--primary)" />
-                  <select 
-                    value={expenseDateFilter}
-                    onChange={(e) => setExpenseDateFilter(e.target.value as any)}
-                    style={{ background: 'transparent', color: 'var(--text-primary)', border: 'none', outline: 'none', cursor: 'pointer', fontSize: '0.825rem', fontWeight: 600 }}
-                  >
-                    <option value="all" style={{ background: '#ffffff', color: '#0F172A' }}>Semua Waktu</option>
-                    <option value="daily" style={{ background: '#ffffff', color: '#0F172A' }}>Hari Ini</option>
-                    <option value="weekly" style={{ background: '#ffffff', color: '#0F172A' }}>7 Hari Terakhir</option>
-                    <option value="monthly" style={{ background: '#ffffff', color: '#0F172A' }}>Bulan Ini</option>
-                    <option value="custom" style={{ background: '#ffffff', color: '#0F172A' }}>Custom Tanggal</option>
-                  </select>
-                </div>
-
-                {expenseDateFilter === 'custom' && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <input 
-                      type="date" 
-                      value={expenseDateRange.start} 
-                      onChange={(e) => setExpenseDateRange(prev => ({ ...prev, start: e.target.value }))}
-                      style={{ padding: '0.45rem', fontSize: '0.825rem', background: '#F8FAFC', border: '1.5px solid var(--border)', color: 'var(--text-primary)', borderRadius: '8px', fontWeight: 600 }}
-                    />
-                    <span style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', fontWeight: 600 }}>sd</span>
-                    <input 
-                      type="date" 
-                      value={expenseDateRange.end} 
-                      onChange={(e) => setExpenseDateRange(prev => ({ ...prev, end: e.target.value }))}
-                      style={{ padding: '0.45rem', fontSize: '0.825rem', background: '#F8FAFC', border: '1.5px solid var(--border)', color: 'var(--text-primary)', borderRadius: '8px', fontWeight: 600 }}
-                    />
-                  </div>
-                )}
-
-                <select 
-                  value={expenseCashFilter} 
-                  onChange={(e) => setExpenseCashFilter(e.target.value as any)}
-                  style={{ padding: '0.45rem 0.9rem', borderRadius: '10px', background: '#F8FAFC', border: '1.5px solid var(--border)', color: 'var(--text-primary)', fontSize: '0.825rem', fontWeight: 600, outline: 'none' }}
-                >
-                  <option value="all" style={{ background: '#ffffff', color: '#0F172A' }}>Semua Kas</option>
-                  <option value="petty" style={{ background: '#ffffff', color: '#0F172A' }}>Kas Kecil (Staff)</option>
-                  <option value="main" style={{ background: '#ffffff', color: '#0F172A' }}>Kas Utama (Owner)</option>
-                </select>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#F8FAFC', padding: '0.45rem 0.9rem', borderRadius: '10px', border: '1.5px solid var(--border)' }}>
-                  <Search size={14} color="var(--text-secondary)" />
-                  <input 
-                    type="text" 
-                    placeholder="Cari deskripsi..."
-                    value={expenseSearch}
-                    onChange={(e) => setExpenseSearch(e.target.value)}
-                    style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)', fontSize: '0.825rem', fontWeight: 600, outline: 'none', width: '150px' }}
-                  />
-                </div>
-                <button
-                  onClick={exportExpensesCSV}
-                  style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.5rem 0.9rem', borderRadius: '10px', background: '#ECFDF5', color: '#059669', border: '1px solid #A7F3D0', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 700 }}
-                >
-                  <Download size={16} /> Export
-                </button>
-                <button 
-                  onClick={() => { setEditingExpense(null); setIsExpenseModalOpen(true); }}
-                  className="btn-primary" 
-                  style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', fontSize: '0.85rem', fontWeight: 800 }}
-                >
-                  <Plus size={18} /> Tambah Pengeluaran
-                </button>
-              </div>
+              <button 
+                onClick={() => { setEditingExpense(null); setIsExpenseModalOpen(true); }}
+                className="btn-primary" 
+                style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.55rem 1.1rem', fontSize: '0.85rem', fontWeight: 800 }}
+              >
+                <Plus size={18} /> Tambah Pengeluaran
+              </button>
             ) : (
               <button 
                 onClick={() => { setEditingCategory(null); setIsCategoryModalOpen(true); }}
                 className="btn-primary" 
-                style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', fontSize: '0.85rem', fontWeight: 800 }}
+                style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.55rem 1.1rem', fontSize: '0.85rem', fontWeight: 800 }}
               >
                 <Plus size={18} /> Tambah Kategori
               </button>
             )}
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {expenseSubTab === 'history' && (
+            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap', background: '#F8FAFC', padding: '0.75rem 1rem', borderRadius: '14px', border: '1px solid #E2E8F0', marginBottom: '1.5rem' }}>
+              {/* Search Bar */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#FFFFFF', padding: '0.45rem 0.9rem', borderRadius: '10px', border: '1.5px solid var(--border)', flex: '1 1 200px' }}>
+                <Search size={16} color="var(--text-secondary)" />
+                <input 
+                  type="text" 
+                  placeholder="Cari deskripsi..."
+                  value={expenseSearch}
+                  onChange={(e) => setExpenseSearch(e.target.value)}
+                  style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)', fontSize: '0.825rem', fontWeight: 600, outline: 'none', width: '100%' }}
+                />
+              </div>
+
+              {/* Category Filter */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#FFFFFF', padding: '0.45rem 0.9rem', borderRadius: '10px', border: '1.5px solid var(--border)' }}>
+                <Filter size={16} color="var(--primary)" />
+                <select 
+                  value={expenseSelectedCategory}
+                  onChange={(e) => setExpenseSelectedCategory(e.target.value)}
+                  style={{ background: 'transparent', color: 'var(--text-primary)', border: 'none', outline: 'none', cursor: 'pointer', fontSize: '0.825rem', fontWeight: 600 }}
+                >
+                  <option value="all" style={{ background: '#ffffff', color: '#0F172A' }}>Semua Kategori</option>
+                  {expenseCategories.map(cat => (
+                    <option key={cat.id} value={cat.id} style={{ background: '#ffffff', color: '#0F172A' }}>{cat.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Date Filter */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#FFFFFF', padding: '0.45rem 0.9rem', borderRadius: '10px', border: '1.5px solid var(--border)' }}>
+                <Calendar size={16} color="var(--primary)" />
+                <select 
+                  value={expenseDateFilter}
+                  onChange={(e) => setExpenseDateFilter(e.target.value as any)}
+                  style={{ background: 'transparent', color: 'var(--text-primary)', border: 'none', outline: 'none', cursor: 'pointer', fontSize: '0.825rem', fontWeight: 600 }}
+                >
+                  <option value="all" style={{ background: '#ffffff', color: '#0F172A' }}>Semua Waktu</option>
+                  <option value="daily" style={{ background: '#ffffff', color: '#0F172A' }}>Hari Ini</option>
+                  <option value="weekly" style={{ background: '#ffffff', color: '#0F172A' }}>7 Hari Terakhir</option>
+                  <option value="monthly" style={{ background: '#ffffff', color: '#0F172A' }}>Bulan Ini</option>
+                  <option value="custom" style={{ background: '#ffffff', color: '#0F172A' }}>Custom Tanggal</option>
+                </select>
+              </div>
+
+              {expenseDateFilter === 'custom' && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <input 
+                    type="date" 
+                    value={expenseDateRange.start} 
+                    onChange={(e) => setExpenseDateRange(prev => ({ ...prev, start: e.target.value }))}
+                    style={{ padding: '0.45rem', fontSize: '0.825rem', background: '#FFFFFF', border: '1.5px solid var(--border)', color: 'var(--text-primary)', borderRadius: '8px', fontWeight: 600 }}
+                  />
+                  <span style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', fontWeight: 600 }}>sd</span>
+                  <input 
+                    type="date" 
+                    value={expenseDateRange.end} 
+                    onChange={(e) => setExpenseDateRange(prev => ({ ...prev, end: e.target.value }))}
+                    style={{ padding: '0.45rem', fontSize: '0.825rem', background: '#FFFFFF', border: '1.5px solid var(--border)', color: 'var(--text-primary)', borderRadius: '8px', fontWeight: 600 }}
+                  />
+                </div>
+              )}
+
+              {/* Cash Filter */}
+              <select 
+                value={expenseCashFilter} 
+                onChange={(e) => setExpenseCashFilter(e.target.value as any)}
+                style={{ padding: '0.45rem 0.9rem', borderRadius: '10px', background: '#FFFFFF', border: '1.5px solid var(--border)', color: 'var(--text-primary)', fontSize: '0.825rem', fontWeight: 600, outline: 'none' }}
+              >
+                <option value="all" style={{ background: '#ffffff', color: '#0F172A' }}>Semua Kas</option>
+                <option value="petty" style={{ background: '#ffffff', color: '#0F172A' }}>Kas Kecil (Staff)</option>
+                <option value="main" style={{ background: '#ffffff', color: '#0F172A' }}>Kas Utama (Owner)</option>
+              </select>
+
+              {/* Export CSV Button */}
+              <button
+                onClick={exportExpensesCSV}
+                style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.5rem 0.9rem', borderRadius: '10px', background: '#ECFDF5', color: '#059669', border: '1px solid #A7F3D0', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 700, marginLeft: 'auto' }}
+              >
+                <Download size={16} /> Export CSV
+              </button>
+            </div>
+          )}
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
             {expenseSubTab === 'history' ? (
-              <div style={{ display: 'grid', gap: '1rem' }}>
+              <div style={{ display: 'grid', gap: '0.85rem' }}>
                 {expenses.filter(ex => (expenseCashFilter === 'all' || ex.cash_type === expenseCashFilter) && stats.isWithinFilter(ex.date)).length === 0 ? (
                   <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-secondary)', fontWeight: 600 }}>Belum ada catatan pengeluaran.</div>
                 ) : (
@@ -1418,46 +1427,84 @@ export const AdminDashboard = () => {
 
                       return true;
                     })
-                    .map(ex => (
-                      <div key={ex.id} style={{ padding: '1.25rem', background: '#F8FAFC', borderRadius: '16px', border: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-                        <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', minWidth: 'min(100%, 250px)', flex: 1 }}>
-                          <div style={{ padding: '0.75rem', borderRadius: '12px', background: ex.cash_type === 'main' ? '#EFF6FF' : '#FEF2F2', color: ex.cash_type === 'main' ? '#2563EB' : '#DC2626', border: `1px solid ${ex.cash_type === 'main' ? '#BFDBFE' : '#FECDD3'}`, flexShrink: 0 }}>
-                            <Wallet size={20} />
+                    .map(ex => {
+                      const categoryName = (ex as any).expense_categories?.[0]?.name || ex.category || 'Pengeluaran';
+                      const displayTitle = (ex.description && isNaN(Number(ex.description))) 
+                        ? ex.description 
+                        : `${categoryName} (No. #${ex.id || ''})`;
+
+                      return (
+                        <div 
+                          key={ex.id} 
+                          style={{ 
+                            padding: '1.1rem 1.25rem', 
+                            background: '#FFFFFF', 
+                            borderRadius: '16px', 
+                            border: '1px solid #E2E8F0', 
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
+                            display: 'flex', 
+                            justifyContent: 'space-between', 
+                            alignItems: 'center', 
+                            flexWrap: 'wrap', 
+                            gap: '1rem' 
+                          }}
+                        >
+                          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', minWidth: 'min(100%, 280px)', flex: 1 }}>
+                            <div style={{ 
+                              width: 48, 
+                              height: 48, 
+                              borderRadius: '14px', 
+                              background: ex.cash_type === 'main' ? '#EFF6FF' : '#FFF1F2', 
+                              color: ex.cash_type === 'main' ? '#2563EB' : '#E11D48', 
+                              border: `1.5px solid ${ex.cash_type === 'main' ? '#BFDBFE' : '#FECDD3'}`, 
+                              display: 'flex', 
+                              alignItems: 'center', 
+                              justifyContent: 'center', 
+                              flexShrink: 0 
+                            }}>
+                              <Wallet size={22} />
+                            </div>
+                            
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                              <div style={{ fontWeight: 800, fontSize: '0.98rem', color: '#0F172A' }}>{displayTitle}</div>
+                              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                                <span style={{ fontSize: '0.72rem', color: '#334155', background: '#F1F5F9', border: '1px solid #CBD5E1', padding: '0.15rem 0.65rem', borderRadius: '999px', fontWeight: 700 }}>
+                                  {categoryName}
+                                </span>
+                                <span style={{ fontSize: '0.72rem', padding: '0.15rem 0.65rem', borderRadius: '999px', background: ex.cash_type === 'main' ? '#EFF6FF' : '#FFF1F2', color: ex.cash_type === 'main' ? '#1D4ED8' : '#E11D48', border: `1px solid ${ex.cash_type === 'main' ? '#BFDBFE' : '#FECDD3'}`, fontWeight: 800 }}>
+                                  {ex.cash_type === 'main' ? 'KAS UTAMA' : 'KAS KECIL'}
+                                </span>
+                                <span style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.3rem', marginLeft: '0.2rem' }}>
+                                  <Calendar size={13} color="#94A3B8" /> {new Date(ex.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                                </span>
+                              </div>
+                            </div>
                           </div>
-                          <div>
-                            <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--text-primary)' }}>{ex.description}</div>
-                            <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.35rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                              <span style={{ fontSize: '0.75rem', color: '#334155', background: '#F1F5F9', border: '1px solid #E2E8F0', padding: '0.15rem 0.6rem', borderRadius: '6px', fontWeight: 700 }}>
-                                {(ex as any).expense_categories?.[0]?.name || ex.category || 'Tanpa Kategori'}
-                              </span>
-                              <span style={{ fontSize: '0.7rem', padding: '3px 8px', borderRadius: '999px', background: ex.cash_type === 'main' ? '#EFF6FF' : '#FEF2F2', color: ex.cash_type === 'main' ? '#1D4ED8' : '#DC2626', border: `1px solid ${ex.cash_type === 'main' ? '#BFDBFE' : '#FECDD3'}`, fontWeight: 800 }}>
-                                {ex.cash_type === 'main' ? 'KAS UTAMA' : 'KAS KECIL'}
-                              </span>
-                              <span style={{ fontSize: '0.78rem', color: '#64748B', fontWeight: 500 }}>{new Date(ex.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                          
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', justifyContent: 'flex-end', flex: '0 0 auto' }}>
+                            <div style={{ textAlign: 'right' }}>
+                              <div style={{ fontWeight: 900, color: '#E11D48', fontSize: '1.15rem' }}>- Rp {ex.amount.toLocaleString()}</div>
+                            </div>
+                            <div style={{ display: 'flex', gap: '0.4rem' }}>
+                              <button 
+                                onClick={() => { setEditingExpense(ex); setIsExpenseModalOpen(true); }}
+                                style={{ padding: '0.5rem', borderRadius: '10px', background: '#EFF6FF', color: '#2563EB', border: '1px solid #BFDBFE', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                title="Edit Pengeluaran"
+                              >
+                                <Edit size={16} />
+                              </button>
+                              <button 
+                                onClick={() => deleteExpense(ex.id)}
+                                style={{ padding: '0.5rem', borderRadius: '10px', background: '#FFF1F2', color: '#E11D48', border: '1px solid #FECDD3', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                title="Hapus Pengeluaran"
+                              >
+                                <Trash2 size={16} />
+                              </button>
                             </div>
                           </div>
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', justifyContent: 'flex-end', minWidth: 'min(100%, 150px)', flex: '0 0 auto' }}>
-                          <div style={{ textAlign: 'right', marginRight: '0.5rem' }}>
-                            <div style={{ fontWeight: 900, color: '#DC2626', fontSize: '1.1rem' }}>- Rp {ex.amount.toLocaleString()}</div>
-                          </div>
-                          <button 
-                            onClick={() => { setEditingExpense(ex); setIsExpenseModalOpen(true); }}
-                            style={{ padding: '0.45rem', borderRadius: '8px', background: '#EFF6FF', color: '#2563EB', border: '1px solid #BFDBFE', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                            title="Edit Pengeluaran"
-                          >
-                            <Edit size={16} />
-                          </button>
-                          <button 
-                            onClick={() => deleteExpense(ex.id)}
-                            style={{ padding: '0.45rem', borderRadius: '8px', background: '#FEF2F2', color: '#EF4444', border: '1px solid #FECDD3', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                            title="Hapus Pengeluaran"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      </div>
-                    ))
+                      );
+                    })
                 )}
               </div>
             ) : (
@@ -1482,12 +1529,14 @@ export const AdminDashboard = () => {
                   expenseCategories
                     .filter(cat => expenseCashFilter === 'all' || cat.cash_type === expenseCashFilter)
                     .map(cat => (
-                      <div key={cat.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 1.25rem', background: '#F8FAFC', borderRadius: '14px', border: '1px solid var(--border)' }}>
+                      <div key={cat.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 1.25rem', background: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                          <Tag size={18} color="var(--primary)" />
+                          <div style={{ padding: '0.65rem', borderRadius: '12px', background: '#EFF6FF', color: '#2563EB', border: '1px solid #BFDBFE' }}>
+                            <Tag size={18} />
+                          </div>
                           <div>
-                            <div style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--text-primary)' }}>{cat.name}</div>
-                            <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
+                            <div style={{ fontWeight: 800, fontSize: '0.98rem', color: '#0F172A' }}>{cat.name}</div>
+                            <div style={{ fontSize: '0.78rem', color: '#64748B', fontWeight: 500 }}>
                               {cat.cash_type === 'main' ? 'Kas Utama (Owner)' : 'Kas Kecil (Staff)'}
                             </div>
                           </div>
@@ -1495,21 +1544,21 @@ export const AdminDashboard = () => {
                         <div style={{ display: 'flex', gap: '0.4rem' }}>
                           <button 
                             style={{ 
-                              padding: '0.45rem', borderRadius: '8px', background: '#EFF6FF', color: '#2563EB', border: '1px solid #BFDBFE', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'
+                              padding: '0.5rem', borderRadius: '10px', background: '#EFF6FF', color: '#2563EB', border: '1px solid #BFDBFE', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'
                             }} 
                             onClick={() => { setEditingCategory(cat); setIsCategoryModalOpen(true); }}
                             title="Edit Kategori"
                           >
-                            <Settings size={15} />
+                            <Settings size={16} />
                           </button>
                           <button 
                             style={{ 
-                              padding: '0.45rem', borderRadius: '8px', background: '#FEF2F2', color: '#EF4444', border: '1px solid #FECDD3', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'
+                              padding: '0.5rem', borderRadius: '10px', background: '#FFF1F2', color: '#E11D48', border: '1px solid #FECDD3', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'
                             }}
                             onClick={() => deleteCategory(cat.id)}
                             title="Hapus Kategori"
                           >
-                            <Trash2 size={15} />
+                            <Trash2 size={16} />
                           </button>
                         </div>
                       </div>
