@@ -340,7 +340,7 @@ export const IdentitySettings = () => {
               
               {/* Added Manual QRIS URL field exactly below upload area */}
               <div style={{ marginTop: '1rem' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontSize: '0.85rem', fontWeight: 600 }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)' }}>
                   <Plus size={14} color="var(--primary)" /> Link Manual Gambar QRIS (URL)
                 </label>
                 <input
@@ -348,16 +348,16 @@ export const IdentitySettings = () => {
                   value={settings.qris_whatsapp_url || ''}
                   onChange={e => setSettings({ ...settings, qris_whatsapp_url: e.target.value })}
                   placeholder="https://domain-anda.com/qris.jpg"
-                  style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', fontSize: '0.85rem' }}
+                  style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '12px', background: '#F8FAFC', border: '1.5px solid var(--border)', color: '#0F172A', fontSize: '0.85rem', fontWeight: 600, outline: 'none' }}
                 />
-                <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: '0.4rem', lineHeight: '1.4' }}>
+                <p style={{ fontSize: '0.72rem', color: '#475569', marginTop: '0.4rem', lineHeight: '1.4', fontWeight: 500 }}>
                   *Link ini khusus digunakan untuk dikirimkan melalui WhatsApp tagihan ke pelanggan karena API WhatsApp terkadang tidak bisa mengirim gambar langsung.
                 </p>
               </div>
             </div>
 
             <div className="form-group">
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 600 }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-primary)' }}>
                 <MapPin size={14} /> Alamat Lengkap
               </label>
               <textarea
@@ -365,12 +365,12 @@ export const IdentitySettings = () => {
                 onChange={e => setSettings({ ...settings, address: e.target.value })}
                 placeholder="Masukkan alamat lengkap usaha..."
                 rows={3}
-                style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', resize: 'vertical' }}
+                style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '12px', background: '#F8FAFC', border: '1.5px solid var(--border)', color: '#0F172A', fontWeight: 600, resize: 'vertical', outline: 'none' }}
               />
             </div>
 
             <div className="form-group">
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 600 }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-primary)' }}>
                 <MessageSquare size={14} /> Pesan Footer Nota
               </label>
               <textarea
@@ -378,7 +378,7 @@ export const IdentitySettings = () => {
                 onChange={e => setSettings({ ...settings, footer_text: e.target.value })}
                 placeholder="Pesan di bawah nota (e.g. Syarat & Ketentuan)..."
                 rows={3}
-                style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: 'white', resize: 'vertical' }}
+                style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: '12px', background: '#F8FAFC', border: '1.5px solid var(--border)', color: '#0F172A', fontWeight: 600, resize: 'vertical', outline: 'none' }}
               />
             </div>
 
@@ -386,19 +386,19 @@ export const IdentitySettings = () => {
             <div className="form-group" style={{ 
               marginTop: '0.5rem', 
               padding: '1.25rem', 
-              background: 'rgba(var(--primary-rgb), 0.05)', 
+              background: '#F8FAFC', 
               borderRadius: '16px', 
-              border: '1px solid rgba(var(--primary-rgb), 0.1)',
+              border: '1px solid #E2E8F0',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
               gap: '1rem'
             }}>
               <div style={{ flex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem', fontWeight: 700, fontSize: '0.95rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem', fontWeight: 700, fontSize: '0.95rem', color: '#0F172A' }}>
                   <Calculator size={18} color="var(--primary)" /> Pembulatan Otomatis (500)
                 </div>
-                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', lineHeight: '1.4' }}>
+                <p style={{ fontSize: '0.78rem', color: '#475569', lineHeight: '1.4', fontWeight: 500 }}>
                   Membulatkan total tagihan (misal: 5.200 jadi 5.000, 5.310 jadi 5.500).
                 </p>
               </div>

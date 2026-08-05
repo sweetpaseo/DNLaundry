@@ -227,7 +227,7 @@ export const AddCustomerModal = ({ isOpen, onClose, onSave, initialData, memberT
                     required 
                     rows={3}
                     placeholder="Alamat lengkap..."
-                    style={{ width: '100%', paddingLeft: '2.5rem', paddingTop: '0.75rem', background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', color: 'white', borderRadius: 'var(--radius)', resize: 'none' }} 
+                    style={{ width: '100%', paddingLeft: '2.5rem', paddingTop: '0.75rem', background: '#F8FAFC', border: '1.5px solid var(--border)', color: 'var(--text-primary)', borderRadius: '12px', resize: 'none', fontWeight: 600, outline: 'none' }} 
                     value={formData.address}
                     onChange={(e) => setFormData({...formData, address: e.target.value})}
                   />
@@ -236,7 +236,7 @@ export const AddCustomerModal = ({ isOpen, onClose, onSave, initialData, memberT
               </div>
 
               <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem' }}>
-                <button type="button" onClick={onClose} style={{ flex: 1, padding: '0.75rem', borderRadius: 'var(--radius)', background: 'transparent', border: '1px solid var(--glass-border)', color: 'white' }}>
+                <button type="button" onClick={onClose} style={{ flex: 1, padding: '0.75rem', borderRadius: '12px', background: '#F1F5F9', border: '1px solid #CBD5E1', color: '#0F172A', fontWeight: 700 }}>
                   Batal
                 </button>
                 <button type="submit" className="btn-primary" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>

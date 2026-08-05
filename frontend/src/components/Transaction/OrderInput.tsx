@@ -350,7 +350,7 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
                 style={{ width: '100%', height: '3.5rem', fontSize: '1rem' }}
               >
                 {services.map(s => (
-                  <option key={s.id} value={s.id} style={{ background: '#1a1a1a', color: 'white' }}>{s.name} - Rp {s.price_normal?.toLocaleString()}/{s.unit}</option>
+                  <option key={s.id} value={s.id} style={{ background: '#ffffff', color: '#0F172A' }}>{s.name} - Rp {s.price_normal?.toLocaleString()}/{s.unit}</option>
                 ))}
               </select>
             </div>
@@ -363,7 +363,7 @@ export const OrderInput = ({ currentUser }: OrderInputProps) => {
                 style={{ width: '100%', height: '3.5rem', fontSize: '1rem' }}
               >
                 {employees.map(e => (
-                  <option key={e.id} value={e.id} style={{ background: '#1a1a1a', color: 'white' }}>{e.name}</option>
+                  <option key={e.id} value={e.id} style={{ background: '#ffffff', color: '#0F172A' }}>{e.name}</option>
                 ))}
               </select>
             </div>
