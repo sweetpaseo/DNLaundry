@@ -164,11 +164,18 @@ function App() {
             borderRadius: '22px', 
             padding: '1rem', 
             textAlign: 'center',
-            border: '1px solid var(--border)'
+            border: '1px solid var(--border)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '0.2rem'
           }}>
-            <div style={{ fontSize: '1.25rem', marginBottom: '0.2rem' }}>🧺✨</div>
-            <div style={{ fontSize: '0.825rem', fontWeight: 800, color: 'var(--text-primary)' }}>DN Laundry POS</div>
-            <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)' }}>Sistem Operasional Pro</div>
+            <div style={{ fontSize: '1.25rem', marginBottom: '0.1rem' }}>🧺✨</div>
+            <div style={{ fontSize: '0.825rem', fontWeight: 800, color: 'var(--text-primary)' }}>{settings?.name || 'DN Laundry'} POS</div>
+            <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Sistem Operasional Pro</div>
+            <span style={{ background: '#EFF6FF', color: '#2563EB', border: '1px solid #BFDBFE', padding: '0.18rem 0.65rem', borderRadius: '999px', fontWeight: 800, fontSize: '0.7rem', letterSpacing: '0.04em' }}>
+              v1.0.0 Pro
+            </span>
           </div>
         </aside>
 
