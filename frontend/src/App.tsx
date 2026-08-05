@@ -216,9 +216,12 @@ function App() {
                   <span style={{ fontSize: '0.7rem', background: '#EFF6FF', color: '#2563EB', border: '1px solid #BFDBFE', padding: '0.15rem 0.65rem', borderRadius: '999px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                     {user.role}
                   </span>
+                  <span style={{ fontSize: '0.8rem', color: '#475569', fontWeight: 700 }}>
+                    • Hi, {user.name}! 👋
+                  </span>
                 </div>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600, marginTop: '0.15rem' }}>
-                  Hi, <strong style={{ color: 'var(--text-primary)' }}>{user.name}</strong>! Selamat bekerja & kelola cucian hari ini.
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 500, marginTop: '0.2rem' }}>
+                  Selamat bekerja! Kelola cucian & transaksi hari ini dengan mudah.
                 </p>
               </div>
             </div>
