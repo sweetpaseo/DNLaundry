@@ -14,6 +14,16 @@ const getHeaders = () => ({
   'X-API-KEY': API_SECRET_KEY
 });
 
+// In-Memory & LocalStorage Cache Layer for Ultra-Fast Response Times
+const cache = {
+  settings: null as any,
+  services: null as any,
+  servicesTime: 0,
+  customers: null as any,
+  customersTime: 0,
+  CACHE_TTL: 60 * 1000 // 60 seconds TTL
+};
+
 export const api = {
   // Transactions
   async getTransactions() {
@@ -60,15 +70,22 @@ export const api = {
 
   // Customers
   async getCustomers() {
+    if (cache.customers && (Date.now() - cache.customersTime < cache.CACHE_TTL)) {
+      return cache.customers;
+    }
     try {
       const res = await fetch(`${API_BASE_URL}/customers`, { headers: getHeaders() });
       if (!res.ok) throw new Error();
-      return await res.json();
+      const data = await res.json();
+      cache.customers = data;
+      cache.customersTime = Date.now();
+      return data;
     } catch (e) {
-      return [];
+      return cache.customers || [];
     }
   },
   async createCustomer(data: any) {
+    cache.customers = null;
     const res = await fetch(`${API_BASE_URL}/customers`, {
       method: 'POST',
       headers: getHeaders(),
@@ -81,6 +98,7 @@ export const api = {
     return res.json();
   },
   async updateCustomer(id: string, data: any) {
+    cache.customers = null;
     const res = await fetch(`${API_BASE_URL}/customers/${id}`, {
       method: 'PUT',
       headers: getHeaders(),
@@ -93,6 +111,7 @@ export const api = {
     return res.json();
   },
   async deleteCustomer(id: string) {
+    cache.customers = null;
     const res = await fetch(`${API_BASE_URL}/customers/${id}`, { 
       method: 'DELETE',
       headers: getHeaders()
@@ -101,20 +120,28 @@ export const api = {
     return res.json();
   },
   async updateCustomerBalance(id: string, newBalance: number) {
+    cache.customers = null;
     return this.updateCustomer(id, { wallet_balance: newBalance });
   },
 
   // Services
   async getServices() {
+    if (cache.services && (Date.now() - cache.servicesTime < cache.CACHE_TTL)) {
+      return cache.services;
+    }
     try {
       const res = await fetch(`${API_BASE_URL}/services`, { headers: getHeaders() });
       if (!res.ok) throw new Error();
-      return await res.json();
+      const data = await res.json();
+      cache.services = data;
+      cache.servicesTime = Date.now();
+      return data;
     } catch (e) {
-      return [];
+      return cache.services || [];
     }
   },
   async createService(data: any) {
+    cache.services = null;
     const res = await fetch(`${API_BASE_URL}/services`, {
       method: 'POST',
       headers: getHeaders(),
@@ -124,6 +151,7 @@ export const api = {
     return res.json();
   },
   async updateService(id: string, data: any) {
+    cache.services = null;
     const res = await fetch(`${API_BASE_URL}/services/${id}`, {
       method: 'PUT',
       headers: getHeaders(),
@@ -133,6 +161,7 @@ export const api = {
     return res.json();
   },
   async deleteService(id: string) {
+    cache.services = null;
     const res = await fetch(`${API_BASE_URL}/services/${id}`, { 
       method: 'DELETE',
       headers: getHeaders()
@@ -388,13 +417,20 @@ export const api = {
 
   // Settings
   async getSettings() {
+    if (cache.settings) return cache.settings;
     try {
       const res = await fetch(`${API_BASE_URL}/settings`, { headers: getHeaders() });
       if (!res.ok) throw new Error();
-      return await res.json();
+      const data = await res.json();
+      cache.settings = data;
+      localStorage.setItem('laundry_settings', JSON.stringify(data));
+      return data;
     } catch (e) {
       const saved = localStorage.getItem('laundry_settings');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        cache.settings = JSON.parse(saved);
+        return cache.settings;
+      }
       return null;
     }
   },
@@ -406,6 +442,7 @@ export const api = {
     });
     if (!res.ok) throw new Error('Gagal simpan data');
     const result = await res.json();
+    cache.settings = result;
     localStorage.setItem('laundry_settings', JSON.stringify(result));
     return result;
   },

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Printer, Trash2, CheckCircle, Clock, Search, Loader2, Edit3, Wallet, Eye, EyeOff } from 'lucide-react';
 import { motion } from 'framer-motion';
 import type { Transaction, TransactionStatus, Customer } from '../../types';
@@ -192,86 +192,89 @@ export const TransactionList = ({ currentUser }: TransactionListProps) => {
     }
   };
 
-  // 1. Group ALL transactions first
-  const groupedOrders = transactions.reduce((acc, t) => {
-    const gid = t.group_id || t.id;
-    if (!acc[gid]) acc[gid] = [];
-    acc[gid].push(t);
-    return acc;
-  }, {} as Record<string, Transaction[]>);
+  // 1. Group & Filter the GROUPS (Memoized for optimal performance)
+  const filteredGroups = useMemo(() => {
+    const groupedOrders = transactions.reduce((acc, t) => {
+      const gid = t.group_id || t.id;
+      if (!acc[gid]) acc[gid] = [];
+      acc[gid].push(t);
+      return acc;
+    }, {} as Record<string, Transaction[]>);
 
-  // 2. Filter the GROUPS
-  const filteredGroups = Object.values(groupedOrders).filter(group => {
-    const t = group[0];
-    
-    // Status Filter (matches if any item in group matches, or just primary)
-    const matchesStatus = filter === 'Semua' || t.status === filter;
-    
-    // Payment Status Filter (Nota level)
-    const allPaid = group.every(item => item.is_paid);
-    const matchesPayment = paymentFilter === 'Semua' || (paymentFilter === 'Lunas' ? allPaid : !allPaid);
+    return Object.values(groupedOrders).filter(group => {
+      const t = group[0];
+      
+      // Status Filter (matches if any item in group matches, or just primary)
+      const matchesStatus = filter === 'Semua' || t.status === filter;
+      
+      // Payment Status Filter (Nota level)
+      const allPaid = group.every(item => item.is_paid);
+      const matchesPayment = paymentFilter === 'Semua' || (paymentFilter === 'Lunas' ? allPaid : !allPaid);
 
-    // Method Filter
-    const matchesMethod = methodFilter === 'Semua' || t.payment_method === methodFilter;
+      // Method Filter
+      const matchesMethod = methodFilter === 'Semua' || t.payment_method === methodFilter;
 
-    // Time Filter
-    let matchesTime = true;
-    const baseDate = dateSource === 'Order' ? new Date(t.created_at) : (t.paid_at ? new Date(t.paid_at) : null);
-    const now = new Date();
+      // Time Filter
+      let matchesTime = true;
+      const baseDate = dateSource === 'Order' ? new Date(t.created_at) : (t.paid_at ? new Date(t.paid_at) : null);
+      const now = new Date();
 
-    if (dateSource === 'Lunas' && !baseDate) {
-      matchesTime = false;
-    } else if (baseDate) {
-      if (timeFilter === 'Hari Ini') {
-        matchesTime = baseDate.toDateString() === now.toDateString();
-      } else if (timeFilter === '7 Hari') {
-        const sevenDaysAgo = new Date();
-        sevenDaysAgo.setDate(now.getDate() - 7);
-        matchesTime = baseDate >= sevenDaysAgo;
-      } else if (timeFilter === '30 Hari') {
-        const thirtyDaysAgo = new Date();
-        thirtyDaysAgo.setDate(now.getDate() - 30);
-        matchesTime = baseDate >= thirtyDaysAgo;
-      } else if (timeFilter === 'Kustom') {
-        const start = startDate ? new Date(startDate) : null;
-        const end = endDate ? new Date(endDate) : null;
-        
-        if (start) {
-          start.setHours(0, 0, 0, 0);
-          matchesTime = matchesTime && baseDate >= start;
-        }
-        if (end) {
-          end.setHours(23, 59, 59, 999);
-          matchesTime = matchesTime && baseDate <= end;
+      if (dateSource === 'Lunas' && !baseDate) {
+        matchesTime = false;
+      } else if (baseDate) {
+        if (timeFilter === 'Hari Ini') {
+          matchesTime = baseDate.toDateString() === now.toDateString();
+        } else if (timeFilter === '7 Hari') {
+          const sevenDaysAgo = new Date();
+          sevenDaysAgo.setDate(now.getDate() - 7);
+          matchesTime = baseDate >= sevenDaysAgo;
+        } else if (timeFilter === '30 Hari') {
+          const thirtyDaysAgo = new Date();
+          thirtyDaysAgo.setDate(now.getDate() - 30);
+          matchesTime = baseDate >= thirtyDaysAgo;
+        } else if (timeFilter === 'Kustom') {
+          const start = startDate ? new Date(startDate) : null;
+          const end = endDate ? new Date(endDate) : null;
+          
+          if (start) {
+            start.setHours(0, 0, 0, 0);
+            matchesTime = matchesTime && baseDate >= start;
+          }
+          if (end) {
+            end.setHours(23, 59, 59, 999);
+            matchesTime = matchesTime && baseDate <= end;
+          }
         }
       }
-    }
 
-    // Search Filter (customer name)
-    const matchesSearch = !searchTerm || t.customer_name.toLowerCase().includes(searchTerm.toLowerCase());
+      // Search Filter (customer name)
+      const matchesSearch = !searchTerm || t.customer_name.toLowerCase().includes(searchTerm.toLowerCase());
 
-    return matchesStatus && matchesPayment && matchesTime && matchesSearch && matchesMethod;
-  }).sort((a, b) => {
-    const tA = a[0];
-    const tB = b[0];
+      return matchesStatus && matchesPayment && matchesTime && matchesSearch && matchesMethod;
+    }).sort((a, b) => {
+      const tA = a[0];
+      const tB = b[0];
 
-    // Primary sort: receipt_no (if exists) descending
-    if (tA.receipt_no && tB.receipt_no) {
-      if (tA.receipt_no !== tB.receipt_no) {
-        return tB.receipt_no.localeCompare(tA.receipt_no);
+      // Primary sort: receipt_no (if exists) descending
+      if (tA.receipt_no && tB.receipt_no) {
+        if (tA.receipt_no !== tB.receipt_no) {
+          return tB.receipt_no.localeCompare(tA.receipt_no);
+        }
       }
-    }
 
-    // Secondary sort: created_at descending
-    const timeA = new Date(tA.created_at).getTime();
-    const timeB = new Date(tB.created_at).getTime();
-    return timeB - timeA;
-  });
+      // Secondary sort: created_at descending
+      const timeA = new Date(tA.created_at).getTime();
+      const timeB = new Date(tB.created_at).getTime();
+      return timeB - timeA;
+    });
+  }, [transactions, filter, paymentFilter, methodFilter, timeFilter, dateSource, startDate, endDate, searchTerm]);
 
-  const totalFilteredAmount = filteredGroups.reduce((sum: number, group: Transaction[]) => {
-    const groupTotal = group.reduce((groupSum: number, item: Transaction) => groupSum + (item.final_price || 0), 0);
-    return sum + groupTotal;
-  }, 0);
+  const totalFilteredAmount = useMemo(() => {
+    return filteredGroups.reduce((sum: number, group: Transaction[]) => {
+      const groupTotal = group.reduce((groupSum: number, item: Transaction) => groupSum + (item.final_price || 0), 0);
+      return sum + groupTotal;
+    }, 0);
+  }, [filteredGroups]);
 
   return (
     <div className="transaction-list">
